@@ -449,7 +449,7 @@
         ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute -e "graphite_host={{collectd_graphite_server}} graphite_prefix={{cloud_name}} dns_server={{dns_server}} collectd_compute=true apache_controller_collectd_request_time=true ceph_controller_collectd_mon_plugin=true ceph_controller_collectd_osd_plugin=true ceph_controller_collectd_pg_plugin=true ceph_controller_collectd_pool_plugin=true gnocchi_status_controller_collectd_plugin=true rabbitmq_controller_collectd_plugin=true ovsagent_compute_monitor=true ovsagent_controller_monitor=true regex_warn=true regex_info=true"
       when: deploy_browbeat and deploy_overcloud_collectd and (deploy_scenario == 2 or deploy_scenario == 3)
 
-    - name: "Deploy collectd on Overcloud for Scenarios without CephStorage
+    - name: Deploy collectd on Overcloud for Scenarios without CephStorage
       shell: |
         cd /home/stack/browbeat/ansible
         ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute -e "graphite_host={{collectd_graphite_server}} graphite_prefix={{cloud_name}} dns_server={{dns_server}} collectd_compute=true apache_controller_collectd_request_time=true gnocchi_status_controller_collectd_plugin=true rabbitmq_controller_collectd_plugin=true ovsagent_compute_monitor=true ovsagent_controller_monitor=true regex_warn=true regex_info=true"
