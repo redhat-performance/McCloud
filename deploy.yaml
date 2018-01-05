@@ -1,0 +1,463 @@
+---
+#
+# Playbook deploying Undercloud and Overcloud on Microcloud with various pre-determined
+# configurations (No Storage, Ceph Storage, Object Storage, Block Storage, etc)
+#
+# Tested against OSP12 with private external network
+#
+
+# Tasks as root
+- hosts: undercloud
+  gather_facts: true
+  vars_files:
+    - defaults/main.yml
+    - vars/main.yml
+    - vars/main.local.yml
+  remote_user: root
+  tasks:
+    - name: Disable epel
+      shell: rpm -e epel-release
+      ignore_errors: true
+
+    - name: Disable beaker repos
+      shell: rm -rf /etc/yum.repos.d/beaker-*
+
+    - name: Get rhos-release
+      get_url:
+        url: "{{rhos_release_rpm}}"
+        dest: /root/rhos-release.rpm
+        validate_certs: false
+
+    - name: Install rhos-release
+      yum:
+        name: /root/rhos-release.rpm
+
+    - name: Setup OSP version to install
+      command: rhos-release {{rhos_release}} -p {{build}} -r {{rhel_version}}
+
+    - name: Install terminal multiplexers
+      yum:
+        name: "{{item}}"
+      with_items:
+        - tmux
+        - screen
+
+    - name: Deploy .tmux.conf
+      copy:
+        content: set-option -g allow-rename off
+        dest: /root/.tmux.conf
+
+    - name: Copy over deploy tmux scripts
+      copy:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        mode: 0744
+      with_items:
+        - src: files/tmux-sh/deploy0-tmux.sh
+          dest: /root/deploy0-tmux.sh
+        - src: files/tmux-sh/deploy1-tmux.sh
+          dest: /root/deploy1-tmux.sh
+        - src: files/tmux-sh/deploy2-tmux.sh
+          dest: /root/deploy2-tmux.sh
+        - src: files/tmux-sh/deploy3-tmux.sh
+          dest: /root/deploy3-tmux.sh
+        - src: files/tmux-sh/deploy4-tmux.sh
+          dest: /root/deploy4-tmux.sh
+        - src: files/tmux-sh/deploy5-tmux.sh
+          dest: /root/deploy5-tmux.sh
+
+    - name: Update Packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Reboot machine
+      shell: nohup sh -c '( sleep 5 ; shutdown -r now )' &
+      async: 0
+      poll: 0
+      ignore_errors: true
+
+    # 8 minute timeout
+    - name: Wait for Machine Ready
+      local_action:
+        module: wait_for
+        host: "{{inventory_hostname}}"
+        port: 22
+        delay: 15
+        timeout: 480
+
+    - name: Add stack user
+      user:
+        name: stack
+
+    # Not entirely sure why the password wouldn't take with the initial command
+    - name: Stack user password
+      user:
+        name: stack
+        update_password: always
+        password: "{{stack_password}}"
+
+    - name: Sudo for stack user
+      shell: echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack; chmod 0440 /etc/sudoers.d/stack
+
+    - name: Setup authorized key upload
+      authorized_key:
+        user: stack
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: Setup tripleo directories
+      file:
+        path: "{{item}}"
+        state: directory
+        owner: stack
+        group: stack
+      with_items:
+        - /home/stack/images
+        - /home/stack/templates
+        - /home/stack/templates/firstboot
+        - /home/stack/pin-definitions
+        - /home/stack/log
+
+    - name: Install tripleo
+      yum:
+        name: python-tripleoclient
+
+    - name: Install ceph-ansible
+      yum:
+        name: ceph-ansible
+      when: version >= 12
+
+    - name: Set hostname
+      shell: hostnamectl set-hostname {{ansible_fqdn}}
+
+    - name: Set transient hostname
+      shell: hostnamectl set-hostname --transient {{ansible_fqdn}}
+
+    - name: Fix hosts file
+      lineinfile:
+        dest: /etc/hosts
+        line: 127.0.0.1   {{ansible_fqdn}} {{ansible_hostname}} localhost localhost.localdomain localhost4 localhost4.localdomain4
+        regexp: 127.0.0.1
+
+    - name: Copy undercloud.conf
+      template:
+        src: templates/undercloud/undercloud.{{version}}.conf.j2
+        dest: /home/stack/undercloud.conf
+        owner: stack
+        group: stack
+
+    - name: Deploy Private external vlan interface
+      template:
+        src: templates/ifcfg-vlan.j2
+        dest: /etc/sysconfig/network-scripts/ifcfg-{{external_vlan_device}}
+        owner: root
+        group: root
+      when: deploy_external_private_vlan
+
+    - name: Turn on Private external vlan interface
+      shell: ifup {{external_vlan_device}}
+      when: deploy_external_private_vlan
+
+- hosts: undercloud
+  gather_facts: false
+  vars_files:
+    - defaults/main.yml
+    - vars/main.yml
+    - vars/main.local.yml
+  remote_user: stack
+  tasks:
+    - name: Install undercloud
+      shell: "{ time openstack undercloud install  2>&1 | tee -a /home/stack/log/install-undercloud.log ; } 2>> /home/stack/log/install-undercloud.log"
+
+    - name: Install ipa and overcloud images
+      become: true
+      yum:
+        name: "{{item}}"
+      with_items:
+        - rhosp-director-images
+        - rhosp-director-images-ipa
+
+    - name: Untar ipa and overcloud images
+      command: tar -xvf {{item}}  -C /home/stack/images
+      with_items:
+        - /usr/share/rhosp-director-images/overcloud-full-latest-{{version}}.0.tar
+        - /usr/share/rhosp-director-images/ironic-python-agent-latest-{{version}}.0.tar
+
+    - name: Upload images
+      shell: . /home/stack/stackrc; { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a /home/stack/log/upload-images.log ; } 2>> /home/stack/log/upload-images.log
+
+    - name: Get neutron subnet uuid
+      shell: . /home/stack/stackrc; neutron subnet-list | grep start | awk '{print $2}'
+      register: neutron_subnet_uuid
+
+    - debug: msg="neutron_subnet_uuid- {{neutron_subnet_uuid}}"
+
+    - name: Setup DNS on Undercloud Neutron subnet
+      shell: . /home/stack/stackrc; neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
+
+    # Import Nodes
+    - name: Get instackenv.json
+      get_url:
+        url: "{{instackenv_json}}"
+        dest: /home/stack/instackenv.json
+        owner: stack
+        group: stack
+
+    - name: Check if credentials in instackenv.json are correct
+      shell: openstack baremetal instackenv validate  -f  /home/stack/instackenv.json
+      register: node_status
+      failed_when: "'SUCCESS' not in node_status.stdout"
+
+    - name: Import instackenv.json
+      shell: . /home/stack/stackrc; { time openstack baremetal import --json /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/import-instackenv.log ; } 2>> /home/stack/log/import-instackenv.log
+
+    - name: Configure boot
+      shell: . /home/stack/stackrc; { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/configure-boot.log ; } 2>> /home/stack/log/configure-boot.log
+    # End Importing and configuring Nodes
+
+    # Introspect Nodes
+    - name: Template introspection with retry script
+      template:
+        src: templates/introspect.sh.j2
+        dest: /home/stack/introspect.sh
+
+    - name: Run Bulk introspection
+      shell:  . /home/stack/stackrc; { time openstack baremetal introspection bulk start 2>&1 | tee -a /home/stack/log/bulk-introspection.log ; } 2>> /home/stack/log/bulk-introspection.log
+      when: bulk_introspection
+
+    - name: Run introspection with retry script
+      shell: bash /home/stack/introspect.sh
+      when: not bulk_introspection
+
+    - name: Generate node-data
+      shell: . /home/stack/stackrc; mkdir ~/node-data; for i in `ironic node-list | grep avail | awk '{print $2}'`; do openstack baremetal introspection data save $i > node-data/$i; done
+    # End Introspecting Nodes
+
+    # Pin Nodes:
+    - name: Copy pin.py to Undercloud
+      copy:
+        src: files/pin.py
+        dest: /home/stack/pin.py
+        owner: stack
+        group: stack
+        mode: 0744
+
+    - name: Copy node pinning definitions to Undercloud
+      copy:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+      with_items:
+        - src: files/pin-definitions/deploy0-pin.yaml
+          dest: /home/stack/pin-definitions/deploy0-pin.yaml
+        - src: files/pin-definitions/deploy1-pin.yaml
+          dest: /home/stack/pin-definitions/deploy1-pin.yaml
+        - src: files/pin-definitions/deploy2-pin.yaml
+          dest: /home/stack/pin-definitions/deploy2-pin.yaml
+        - src: files/pin-definitions/deploy3-pin.yaml
+          dest: /home/stack/pin-definitions/deploy3-pin.yaml
+        - src: files/pin-definitions/deploy4-pin.yaml
+          dest: /home/stack/pin-definitions/deploy4-pin.yaml
+        - src: files/pin-definitions/deploy5-pin.yaml
+          dest: /home/stack/pin-definitions/deploy5-pin.yaml
+    # Node pinning occurs in the deploy script
+    # End Pin Nodes
+
+    - name: Copy original network configuration files
+      shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs
+
+    - name: Copy original roles_data.yaml into /home/stack/templates
+      shell: cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
+
+    - name: Copy roles_data.yaml to roles_data.objectstorage.yaml
+      shell: cp /home/stack/templates/roles_data.yaml /home/stack/templates/roles_data.objectstorage.yaml
+
+    - name: Modify roles_data.objectstorage.yaml
+      replace:
+        path: /home/stack/templates/roles_data.objectstorage.yaml
+        regexp: "    - OS::TripleO::Services::SwiftStorage"
+        replace: "#    - OS::TripleO::Services::SwiftStorage"
+        before: "- name: Compute"
+
+    - name: Copy over static Tripleo Heat Template configuration files
+      copy:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: stack
+        group: stack
+      with_items:
+        - src: files/nic-configs/ceph-storage.yaml
+          dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+        - src: files/nic-configs/cinder-storage.yaml
+          dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+        - src: files/nic-configs/compute.yaml
+          dest: /home/stack/templates/nic-configs/compute.yaml
+        - src: files/nic-configs/controller.yaml
+          dest: /home/stack/templates/nic-configs/controller.yaml
+        - src: files/nic-configs/swift-storage.yaml
+          dest: /home/stack/templates/nic-configs/swift-storage.yaml
+        - src: files/scheduler-hints.yaml
+          dest: /home/stack/templates/scheduler-hints.yaml
+        - src: files/wipe-disks.yaml
+          dest: /home/stack/templates/firstboot/wipe-disks.yaml
+        - src: files/wipe-disk.sh
+          dest: /home/stack/templates/firstboot/wipe-disk.sh
+
+    - name: Template out Tripleo Heat Templates and other Scripts/Files
+      template:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: stack
+        group: stack
+      with_items:
+        - src: "templates/deploy-yaml/deploy0.yaml.j2"
+          dest: "/home/stack/templates/deploy0.yaml"
+        - src: "templates/deploy-yaml/deploy1.yaml.j2"
+          dest: "/home/stack/templates/deploy1.yaml"
+        - src: "templates/deploy-yaml/deploy2.yaml.j2"
+          dest: "/home/stack/templates/deploy2.yaml"
+        - src: "templates/deploy-yaml/deploy3.yaml.j2"
+          dest: "/home/stack/templates/deploy3.yaml"
+        - src: "templates/deploy-yaml/deploy4.yaml.j2"
+          dest: "/home/stack/templates/deploy4.yaml"
+        - src: "templates/deploy-yaml/deploy5.yaml.j2"
+          dest: "/home/stack/templates/deploy5.yaml"
+
+        - src: "templates/deploy-sh/deploy0.sh.j2"
+          dest: "/home/stack/deploy0.sh"
+        - src: "templates/deploy-sh/deploy1.sh.j2"
+          dest: "/home/stack/deploy1.sh"
+        - src: "templates/deploy-sh/deploy2.sh.j2"
+          dest: "/home/stack/deploy2.sh"
+        - src: "templates/deploy-sh/deploy3.sh.j2"
+          dest: "/home/stack/deploy3.sh"
+        - src: "templates/deploy-sh/deploy4.sh.j2"
+          dest: "/home/stack/deploy4.sh"
+        - src: "templates/deploy-sh/deploy5.sh.j2"
+          dest: "/home/stack/deploy5.sh"
+
+        - src: "templates/network-environment.yaml.j2"
+          dest: "/home/stack/templates/network-environment.yaml"
+        - src: "templates/storage-environment.yaml.j2"
+          dest: "/home/stack/templates/storage-environment.yaml"
+
+    - name: Place version metadata json file in /home/stack
+      become: true
+      template:
+        src: "templates/version.json.j2"
+        dest: "{{version_directory}}/version.json"
+        owner: stack
+        group: stack
+
+    # Setup Container Registry - Pike (OSP12)
+    - name: Append additional insecure registry to /etc/sysconfig/docker
+      become: true
+      lineinfile:
+        path: /etc/sysconfig/docker
+        state: present
+        regexp: '^INSECURE_REGISTRY='
+        line: 'INSECURE_REGISTRY="--insecure-registry 192.168.24.1:8787 --insecure-registry 192.168.24.3:8787 --insecure-registry {{additional_insecure_registry}}"'
+      when: version >= 12
+
+    - name: Restart Docker registry
+      become: true
+      service:
+        name: docker
+        state: restarted
+      when: version >= 12
+
+    - name: Create template to pull images to local registry
+      shell: . /home/stack/stackrc; openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --suffix docker --push-destination 192.168.24.1:8787 --images-file overcloud_containers.yaml
+      when: version >= 12
+
+    # (akrzos) I could not get this command to respond without:
+    # "Error while fetching server API version: ('Connection aborted.', error(13, 'Permission denied'))"
+    # In order to work around this I used Ansible's "become: true" which I am unsure if it will be a
+    # long term solution
+    - name: Pull images using the container_images.yaml
+      shell: . /home/stack/stackrc; { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/container-image-upload.log ; } 2>> /home/stack/log/container-image-upload.log
+      become: true
+      register: pull_images
+      until: pull_images.rc == 0
+      retries: 2
+      delay: 10
+      when: version >= 12
+
+    - name: Create template for using images from local registry
+      shell: . /home/stack/stackrc; openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.24.1:8787/{{container_namespace}} --prefix openstack --suffix docker --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml
+      when: version >= 12
+    # End Setup Container Registry
+
+    - name: Clone browbeat on undercloud
+      git:
+        repo: https://github.com/openstack/browbeat.git
+        dest: /home/stack/browbeat
+        version: master
+      when: deploy_browbeat
+
+    # Collectd on Undercloud
+    - name: Generate hosts and ssh-config on Undercloud for Browbeat (Pre-Deployment)
+      shell: |
+        cd /home/stack/browbeat/ansible
+        . /home/stack/stackrc
+        /home/stack/browbeat/ansible/generate_tripleo_hostfile.sh -l
+      when: deploy_browbeat and deploy_undercloud_collectd
+
+    - name: Deploy collectd on Undercloud
+      shell: |
+        cd /home/stack/browbeat/ansible
+        ansible-playbook -i hosts install/collectd-openstack.yml --tag undercloud -e "graphite_host={{collectd_graphite_server}} graphite_prefix={{cloud_name}} dns_server={{dns_server}} gnocchi_status_undercloud_collectd_plugin=true rabbitmq_undercloud_collectd_plugin=true regex_warn=true regex_info=true"
+      when: deploy_browbeat and deploy_undercloud_collectd
+    # End collectd on Undercloud
+
+    # Create "Install" tmux session with 4 windows (3 under stack, 1 under root)
+    # Two of the sessions with stackrc sourced and another inside browbeat/ansible
+    # Last session is root user under /var/log for debugging purposes
+    - name: Setup "install" tmux
+      become: true
+      shell: |
+        tmux -2 new-session -d -s install -n 'root'
+        tmux send-keys "cd /var/log" C-m
+        tmux new-window -t install:2 -n 'stack-install'
+        tmux send-keys "su - stack" C-m
+        tmux send-keys ". stackrc" C-m
+        tmux split-window -v
+        tmux select-pane -t 1
+        tmux send-keys "su - stack" C-m
+        tmux send-keys ". stackrc" C-m
+        tmux select-pane -t 0
+        tmux new-window -t install:3 -n 'browbeat-ansible'
+        tmux send-keys "su - stack" C-m
+        tmux send-keys ". stackrc" C-m
+        tmux send-keys "cd /home/stack/browbeat/ansible" C-m
+        tmux select-window -t install:2
+
+    - name: "Deploy Overcloud Scenario: {{deploy_scenario_human[deploy_scenario]}}"
+      shell: . /home/stack/stackrc; bash /home/stack/deploy{{deploy_scenario}}.sh
+      when: deploy_overcloud
+
+    - name: Generate hosts and ssh-config on Undercloud for Browbeat (Post-Deployment)
+      shell: |
+        cd /home/stack/browbeat/ansible
+        . /home/stack/stackrc
+        /home/stack/browbeat/ansible/generate_tripleo_hostfile.sh -l
+      when: deploy_browbeat
+
+    # Ceph Scenarios (Turn on Ceph collectd options)
+    - name: Deploy collectd on Overcloud for Scenarios with CephStorage
+      shell: |
+        cd /home/stack/browbeat/ansible
+        ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute -e "graphite_host={{collectd_graphite_server}} graphite_prefix={{cloud_name}} dns_server={{dns_server}} collectd_compute=true apache_controller_collectd_request_time=true ceph_controller_collectd_mon_plugin=true ceph_controller_collectd_osd_plugin=true ceph_controller_collectd_pg_plugin=true ceph_controller_collectd_pool_plugin=true gnocchi_status_controller_collectd_plugin=true rabbitmq_controller_collectd_plugin=true ovsagent_compute_monitor=true ovsagent_controller_monitor=true regex_warn=true regex_info=true"
+      when: deploy_browbeat and deploy_overcloud_collectd and (deploy_scenario == 2 or deploy_scenario == 3)
+
+    - name: "Deploy collectd on Overcloud for Scenarios without CephStorage
+      shell: |
+        cd /home/stack/browbeat/ansible
+        ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute -e "graphite_host={{collectd_graphite_server}} graphite_prefix={{cloud_name}} dns_server={{dns_server}} collectd_compute=true apache_controller_collectd_request_time=true gnocchi_status_controller_collectd_plugin=true rabbitmq_controller_collectd_plugin=true ovsagent_compute_monitor=true ovsagent_controller_monitor=true regex_warn=true regex_info=true"
+      when: deploy_browbeat and deploy_overcloud_collectd and not (deploy_scenario == 2 or deploy_scenario == 3)
+
+    # Needs Work:
+    # - name: Install Browbeat
+    #   shell: |
+    #     cd /home/stack/browbeat/ansible
+    #     ansible-playbook -i hosts install/browbeat.yml -e " dns_server={{dns_server}} browbeat_guest_images={{browbeat_guest_images_ceph | to_json}} disable_ssh_dns=true"
+    #   when: deploy_browbeat
