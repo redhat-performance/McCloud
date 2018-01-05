@@ -1,0 +1,14 @@
+parameter_defaults:
+  DockerInsecureRegistryAddress: 192.168.24.1:8787
+  DnsServers: ["{{dns_server}}"]
+
+  # 3 Controllers / 4 Computes
+  ControllerCount: 3
+  CephStorageCount: 0
+  ObjectStorageCount: 0
+  BlockStorageCount: 0
+  ComputeCount: 4
+
+  SwiftMountCheck: true
+  SwiftUseLocalDir: false
+  SwiftRawDisks: {"sdb": {}}

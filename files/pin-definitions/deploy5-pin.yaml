@@ -1,0 +1,8 @@
+# 1 Controller / 3 BlockStorage Nodes / 3 Computes
+perf-sm5039-1-2-mm: controller-0
+perf-sm5039-1-3-mm: blockstorage-0
+perf-sm5039-1-4-mm: blockstorage-1
+perf-sm5039-1-5-mm: blockstorage-2
+perf-sm5039-1-6-mm: novacompute-0
+perf-sm5039-1-7-mm: novacompute-1
+perf-sm5039-1-8-mm: novacompute-2

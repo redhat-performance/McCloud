@@ -1,3 +1,8 @@
+# Ansible:
+*.retry
+vars/main.local.yml
+hosts.local
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

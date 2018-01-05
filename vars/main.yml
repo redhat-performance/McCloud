@@ -1,0 +1,53 @@
+---
+###########################################
+# Items requiring configuration
+###########################################
+rhos_release_rpm:
+
+version: 12
+rhel_version: 7.4
+rhos_release: 12-director
+build: "2017-12-06.2"
+
+# Deploy Scenario:
+deploy_scenario: 0
+deploy_overcloud: true
+deploy_browbeat: true
+dns_server:
+instackenv_json:
+
+# OSP12 Items
+# Container Registry Details:
+additional_insecure_registry:
+container_namespace: rhosp12
+containers_tag: 12.0-20171201.1
+# End OSP12 Items
+
+# Stack user password:
+# Make a new password: python -c "from passlib.hash import sha512_crypt; print sha512_crypt.encrypt('password')"
+stack_password: $6$rounds=656000$3ZalBI1dHsb8kfJI$XbtraTo6qcAfAHR158Wf4mLoUrDQsTCIWSAZevFapJIq2OS/qATHQ39PwsJ6JusOBue3nxeNm5mTBM3m97EnQ.
+
+# NTP server
+ntp_server: 0.pool.ntp.org
+
+###########################################
+# Unlikely Configuration Items (Undercloud)
+###########################################
+# Undercloud control plane interface:
+local_interface: enp2s0f1
+# Option for ironic node cleaning on overcloud nodes
+node_cleaning: true
+version_directory: /etc
+# External private vlan on undercloud:
+deploy_external_private_vlan: true
+external_vlan_device: enp1s0f0.10
+private_external_address: 172.21.0.1
+private_external_netmask: 255.255.0.0
+# Introspection or introspection with retry
+bulk_introspection: true
+
+###########################################
+# Unlikely Configuration Items (Overcloud)
+###########################################
+# Overcloud External Network VIP
+external_network_vip: 172.21.0.10

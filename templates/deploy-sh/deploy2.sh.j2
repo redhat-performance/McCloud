@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+ts=$(date -u +%Y%m%d-%H%M%S)
+date -u >> /home/stack/log/deploy2-${ts}.log
+
+# Ensure Nodes Pinned Correctly
+{ time /home/stack/pin.py /home/stack/pin-definitions/deploy2-pin.yaml 2>&1 | tee -a /home/stack/log/deploy2-${ts}.log ; } 2>> /home/stack/log/deploy2-${ts}.log
+
+date -u >> /home/stack/log/deploy2-${ts}.log
+
+# OSP12 Pike Docker Containers Deployment (w/ scheduler-hints.yaml, storage-environment.yaml, ceph-ansible, docker_registry.yaml)
+{ time openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templates/ -e /home/stack/templates/scheduler-hints.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/docker.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/docker-ha.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml -e /home/stack/templates/network-environment.yaml -e /home/stack/templates/storage-environment.yaml -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml -e /home/stack/docker_registry.yaml -e /home/stack/templates/deploy2.yaml --ntp-server {{ntp_server}}  2>&1 | tee -a /home/stack/log/deploy2-${ts}.log ; } 2>> /home/stack/log/deploy2-${ts}.log
+
+date -u >> /home/stack/log/deploy2-${ts}.log
