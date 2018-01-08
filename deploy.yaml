@@ -155,7 +155,7 @@
   remote_user: stack
   tasks:
     - name: Install undercloud
-      shell: "{ time openstack undercloud install  2>&1 | tee -a /home/stack/log/install-undercloud.log ; } 2>> /home/stack/log/install-undercloud.log"
+      shell: "{ time openstack undercloud install  2>&1 | tee -a /home/stack/log/001-install-undercloud.log ; } 2>> /home/stack/log/001-install-undercloud.log"
 
     - name: Install ipa and overcloud images
       become: true
@@ -172,14 +172,20 @@
         - /usr/share/rhosp-director-images/ironic-python-agent-latest-{{version}}.0.tar
 
     - name: Upload images
-      shell: . /home/stack/stackrc; { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a /home/stack/log/upload-images.log ; } 2>> /home/stack/log/upload-images.log
+      shell: |
+        . /home/stack/stackrc
+        { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a /home/stack/log/002-upload-images.log ; } 2>> /home/stack/log/002-upload-images.log
 
     - name: Get neutron subnet uuid
-      shell: . /home/stack/stackrc; neutron subnet-list | grep start | awk '{print $2}'
+      shell: |
+        . /home/stack/stackrc
+        neutron subnet-list | grep start | awk '{print $2}'
       register: neutron_subnet_uuid
 
     - name: Setup DNS on Undercloud Neutron subnet
-      shell: . /home/stack/stackrc; neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
+      shell: |
+        . /home/stack/stackrc
+        neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
 
     # Import Nodes
     - name: Get instackenv.json
@@ -195,10 +201,14 @@
       failed_when: "'SUCCESS' not in node_status.stdout"
 
     - name: Import instackenv.json
-      shell: . /home/stack/stackrc; { time openstack baremetal import --json /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/import-instackenv.log ; } 2>> /home/stack/log/import-instackenv.log
+      shell: |
+        . /home/stack/stackrc
+        { time openstack baremetal import --json /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/003-import-instackenv.log ; } 2>> /home/stack/log/003-import-instackenv.log
 
     - name: Configure boot
-      shell: . /home/stack/stackrc; { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/configure-boot.log ; } 2>> /home/stack/log/configure-boot.log
+      shell: |
+        . /home/stack/stackrc
+        { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/004-configure-boot.log ; } 2>> /home/stack/log/004-configure-boot.log
     # End Importing and configuring Nodes
 
     # Introspect Nodes
@@ -208,7 +218,9 @@
         dest: /home/stack/introspect.sh
 
     - name: Run Bulk introspection
-      shell:  . /home/stack/stackrc; { time openstack baremetal introspection bulk start 2>&1 | tee -a /home/stack/log/bulk-introspection.log ; } 2>> /home/stack/log/bulk-introspection.log
+      shell:  |
+        . /home/stack/stackrc
+        { time openstack baremetal introspection bulk start 2>&1 | tee -a /home/stack/log/005-bulk-introspection.log ; } 2>> /home/stack/log/005-bulk-introspection.log
       when: bulk_introspection
 
     - name: Run introspection with retry script
@@ -216,7 +228,10 @@
       when: not bulk_introspection
 
     - name: Generate node-data
-      shell: . /home/stack/stackrc; mkdir ~/node-data; for i in `ironic node-list | grep avail | awk '{print $2}'`; do openstack baremetal introspection data save $i > node-data/$i; done
+      shell: |
+        . /home/stack/stackrc
+        mkdir ~/node-data
+        for i in `ironic node-list | grep avail | awk '{print $2}'`; do openstack baremetal introspection data save $i > node-data/$i; done
     # End Introspecting Nodes
 
     # Pin Nodes:
@@ -306,7 +321,7 @@
     - name: Pull images using the container_images.yaml
       shell: |
         . /home/stack/stackrc;
-        { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/container-image-upload.log ; } 2>> /home/stack/log/container-image-upload.log
+        { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/006-container-image-upload.log ; } 2>> /home/stack/log/006-container-image-upload.log
       become: true
       register: pull_images
       until: pull_images.rc == 0
@@ -378,7 +393,7 @@
     - name: Deploy collectd on Undercloud
       shell: |
         cd /home/stack/browbeat/ansible
-        ansible-playbook -i hosts install/collectd-openstack.yml --tag undercloud
+        { time ansible-playbook -i hosts install/collectd-openstack.yml --tag undercloud 2>&1 | tee -a /home/stack/log/101-collectd-undercloud-install.log ; } 2>> /home/stack/log/101-collectd-undercloud-install.log
       when: deploy_browbeat and deploy_undercloud_collectd
     # End collectd on Undercloud
 
@@ -400,19 +415,19 @@
     - name: Deploy Grafana Dashboards
       shell: |
         cd /home/stack/browbeat/ansible
-        ansible-playbook -i hosts install/grafana-dashboards.yml
+        { time ansible-playbook -i hosts install/grafana-dashboards.yml 2>&1 | tee -a /home/stack/log/102-grafana-dashboards.log ; } 2>> /home/stack/log/102-grafana-dashboards.log
       when: deploy_browbeat
 
     - name: Deploy collectd on Overcloud for Scenarios with CephStorage
       shell: |
         cd /home/stack/browbeat/ansible
-        ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute
+        { time ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
       when: deploy_browbeat and deploy_overcloud_collectd
 
     - name: Install Browbeat
       shell: |
         cd /home/stack/browbeat/ansible
-        ansible-playbook -i hosts install/browbeat.yml
+        { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a /home/stack/log/104-browbeat-install.log ; } 2>> /home/stack/log/104-browbeat-install.log
       when: deploy_browbeat
 
     # Run Gather Playbook
@@ -428,5 +443,4 @@
     # Run Browbeat
     # Networking for PerfKit and Shaker and Browbeat Workloads
     # Bugs/Thoughts
-    # * Fail on deployment failure rather that continuing to future failure
     # * Pike can't build objectstorage nodes
