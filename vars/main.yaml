@@ -16,6 +16,9 @@ deploy_browbeat: true
 deploy_undercloud_collectd: true
 deploy_overcloud_collectd: true
 collectd_graphite_server:
+grafana_host:
+grafana_username: admin
+grafana_password: admin
 cloud_name:
 dns_server:
 instackenv_json:

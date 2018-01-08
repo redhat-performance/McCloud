@@ -1,6 +1,6 @@
 # Ansible:
 *.retry
-vars/main.local.yml
+vars/main.local.yaml
 hosts.local
 
 # Byte-compiled / optimized / DLL files

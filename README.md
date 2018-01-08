@@ -15,7 +15,7 @@ Usage:
 ```
 $ cp hosts hosts.local
 $ # Add Microcloud to hosts.local
-$ cp vars/main.yml vars/main.local.yml
+$ cp vars/main.yaml vars/main.local.yaml
 $ # Edit vars/main.local.yml to adjust deployment parameters
 $ ansible-playbook -i hosts.local deploy.yaml
 ```

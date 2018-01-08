@@ -1,0 +1,171 @@
+---
+# Vars that should never be touched when running
+
+# Deployment Scenarios with a human readable format
+deploy_scenario_human:
+  0: 1 Controller / 6 Computes
+  1: 3 Controllers / 4 Computes
+  2: 1 Controller / 3 CephStorage Nodes / 3 Computes
+  3: 3 Controllers / 3 CephStorage Nodes / 1 Compute
+  4: 1 Controller / 3 ObjectStorage Nodes / 3 Computes
+  5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
+
+# Variables for Browbeat and Collectd Install
+browbeat_vars:
+  - regexp: "dns_server: [0-9]*.[0-9]*.[0-9]*.[0-9]*"
+    replace: "dns_server: {{dns_server}}"
+  - regexp: "disable_ssh_dns:.*"
+    replace: "disable_ssh_dns: true"
+
+  # Collectd/Graphite/Grafana vars
+  - regexp: "graphite_host:.*"
+    replace: "graphite_host: {{collectd_graphite_server}}"
+  - regexp: "graphite_prefix:.*"
+    replace: "graphite_prefix: {{cloud_name}}"
+  - regexp: "grafana_host:.*"
+    replace: "grafana_host: {{grafana_host}}"
+  - regexp: "grafana_username:.*"
+    replace: "grafana_username: {{grafana_username}}"
+  - regexp: "grafana_password:.*"
+    replace: "grafana_password: {{grafana_password}}"
+
+  - regexp: "collectd_compute: false"
+    replace: "collectd_compute: true"
+  - regexp: "apache_controller_collectd_request_time: false"
+    replace: "apache_controller_collectd_request_time: true"
+  - regexp: "gnocchi_status_undercloud_collectd_plugin: false"
+    replace: "gnocchi_status_undercloud_collectd_plugin: true"
+  - regexp: "gnocchi_status_controller_collectd_plugin: false"
+    replace: "gnocchi_status_controller_collectd_plugin: true"
+  - regexp: "rabbitmq_undercloud_collectd_plugin: false"
+    replace: "rabbitmq_undercloud_collectd_plugin: true"
+  - regexp: "rabbitmq_controller_collectd_plugin: false"
+    replace: "rabbitmq_controller_collectd_plugin: true"
+  - regexp: "ovsagent_compute_monitor: false"
+    replace: "ovsagent_compute_monitor: true"
+  - regexp: "ovsagent_controller_monitor: false"
+    replace: "ovsagent_controller_monitor: true"
+  - regexp: "regex_warn: false"
+    replace: "regex_warn: true"
+  - regexp: "regex_info: false"
+    replace: "regex_info: true"
+
+# Browbeat vars when CephStorage is enabled
+browbeat_cephstorage_vars:
+  # Images need to be raw format
+  - regexp: "    convert_to_raw: .*"
+    replace: "    convert_to_raw: true"
+  # Enable Ceph collectd plugins
+  - regexp: "ceph_controller_collectd_mon_plugin: false"
+    replace: "ceph_controller_collectd_mon_plugin: true"
+  - regexp: "ceph_controller_collectd_osd_plugin: false"
+    replace: "ceph_controller_collectd_osd_plugin: true"
+  - regexp: "ceph_controller_collectd_pg_plugin: false"
+    replace: "ceph_controller_collectd_pg_plugin: true"
+  - regexp: "ceph_controller_collectd_pool_plugin: false"
+    replace: "ceph_controller_collectd_pool_plugin: true"
+
+# Browbeat vars when ObjectStorage is enabled
+browbeat_objectstorage_vars:
+  - regexp: "swift_stat_controller_collectd_plugin: false"
+    replace: "swift_stat_controller_collectd_plugin: true"
+
+# Yaml files containing part of node ipmi address to node id map per deployment scenario
+deploy_node_pinning_yamls:
+  - src: files/pin-definitions/deploy0-pin.yaml
+    dest: /home/stack/pin-definitions/deploy0-pin.yaml
+  - src: files/pin-definitions/deploy1-pin.yaml
+    dest: /home/stack/pin-definitions/deploy1-pin.yaml
+  - src: files/pin-definitions/deploy2-pin.yaml
+    dest: /home/stack/pin-definitions/deploy2-pin.yaml
+  - src: files/pin-definitions/deploy3-pin.yaml
+    dest: /home/stack/pin-definitions/deploy3-pin.yaml
+  - src: files/pin-definitions/deploy4-pin.yaml
+    dest: /home/stack/pin-definitions/deploy4-pin.yaml
+  - src: files/pin-definitions/deploy5-pin.yaml
+    dest: /home/stack/pin-definitions/deploy5-pin.yaml
+
+deploy_static_tripleo_heat_templates:
+  - src: files/nic-configs/ceph-storage.yaml
+    dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+  - src: files/nic-configs/cinder-storage.yaml
+    dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+  - src: files/nic-configs/compute.yaml
+    dest: /home/stack/templates/nic-configs/compute.yaml
+  - src: files/nic-configs/controller.yaml
+    dest: /home/stack/templates/nic-configs/controller.yaml
+  - src: files/nic-configs/swift-storage.yaml
+    dest: /home/stack/templates/nic-configs/swift-storage.yaml
+  - src: files/scheduler-hints.yaml
+    dest: /home/stack/templates/scheduler-hints.yaml
+  - src: files/wipe-disks.yaml
+    dest: /home/stack/templates/firstboot/wipe-disks.yaml
+  - src: files/wipe-disk.sh
+    dest: /home/stack/templates/firstboot/wipe-disk.sh
+
+deploy_templated_tripleo_heat_templates:
+  - src: "templates/deploy-yaml/deploy0.yaml.j2"
+    dest: "/home/stack/templates/deploy0.yaml"
+  - src: "templates/deploy-yaml/deploy1.yaml.j2"
+    dest: "/home/stack/templates/deploy1.yaml"
+  - src: "templates/deploy-yaml/deploy2.yaml.j2"
+    dest: "/home/stack/templates/deploy2.yaml"
+  - src: "templates/deploy-yaml/deploy3.yaml.j2"
+    dest: "/home/stack/templates/deploy3.yaml"
+  - src: "templates/deploy-yaml/deploy4.yaml.j2"
+    dest: "/home/stack/templates/deploy4.yaml"
+  - src: "templates/deploy-yaml/deploy5.yaml.j2"
+    dest: "/home/stack/templates/deploy5.yaml"
+
+  - src: "templates/deploy-sh/deploy0.sh.j2"
+    dest: "/home/stack/deploy0.sh"
+  - src: "templates/deploy-sh/deploy1.sh.j2"
+    dest: "/home/stack/deploy1.sh"
+  - src: "templates/deploy-sh/deploy2.sh.j2"
+    dest: "/home/stack/deploy2.sh"
+  - src: "templates/deploy-sh/deploy3.sh.j2"
+    dest: "/home/stack/deploy3.sh"
+  - src: "templates/deploy-sh/deploy4.sh.j2"
+    dest: "/home/stack/deploy4.sh"
+  - src: "templates/deploy-sh/deploy5.sh.j2"
+    dest: "/home/stack/deploy5.sh"
+
+  - src: "templates/network-environment.yaml.j2"
+    dest: "/home/stack/templates/network-environment.yaml"
+  - src: "templates/storage-environment.yaml.j2"
+    dest: "/home/stack/templates/storage-environment.yaml"
+
+# Create "Install" tmux session with 4 windows (3 under stack, 1 under root)
+# Two of the sessions with stackrc sourced and another inside browbeat/ansible
+# Last session is root user under /var/log for debugging purposes
+tmux_install_shell: |
+  tmux -2 new-session -d -s install -n 'root'
+  tmux send-keys "cd /var/log" C-m
+  tmux new-window -t install:2 -n 'stack-install'
+  tmux send-keys "su - stack" C-m
+  tmux send-keys ". stackrc" C-m
+  tmux split-window -v
+  tmux select-pane -t 1
+  tmux send-keys "su - stack" C-m
+  tmux send-keys ". stackrc" C-m
+  tmux select-pane -t 0
+  tmux new-window -t install:3 -n 'browbeat-ansible'
+  tmux send-keys "su - stack" C-m
+  tmux send-keys ". stackrc" C-m
+  tmux send-keys "cd /home/stack/browbeat/ansible" C-m
+  tmux select-window -t install:2
+
+# tmux script for each deployment scenario
+tmux_scripts:
+  - src: files/tmux-sh/deploy0-tmux.sh
+    dest: /root/deploy0-tmux.sh
+  - src: files/tmux-sh/deploy1-tmux.sh
+    dest: /root/deploy1-tmux.sh
+  - src: files/tmux-sh/deploy2-tmux.sh
+    dest: /root/deploy2-tmux.sh
+  - src: files/tmux-sh/deploy3-tmux.sh
+    dest: /root/deploy3-tmux.sh
+  - src: files/tmux-sh/deploy4-tmux.sh
+    dest: /root/deploy4-tmux.sh
+  - src: files/tmux-sh/deploy5-tmux.sh
+    dest: /root/deploy5-tmux.sh
