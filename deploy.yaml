@@ -416,9 +416,9 @@
       shell: |
         cd /home/stack/browbeat/ansible
         { time ansible-playbook -i hosts install/grafana-dashboards.yml 2>&1 | tee -a /home/stack/log/102-grafana-dashboards.log ; } 2>> /home/stack/log/102-grafana-dashboards.log
-      when: deploy_browbeat
+      when: deploy_browbeat and deploy_grafana_dashboards
 
-    - name: Deploy collectd on Overcloud for Scenarios with CephStorage
+    - name: Deploy collectd on Overcloud
       shell: |
         cd /home/stack/browbeat/ansible
         { time ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
@@ -430,17 +430,60 @@
         { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a /home/stack/log/104-browbeat-install.log ; } 2>> /home/stack/log/104-browbeat-install.log
       when: deploy_browbeat
 
-    # Run Gather Playbook
-    # Potentially split playbook into roles so we can have:
-    # * Deploy from scratch
-    # * Rebuild overcloud (Whichever overcloud deployment scenario)
+    - name: Browbeat collect metadata
+      shell: |
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts gather/site.yml 2>&1 | tee -a /home/stack/log/105-browbeat-gather.log ; } 2>> /home/stack/log/105-browbeat-gather.log
+      when: deploy_browbeat and browbeat_collect_metadata
+
+    - name: Disable Overcloud admin quota
+      shell: ". /home/stack/overcloudrc \n
+        openstack quota set --properties -1 --server-groups -1 --ram -1 --key-pairs -1 --instances -1 --fixed-ips -1 --injected-file-size -1 --server-group-members -1
+        --injected-files -1 --injected-files -1 --cores -1 --injected-path-size -1 --per-volume-gigabytes -1 --gigabytes -1 --backup-gigabytes -1 --snapshots -1
+        --volumes -1 --backups -1 --subnetpools -1 --vips -1 --ports -1 --subnets -1 --networks -1 --floating-ips -1 --secgroup-rules -1 --secgroups -1 --routers -1
+        --rbac-policies -1 admin"
+      when: disable_quota
+
+    - name: Create security group
+      shell: |
+        . /home/stack/overcloudrc
+        openstack security group create {{security_group_name}}
+        openstack security group rule create --protocol icmp {{security_group_name}}
+        openstack security group rule create --protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0 {{security_group_name}}
+      when: create_security_group
+
+    - name: Create keypair
+      shell: |
+        . /home/stack/overcloudrc
+        openstack keypair create {{keypair_name}} > /home/stack/{{keypair_name}}.pem
+        chmod 0600 /home/stack/{{keypair_name}}.pem
+      when: create_keypair
+
+    - name: Create private and public external networking
+      shell: |
+        . /home/stack/overcloudrc
+        neutron net-create {{private_network_name}} --shared
+        neutron subnet-create --name {{private_network_name}} {{private_network_name}} {{private_subnet}}
+        neutron subnet-update {{private_network_name}} --dns-nameservers list=true {{dns_server}}
+        neutron net-create {{public_network_name}} --shared --router:external --provider:network_type vlan --provider:physical_network datacentre --provider:segmentation_id {{external_vlan}}
+        neutron subnet-create --disable-dhcp --gateway {{public_gateway}} --allocation-pool start={{public_allocation_start}},end={{public_allocation_end}}  browbeat_public {{public_subnet}}
+        neutron router-create {{router_name}}
+        neutron router-gateway-set {{router_name}} {{public_network_name}}
+        neutron router-interface-add {{router_name}} {{private_network_name}}
+      when: create_networks
+
+    # Reorganize/refactor Playbook:
+    # * Split into roles
+    # * Deploy from scratch playbook
+    # * Rebuild overcloud playbook (Using any overcloud deployment scenario)
     # Healthcheck
     #  * Get Token
     #  * Add Network
     #  * Boot Instance
     #  * Ping Instance
     #  * Delete Instance, Network
+    # Build Browbeat workload images
     # Run Browbeat
-    # Networking for PerfKit and Shaker and Browbeat Workloads
     # Bugs/Thoughts
-    # * Pike can't build objectstorage nodes
+    # * Pike cannot build objectstorage nodes
+    # * Capture Memory usage?
