@@ -37,6 +37,12 @@ collectd_graphite_server:
 grafana_host:
 grafana_username: admin
 grafana_password: admin
+# Browbeat Adjustment vars
+update_microcode: true
+adjust_security:
+  enabled: true
+  security: true
+microcode_url: http://example.com.com/intel-ucode/
 # End Browbeat dependent vars
 
 ###########################################
@@ -62,6 +68,7 @@ bulk_introspection: true
 # Overcloud External Network VIP
 external_network_vip: 172.21.0.10
 # OpenStack Overcloud config items:
+create_flavors: true
 disable_quota: true
 create_security_group: true
 security_group_name: browbeat

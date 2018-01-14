@@ -171,7 +171,7 @@
         - /usr/share/rhosp-director-images/overcloud-full-latest-{{version}}.0.tar
         - /usr/share/rhosp-director-images/ironic-python-agent-latest-{{version}}.0.tar
 
-    - name: Upload images
+    - name: Upload overcloud images
       shell: |
         . /home/stack/stackrc
         { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a /home/stack/log/002-upload-images.log ; } 2>> /home/stack/log/002-upload-images.log
@@ -421,7 +421,7 @@
     - name: Deploy collectd on Overcloud
       shell: |
         cd /home/stack/browbeat/ansible
-        { time ansible-playbook -i hosts install/collectd-openstack.yml --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
+        { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 10 --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
       when: deploy_browbeat and deploy_overcloud_collectd
 
     - name: Install Browbeat
@@ -444,7 +444,14 @@
         --rbac-policies -1 admin"
       when: disable_quota
 
-    - name: Create security group
+    - name: Create Overcloud flavors
+      shell: |
+        . /home/stack/overcloudrc; nova flavor-create {{item.name}} auto {{item.memory}} {{item.disk}} {{item.cpu}}
+      when: create_flavors
+      with_items: "{{microcloud_flavors}}"
+      ignore_errors: true
+
+    - name: Create Overcloud security group
       shell: |
         . /home/stack/overcloudrc
         openstack security group create {{security_group_name}}
@@ -452,7 +459,7 @@
         openstack security group rule create --protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0 {{security_group_name}}
       when: create_security_group
 
-    - name: Create keypair
+    - name: Create Overcloud keypair
       shell: |
         . /home/stack/overcloudrc
         openstack keypair create {{keypair_name}} > /home/stack/{{keypair_name}}.pem
@@ -471,6 +478,18 @@
         neutron router-gateway-set {{router_name}} {{public_network_name}}
         neutron router-interface-add {{router_name}} {{private_network_name}}
       when: create_networks
+
+    - name: Update Microcode
+      shell: |
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts browbeat/adjust-microcode.yml -e 'get_url_base={{microcode_url}}' 2>&1 | tee -a /home/stack/log/201-microcode-update.log ; } 2>> /home/stack/log/201-microcode-update.log
+      when: deploy_browbeat and update_microcode
+
+    - name: Adjust Security
+      shell: |
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts browbeat/adjust-security.yml -e 'security={{adjust_security['security']}}' 2>&1 | tee -a /home/stack/log/202-security-update.log ; } 2>> /home/stack/log/202-security-update.log
+      when: deploy_browbeat and adjust_security['enabled']
 
     # Reorganize/refactor Playbook:
     # * Split into roles
