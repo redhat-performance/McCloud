@@ -336,6 +336,16 @@
       when: version >= 12
     # End Setup Container Registry
 
+    # Undercloud ready for deployment at this point
+    # Apply deployment workarounds:
+    - name: Pike - Apply ObjectStorage THT fix
+      shell: find  /usr/share/openstack-tripleo-heat-templates/ -type f -exec sed -i 's/OS::TripleO::SwiftStorage/OS::TripleO::ObjectStorage/g' {} \;
+      become: true
+      when:
+        - version >= 12
+        - pike_objectstorage_deploy_workaround
+    # End workarounds
+
     - name: Clone browbeat on undercloud
       git:
         repo: https://github.com/openstack/browbeat.git
@@ -504,5 +514,4 @@
     # Build Browbeat workload images
     # Run Browbeat
     # Bugs/Thoughts
-    # * Pike cannot build objectstorage nodes
     # * Capture Memory usage?

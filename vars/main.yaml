@@ -45,6 +45,9 @@ adjust_security:
 microcode_url: http://example.com.com/intel-ucode/
 # End Browbeat dependent vars
 
+# "Possibly" temporary workarounds:
+pike_objectstorage_deploy_workaround: true
+
 ###########################################
 # Unlikely Configuration Items (Undercloud)
 ###########################################
