@@ -17,11 +17,10 @@ browbeat_vars:
   - regexp: "disable_ssh_dns:.*"
     replace: "disable_ssh_dns: true"
 
-  # Placeholders to disable flavor/image create in Browbeat
-  # - regexp: "create_flavors:.*"
-  #   replace: "create_flavors: false"
-  # - regexp: "upload_images:.*"
-  #   replace: "upload_images: false"
+  - regexp: "browbeat_create_flavors:.*"
+    replace: "browbeat_create_flavors: false"
+  # - regexp: "browbeat_upload_guest_images:.*"
+  #   replace: "browbeat_upload_guest_images: false"
 
   # Collectd/Graphite/Grafana vars
   - regexp: "graphite_host:.*"
