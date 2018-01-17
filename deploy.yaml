@@ -360,14 +360,6 @@
         remote_src: true
       when: deploy_browbeat
 
-    - name: Disable host_key_checking within Browbeat ansible.cfg
-      ini_file:
-        path: /home/stack/browbeat/ansible/ansible.cfg
-        section: defaults
-        option: host_key_checking
-        value: False
-      when: deploy_browbeat
-
     - name: Configure Browbeat install vars
       replace:
         path: /home/stack/browbeat/ansible/install/group_vars/all.yml
