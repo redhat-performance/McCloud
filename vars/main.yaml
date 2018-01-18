@@ -38,6 +38,11 @@ grafana_host:
 grafana_username: admin
 grafana_password: admin
 # Browbeat Adjustment vars
+adjust_nova_allocation:
+  enabled: true
+  cpu_allocation_ratio: 100.0
+  ram_allocation_ratio: 100.0
+  disk_allocation_ratio: 100.0
 update_microcode: true
 adjust_security:
   enabled: true
