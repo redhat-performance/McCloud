@@ -527,6 +527,13 @@
         neutron router-interface-add {{router_name}} {{private_network_name}}
       when: create_networks
 
+    - name: Route external traffic from Undercloud
+      shell: |
+        iptables -t nat -A POSTROUTING -o {{external_undercloud_interface}}  -j MASQUERADE
+        iptables -A FORWARD -i {{external_undercloud_interface}} -o {{external_vlan_device}} -m state --state RELATED,ESTABLISHED -j ACCEPT
+        iptables -A FORWARD -i {{external_vlan_device}} -o {{external_undercloud_interface}} -j ACCEPT
+      when: route_external_traffic_from_undercloud
+
     - name: Adjust nova allocation ratios
       shell: |
         cd /home/stack/browbeat/ansible
