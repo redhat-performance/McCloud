@@ -19,8 +19,8 @@ browbeat_vars:
 
   - regexp: "browbeat_create_flavors:.*"
     replace: "browbeat_create_flavors: false"
-  # - regexp: "browbeat_upload_guest_images:.*"
-  #   replace: "browbeat_upload_guest_images: false"
+  - regexp: "browbeat_upload_guest_images:.*"
+    replace: "browbeat_upload_guest_images: false"
 
   # Collectd/Graphite/Grafana vars
   - regexp: "graphite_host:.*"
@@ -169,6 +169,16 @@ microcloud_flavors:
     cpu: 8
     memory: 16384
     disk: 160
+
+microcloud_guest_images:
+  centos7:
+    name: centos7
+    url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+    type: qcow2
+  cirros:
+    name: cirros
+    url: http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+    type: qcow2
 
 # Create "Install" tmux session with 4 windows (3 under stack, 1 under root)
 # Two of the sessions with stackrc sourced and another inside browbeat/ansible
