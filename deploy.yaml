@@ -311,7 +311,7 @@
     - name: Create template to pull images to local registry
       shell: |
         . /home/stack/stackrc;
-        openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --suffix docker --push-destination 192.168.24.1:8787 --images-file overcloud_containers.yaml
+        openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --push-destination 192.168.24.1:8787 --images-file overcloud_containers.yaml
       when: version >= 12
 
     # (akrzos) I could not get this command to respond without:
@@ -588,3 +588,4 @@
     # Bugs/Thoughts
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
+    # * Fail if containers are not pulled down (missing containers)
