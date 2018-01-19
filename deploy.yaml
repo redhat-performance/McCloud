@@ -332,7 +332,7 @@
     - name: Create template for using images from local registry
       shell: |
         . /home/stack/stackrc;
-        openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.24.1:8787/{{container_namespace}} --prefix openstack --suffix docker --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml
+        openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.24.1:8787/{{container_namespace}} --prefix openstack --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml
       when: version >= 12
     # End Setup Container Registry
 
@@ -583,9 +583,9 @@
     #  * Boot Instance
     #  * Ping Instance
     #  * Delete Instance, Network
-    # Build Browbeat workload images
     # Run Browbeat
     # Bugs/Thoughts
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Fail if containers are not pulled down (missing containers)
+    # * Capture logs from each deployment attempt into local folder?
