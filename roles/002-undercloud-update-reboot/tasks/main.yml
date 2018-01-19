@@ -1,0 +1,24 @@
+---
+#
+# Undercloud update and reboot
+#
+
+- name: Update Packages
+  yum:
+    name: '*'
+    state: latest
+
+- name: Reboot machine
+  shell: nohup sh -c '( sleep 5 ; shutdown -r now )' &
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+# 8 minute timeout
+- name: Wait for Machine Ready
+  local_action:
+    module: wait_for
+    host: "{{inventory_hostname}}"
+    port: 22
+    delay: 15
+    timeout: 480

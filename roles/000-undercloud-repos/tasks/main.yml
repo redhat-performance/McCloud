@@ -1,0 +1,24 @@
+---
+#
+# Setup Undercloud repos for tripleo install
+#
+
+- name: Disable epel
+  shell: rpm -e epel-release
+  ignore_errors: true
+
+- name: Disable beaker repos
+  shell: rm -rf /etc/yum.repos.d/beaker-*
+
+- name: Get rhos-release
+  get_url:
+    url: "{{rhos_release_rpm}}"
+    dest: /root/rhos-release.rpm
+    validate_certs: false
+
+- name: Install rhos-release
+  yum:
+    name: /root/rhos-release.rpm
+
+- name: Setup OSP version to install
+  command: rhos-release {{rhos_release}} -p {{build}} -r {{rhel_version}}

@@ -1,0 +1,33 @@
+---
+#
+# Install Tripleo packages and undercloud.conf
+#
+
+- name: Setup tripleo directories
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: stack
+    group: stack
+  with_items:
+    - /home/stack/images
+    - /home/stack/templates
+    - /home/stack/templates/firstboot
+    - /home/stack/pin-definitions
+    - /home/stack/log
+
+- name: Install tripleo
+  yum:
+    name: python-tripleoclient
+
+- name: Install ceph-ansible
+  yum:
+    name: ceph-ansible
+  when: version >= 12
+
+- name: Copy undercloud.conf
+  template:
+    src: undercloud.{{version}}.conf.j2
+    dest: /home/stack/undercloud.conf
+    owner: stack
+    group: stack

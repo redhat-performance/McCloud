@@ -1,0 +1,16 @@
+---
+#
+# Setup Undercloud hostname
+#
+
+- name: Set hostname
+  shell: hostnamectl set-hostname {{ansible_fqdn}}
+
+- name: Set transient hostname
+  shell: hostnamectl set-hostname --transient {{ansible_fqdn}}
+
+- name: Fix hosts file
+  lineinfile:
+    dest: /etc/hosts
+    line: 127.0.0.1   {{ansible_fqdn}} {{ansible_hostname}} localhost localhost.localdomain localhost4 localhost4.localdomain4
+    regexp: 127.0.0.1

@@ -1,0 +1,23 @@
+---
+#
+# Setup the stack user on the Undercloud
+#
+
+- name: Add stack user
+  user:
+    name: stack
+
+# Not entirely sure why the password wouldn't take with the initial command
+- name: Stack user password
+  user:
+    name: stack
+    update_password: always
+    password: "{{stack_password}}"
+
+- name: Sudo for stack user
+  shell: echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack; chmod 0440 /etc/sudoers.d/stack
+
+- name: Setup authorized key upload
+  authorized_key:
+    user: stack
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

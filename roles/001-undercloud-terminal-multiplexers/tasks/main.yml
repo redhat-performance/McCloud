@@ -1,0 +1,23 @@
+---
+#
+# Install and terminal multiplexers (tmux and screen) and copy over tmux_scripts
+#
+
+- name: Install terminal multiplexers
+  yum:
+    name: "{{item}}"
+  with_items:
+    - tmux
+    - screen
+
+- name: Deploy .tmux.conf
+  copy:
+    content: set-option -g allow-rename off
+    dest: /root/.tmux.conf
+
+- name: Copy over deploy tmux scripts
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    mode: 0744
+  with_items: "{{tmux_scripts}}"

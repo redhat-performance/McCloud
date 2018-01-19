@@ -1,0 +1,16 @@
+---
+#
+# Setup the private external vlan interface
+#
+
+- name: Deploy Private external vlan interface
+  template:
+    src: ifcfg-vlan.j2
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{external_vlan_device}}
+    owner: root
+    group: root
+  when: deploy_external_private_vlan
+
+- name: Turn on Private external vlan interface
+  shell: ifup {{external_vlan_device}}
+  when: deploy_external_private_vlan
