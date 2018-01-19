@@ -426,18 +426,6 @@
         { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 10 --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
       when: deploy_browbeat and deploy_overcloud_collectd
 
-    - name: Install Browbeat
-      shell: |
-        cd /home/stack/browbeat/ansible
-        { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a /home/stack/log/104-browbeat-install.log ; } 2>> /home/stack/log/104-browbeat-install.log
-      when: deploy_browbeat
-
-    - name: Browbeat collect metadata
-      shell: |
-        cd /home/stack/browbeat/ansible
-        { time ansible-playbook -i hosts gather/site.yml 2>&1 | tee -a /home/stack/log/105-browbeat-gather.log ; } 2>> /home/stack/log/105-browbeat-gather.log
-      when: deploy_browbeat and browbeat_collect_metadata
-
     - name: Disable Overcloud admin quota
       shell: ". /home/stack/overcloudrc \n
         openstack quota set --properties -1 --server-groups -1 --ram -1 --key-pairs -1 --instances -1 --fixed-ips -1 --injected-file-size -1 --server-group-members -1
@@ -527,12 +515,45 @@
         neutron router-interface-add {{router_name}} {{private_network_name}}
       when: create_networks
 
+    - name: Get private network - {{private_network_name}} UUID
+      shell: |
+        . /home/stack/overcloudrc
+        openstack network list | grep "{{private_network_name}}" | awk '{print $2}'
+      register: private_network_uuid
+      when: create_networks and browbeat_workload_guests
+
     - name: Route external traffic from Undercloud
       shell: |
         iptables -t nat -A POSTROUTING -o {{external_undercloud_interface}}  -j MASQUERADE
         iptables -A FORWARD -i {{external_undercloud_interface}} -o {{external_vlan_device}} -m state --state RELATED,ESTABLISHED -j ACCEPT
         iptables -A FORWARD -i {{external_vlan_device}} -o {{external_undercloud_interface}} -j ACCEPT
       when: route_external_traffic_from_undercloud
+
+    - name: Configure Browbeat workload install vars
+      replace:
+        path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+        regexp: "{{item.regexp}}"
+        replace: "{{item.replace}}"
+      with_items:
+        - regexp: "install_browbeat_workloads:.*"
+          replace: "install_browbeat_workloads: true"
+        - regexp: "pbench_internal_url:.*"
+          replace: "pbench_internal_url: {{pbench_internal_url}}"
+        - regexp: "browbeat_network:.*"
+          replace: "browbeat_network: {{private_network_uuid.stdout}}"
+      when: deploy_browbeat and browbeat_workload_guests
+
+    - name: Install Browbeat
+      shell: |
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a /home/stack/log/104-browbeat-install.log ; } 2>> /home/stack/log/104-browbeat-install.log
+      when: deploy_browbeat
+
+    - name: Browbeat collect metadata
+      shell: |
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts gather/site.yml 2>&1 | tee -a /home/stack/log/105-browbeat-gather.log ; } 2>> /home/stack/log/105-browbeat-gather.log
+      when: deploy_browbeat and browbeat_collect_metadata
 
     - name: Adjust nova allocation ratios
       shell: |
