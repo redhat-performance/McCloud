@@ -523,6 +523,7 @@
       when: create_networks and browbeat_workload_guests
 
     - name: Route external traffic from Undercloud
+      become: true
       shell: |
         iptables -t nat -A POSTROUTING -o {{external_undercloud_interface}}  -j MASQUERADE
         iptables -A FORWARD -i {{external_undercloud_interface}} -o {{external_vlan_device}} -m state --state RELATED,ESTABLISHED -j ACCEPT
