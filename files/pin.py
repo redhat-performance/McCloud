@@ -28,10 +28,18 @@ print "----------------------------------------------"
 with open(pin_yaml, "r") as stream:
     pins = yaml.load(stream)
 
+if 'OS_PROJECT_NAME' in os.environ:
+    project_name = os.environ['OS_PROJECT_NAME']
+elif 'OS_TENANT_NAME' in os.environ:
+    project_name = os.environ['OS_TENANT_NAME']
+else:
+    print 'ERROR :: Missing OS_PROJECT_NAME or OS_TENANT_NAME in rc file'
+    exit(1)
+
 # Establish Ironic API Connection
 ironic = client.get_client(
         1, os_username=os.environ['OS_USERNAME'], os_password=os.environ['OS_PASSWORD'],
-        os_auth_url=os.environ['OS_AUTH_URL'], os_project_name=os.environ['OS_PROJECT_NAME'])
+        os_auth_url=os.environ['OS_AUTH_URL'], os_project_name=project_name)
 
 nodes = ironic.node.list()
 missing = []
