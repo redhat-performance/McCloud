@@ -1,0 +1,15 @@
+---
+#
+# Setup Undercloud DNS 
+#
+
+- name: Get neutron subnet uuid
+  shell: |
+    . /home/stack/stackrc
+    neutron subnet-list | grep start | awk '{print $2}'
+  register: neutron_subnet_uuid
+
+- name: Setup DNS on Undercloud Neutron subnet
+  shell: |
+    . /home/stack/stackrc
+    neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}

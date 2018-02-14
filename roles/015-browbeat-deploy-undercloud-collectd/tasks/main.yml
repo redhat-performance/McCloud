@@ -1,0 +1,15 @@
+---
+#
+# Setup Browbeat collectd on the Undercloud
+#
+
+- name: Generate hosts and ssh-config on Undercloud for Browbeat (Pre-Deployment)
+  shell: |
+    cd /home/stack/browbeat/ansible
+    . /home/stack/stackrc
+    /home/stack/browbeat/ansible/generate_tripleo_hostfile.sh -l
+
+- name: Deploy collectd on Undercloud
+  shell: |
+    cd /home/stack/browbeat/ansible
+    { time ansible-playbook -i hosts install/collectd-openstack.yml --tag undercloud 2>&1 | tee -a /home/stack/log/101-collectd-undercloud-install.log ; } 2>> /home/stack/log/101-collectd-undercloud-install.log

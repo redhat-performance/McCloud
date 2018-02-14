@@ -1,0 +1,42 @@
+---
+#
+# Setup Container Registry - Pike (OSP12)
+#
+
+- name: Append additional insecure registry to /etc/sysconfig/docker
+  become: true
+  lineinfile:
+    path: /etc/sysconfig/docker
+    state: present
+    regexp: '^INSECURE_REGISTRY='
+    line: 'INSECURE_REGISTRY="--insecure-registry 192.168.24.1:8787 --insecure-registry 192.168.24.3:8787 --insecure-registry {{additional_insecure_registry}}"'
+
+- name: Restart Docker registry
+  become: true
+  service:
+    name: docker
+    state: restarted
+
+- name: Create template to pull images to local registry
+  shell: |
+    . /home/stack/stackrc;
+    openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --push-destination 192.168.24.1:8787 --images-file overcloud_containers.yaml
+
+# (akrzos) I could not get this command to respond without:
+# "Error while fetching server API version: ('Connection aborted.', error(13, 'Permission denied'))"
+# In order to work around this I used Ansible's "become: true" which I am unsure if it will be a
+# long term solution
+- name: Pull images using the container_images.yaml
+  shell: |
+    . /home/stack/stackrc;
+    { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/006-container-image-upload.log ; } 2>> /home/stack/log/006-container-image-upload.log
+  become: true
+  register: pull_images
+  until: pull_images.rc == 0
+  retries: 2
+  delay: 10
+
+- name: Create template for using images from local registry
+  shell: |
+    . /home/stack/stackrc;
+    openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.24.1:8787/{{container_namespace}} --prefix openstack --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml

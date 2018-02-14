@@ -1,0 +1,39 @@
+---
+#
+# Deploy Browbeat onto the Undercloud
+#
+
+- name: Clone browbeat on undercloud
+  git:
+    repo: https://github.com/openstack/browbeat.git
+    dest: /home/stack/browbeat
+    version: master
+
+- name: Copy version.json into metadata directory
+  copy:
+    src: /etc/version.json
+    dest: /home/stack/browbeat/metadata/version.json
+    remote_src: true
+
+- name: Configure Browbeat install vars
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_vars}}"
+
+- name: Configure Browbeat install vars for CephStorage Nodes
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_cephstorage_vars}}"
+  when: (deploy_scenario == 2 or deploy_scenario == 3)
+
+- name: Configure Browbeat install vars for Non-CephStorage Deployments
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_objectstorage_vars}}"
+  when: (deploy_scenario != 2 and deploy_scenario != 3)

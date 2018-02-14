@@ -1,0 +1,11 @@
+---
+#
+# Generate Hosts/ssh-config with Overcloud Nodes for Browbeat
+#
+
+- name: Generate hosts and ssh-config on Undercloud for Browbeat (Post-Deployment)
+  shell: |
+    cd /home/stack/browbeat/ansible
+    . /home/stack/stackrc
+    /home/stack/browbeat/ansible/generate_tripleo_hostfile.sh -l
+  when: deploy_browbeat

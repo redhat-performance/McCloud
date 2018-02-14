@@ -1,0 +1,55 @@
+---
+#
+# Organizes/places all templates and files on the Undercloud
+#
+
+# Local Files (Local to Undercloud)
+- name: Copy original network configuration files
+  shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs
+
+- name: Copy original roles_data.yaml into /home/stack/templates
+  shell: cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
+
+- name: Copy roles_data.yaml to roles_data.objectstorage.yaml
+  shell: cp /home/stack/templates/roles_data.yaml /home/stack/templates/roles_data.objectstorage.yaml
+
+- name: Modify roles_data.objectstorage.yaml
+  replace:
+    path: /home/stack/templates/roles_data.objectstorage.yaml
+    regexp: "    - OS::TripleO::Services::SwiftStorage"
+    replace: "#    - OS::TripleO::Services::SwiftStorage"
+    before: "- name: Compute"
+
+# Files
+- name: Copy node pinning definitions to Undercloud
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+  with_items: "{{deploy_node_pinning_yamls}}"
+
+- name: Copy over static Tripleo Heat Template configuration files and scripts
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_files}}"
+
+# Templates
+- name: Template out Tripleo Heat Templates and other Scripts/Files
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_templates}}"
+
+- name: Place version metadata json file in /home/stack
+  become: true
+  template:
+    src: "templates/version.json.j2"
+    dest: "{{version_directory}}/version.json"
+    owner: stack
+    group: stack

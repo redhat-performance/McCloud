@@ -1,0 +1,20 @@
+---
+#
+# Perform Iitrospection of Overcloud Nodes
+#
+
+- name: Run Bulk introspection
+  shell:  |
+    . /home/stack/stackrc
+    { time openstack baremetal introspection bulk start 2>&1 | tee -a /home/stack/log/005-bulk-introspection.log ; } 2>> /home/stack/log/005-bulk-introspection.log
+  when: introspection['bulk_introspection']
+
+- name: Run introspection with retry script
+  shell: { time bash /home/stack/introspect.sh 2>&1 | tee -a /home/stack/log/005-introspection-script.log ; } 2>> /home/stack/log/005-introspection-script.log
+  when: not introspection['bulk_introspection']
+
+- name: Generate node-data
+  shell: |
+    . /home/stack/stackrc
+    mkdir ~/node-data
+    for i in `ironic node-list | grep avail | awk '{print $2}'`; do openstack baremetal introspection data save $i > node-data/$i; done

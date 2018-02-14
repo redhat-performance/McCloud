@@ -75,8 +75,11 @@ browbeat_objectstorage_vars:
   - regexp: "swift_stat_controller_collectd_plugin: false"
     replace: "swift_stat_controller_collectd_plugin: true"
 
-# Yaml files containing part of node ipmi address to node id map per deployment scenario
-deploy_node_pinning_yamls:
+deploy_files:
+  - src: files/pin.py
+    dest: /home/stack/pin.py
+    mode: "0744"
+
   - src: files/pin-definitions/deploy0-pin.yaml
     dest: /home/stack/pin-definitions/deploy0-pin.yaml
   - src: files/pin-definitions/deploy1-pin.yaml
@@ -90,7 +93,6 @@ deploy_node_pinning_yamls:
   - src: files/pin-definitions/deploy5-pin.yaml
     dest: /home/stack/pin-definitions/deploy5-pin.yaml
 
-deploy_static_tripleo_heat_templates:
   - src: files/nic-configs/ceph-storage.yaml
     dest: /home/stack/templates/nic-configs/ceph-storage.yaml
   - src: files/nic-configs/cinder-storage.yaml
@@ -108,7 +110,10 @@ deploy_static_tripleo_heat_templates:
   - src: files/wipe-disk.sh
     dest: /home/stack/templates/firstboot/wipe-disk.sh
 
-deploy_templated_tripleo_heat_templates:
+deploy_templates:
+  - src: "templates/introspect.sh.j2"
+    dest: "/home/stack/introspect.sh"
+
   - src: "templates/deploy-yaml/deploy0.yaml.j2"
     dest: "/home/stack/templates/deploy0.yaml"
   - src: "templates/deploy-yaml/deploy1.yaml.j2"
@@ -124,16 +129,22 @@ deploy_templated_tripleo_heat_templates:
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
     dest: "/home/stack/deploy0.sh"
+    mode: "0744"
   - src: "templates/deploy-sh/deploy1.sh.j2"
     dest: "/home/stack/deploy1.sh"
+    mode: "0744"
   - src: "templates/deploy-sh/deploy2.sh.j2"
     dest: "/home/stack/deploy2.sh"
+    mode: "0744"
   - src: "templates/deploy-sh/deploy3.sh.j2"
     dest: "/home/stack/deploy3.sh"
+    mode: "0744"
   - src: "templates/deploy-sh/deploy4.sh.j2"
     dest: "/home/stack/deploy4.sh"
+    mode: "0744"
   - src: "templates/deploy-sh/deploy5.sh.j2"
     dest: "/home/stack/deploy5.sh"
+    mode: "0744"
 
   - src: "templates/network-environment.yaml.j2"
     dest: "/home/stack/templates/network-environment.yaml"

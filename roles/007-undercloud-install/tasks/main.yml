@@ -1,0 +1,26 @@
+---
+#
+# Installs Undercloud, and Overcloud Images into undercloud
+#
+
+- name: Install undercloud
+  shell: "{ time openstack undercloud install  2>&1 | tee -a /home/stack/log/001-install-undercloud.log ; } 2>> /home/stack/log/001-install-undercloud.log"
+
+- name: Install ipa and overcloud images
+  become: true
+  yum:
+    name: "{{item}}"
+  with_items:
+    - rhosp-director-images
+    - rhosp-director-images-ipa
+
+- name: Untar ipa and overcloud images
+  command: tar -xvf {{item}}  -C /home/stack/images
+  with_items:
+    - /usr/share/rhosp-director-images/overcloud-full-latest-{{version}}.0.tar
+    - /usr/share/rhosp-director-images/ironic-python-agent-latest-{{version}}.0.tar
+
+- name: Upload overcloud images
+  shell: |
+    . /home/stack/stackrc
+    { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a /home/stack/log/002-upload-images.log ; } 2>> /home/stack/log/002-upload-images.log
