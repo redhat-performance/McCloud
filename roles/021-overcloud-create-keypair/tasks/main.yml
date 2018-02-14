@@ -1,0 +1,10 @@
+---
+#
+# Create a keypair for instances in the Overcloud
+#
+
+- name: Create Overcloud keypair
+  shell: |
+    . /home/stack/overcloudrc
+    openstack keypair create {{keypair_name}} > /home/stack/{{keypair_name}}.pem
+    chmod 0600 /home/stack/{{keypair_name}}.pem

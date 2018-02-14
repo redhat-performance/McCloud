@@ -37,3 +37,11 @@
     replace: "{{item.replace}}"
   with_items: "{{browbeat_objectstorage_vars}}"
   when: (deploy_scenario != 2 and deploy_scenario != 3)
+
+- name: Configure Browbeat install vars for osp_version < 12
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_prepike_vars}}"
+  when: version < 12

@@ -1,0 +1,9 @@
+---
+#
+# Adjust Nova allocation ratios to allow greater overcommit
+#
+
+- name: Adjust Nova allocation ratios
+  shell: |
+    cd /home/stack/browbeat/ansible
+    { time ansible-playbook -i hosts browbeat/adjust-nova-allocation.yml -e "cpu_allocation_ratio={{adjust_nova_allocation['cpu_allocation_ratio']}} ram_allocation_ratio={{adjust_nova_allocation['ram_allocation_ratio']}} disk_allocation_ratio={{adjust_nova_allocation['disk_allocation_ratio']}} restart_nova=true" 2>&1 | tee -a /home/stack/log/201-adjust-nova-allocation.log ; } 2>> /home/stack/log/201-adjust-nova-allocation.log

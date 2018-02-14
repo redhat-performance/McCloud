@@ -1,0 +1,9 @@
+---
+#
+# Update microcode to protect against Spectre/Meltdown
+#
+
+- name: Update Microcode
+  shell: |
+    cd /home/stack/browbeat/ansible
+    { time ansible-playbook -i hosts browbeat/adjust-microcode.yml -e 'get_url_base={{microcode_url}}' 2>&1 | tee -a /home/stack/log/202-microcode-update.log ; } 2>> /home/stack/log/202-microcode-update.log

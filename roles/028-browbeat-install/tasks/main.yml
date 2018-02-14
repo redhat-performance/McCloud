@@ -1,0 +1,9 @@
+---
+#
+# Install Browbeat via playbook
+#
+
+- name: Install Browbeat
+  shell: |
+    cd /home/stack/browbeat/ansible
+    { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a /home/stack/log/104-browbeat-install.log ; } 2>> /home/stack/log/104-browbeat-install.log

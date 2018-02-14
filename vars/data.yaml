@@ -75,6 +75,11 @@ browbeat_objectstorage_vars:
   - regexp: "swift_stat_controller_collectd_plugin: false"
     replace: "swift_stat_controller_collectd_plugin: true"
 
+# Browbeat vars for version < 12
+browbeat_prepike_vars:
+  - regexp: "apache_controller_collectd_plugin: false"
+    replace: "apache_controller_collectd_plugin: true"
+
 deploy_files:
   - src: files/pin.py
     dest: /home/stack/pin.py

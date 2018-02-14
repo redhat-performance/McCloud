@@ -1,0 +1,11 @@
+---
+#
+# Create flavors on the Overcloud
+#
+
+- name: Create Overcloud flavors
+  shell: |
+    . /home/stack/overcloudrc
+    nova flavor-create {{item.name}} auto {{item.memory}} {{item.disk}} {{item.cpu}}
+  with_items: "{{microcloud_flavors}}"
+  ignore_errors: true

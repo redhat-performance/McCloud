@@ -1,0 +1,121 @@
+---
+#
+# Deploy playbook using roles (Work In Progress)
+#
+
+# Tasks as root
+- hosts: undercloud
+  gather_facts: true
+  vars_files:
+    - vars/data.yaml
+    - vars/main.yaml
+    - vars/main.local.yaml
+  remote_user: root
+  roles:
+    - role: 000-undercloud-repos
+    - role: 001-undercloud-terminal-multiplexers
+    - role: 002-undercloud-update-reboot
+    - role: 003-undercloud-setup-stack-user
+    - role: 004-undercloud-install-tripleo
+    - role: 005-undercloud-setup-hostname
+    - role: 006-undercloud-private-external-vlan
+
+# Tasks as stack user
+- hosts: undercloud
+  gather_facts: false
+  vars_files:
+    - vars/data.yaml
+    - vars/main.yaml
+    - vars/main.local.yaml
+  remote_user: stack
+  roles:
+    - role: 007-undercloud-install
+    - role: 008-undercloud-setup-dns
+    - role: 009-undercloud-import-nodes
+    - role: 010-undercloud-templates-files
+    - role: 011-undercloud-introspect-overcloud-nodes
+      when: introspection['enabled']
+    - role: 012-undercloud-setup-container-registry
+      when: version >= 12
+    - role: 013-undercloud-deploy-workarounds
+    - role: 014-browbeat-setup
+      when: deploy_browbeat
+    - role: 015-browbeat-deploy-undercloud-collectd
+      when:
+        - deploy_browbeat
+        - deploy_undercloud_collectd
+
+# Overcloud Ready for Deployment now:
+    - role: 016-overcloud-deploy
+      when: deploy_overcloud
+    - role: 017-browbeat-generate-overcloud-hosts
+      when: deploy_browbeat
+    - role: 018-browbeat-deploy-overcloud-collectd
+      when:
+        - deploy_browbeat
+        - deploy_overcloud_collectd
+    - role: 019-browbeat-deploy-grafana-dashboards
+      when:
+        - deploy_browbeat
+        - deploy_grafana_dashboards
+    - role: 020-overcloud-disable-admin-quota
+      when: disable_quota
+    - role: 021-overcloud-create-keypair
+      when: create_keypair
+    - role: 022-overcloud-create-flavors
+      when: create_flavors
+    - role: 023-overcloud-upload-images
+      when: upload_guest_images
+    - role: 024-overcloud-create-security-group
+      when: create_security_group
+    - role: 025-overcloud-create-networks/tasks/main.yml
+      when: create_networks
+    - role: 026-undercloud-route-external-traffic/tasks/main.yml
+      when: route_external_traffic_from_undercloud
+    - role: 027-browbeat-workload-guests-config/tasks/main.yml
+      when:
+        - create_networks
+        - browbeat_workload_guests
+        - deploy_browbeat
+    - role: 028-browbeat-install/tasks/main.yml
+      when: deploy_browbeat
+    - role: 029-browbeat-adjust-nova-allocation-ratios/tasks/main.yml
+      when:
+        - deploy_browbeat
+        - adjust_nova_allocation['enabled']
+    - role: 030-browbeat-collect-metadata/tasks/main.yml
+      when:
+        - deploy_browbeat
+        - browbeat_collect_metadata
+    - role: 031-browbeat-install-microcode/tasks/main.yml
+      when:
+        - deploy_browbeat
+        - update_microcode
+    - role: 032-browbeat-adjust-security/tasks/main.yml
+      when:
+        - deploy_browbeat
+        - adjust_security['enabled']
+
+    # Playbooks:
+    # * Redeploy Overcloud Playbook
+    # Get Shaker Working
+    # Speed Ups:
+    # * Concurrent collect installs (across node types)
+    # * Browbeat workload vms built beforehand
+    # * Microcode pre-installed
+    # Healthcheck
+    #  * Get Token
+    #  * Add Network
+    #  * Boot Instance
+    #  * Ping Instance
+    #  * Delete Instance, Network
+    # Run Browbeat
+    # Bugs/Thoughts
+    # * Capture Memory usage?
+    # * Auto install: sysstat, strace
+    # * Fail if containers are not pulled down (missing containers)
+    # * Artifacting:
+    #    * /home/stack/log/*
+    #    * /home/stack/browbeat/results/*
+    #    * /home/stack/browbeat/metadata/*
+    #    * Local deploy microcloud timings (Ansible timings)

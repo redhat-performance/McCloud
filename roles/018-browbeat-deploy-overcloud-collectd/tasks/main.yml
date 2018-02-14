@@ -1,6 +1,6 @@
 ---
 #
-#
+# Deploys collectd on the Overcloud
 #
 
 - name: Deploy collectd on Overcloud

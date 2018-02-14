@@ -1,0 +1,23 @@
+---
+#
+# Setup up Vars for Browbeat Workload Image building
+#
+
+- name: Get private network - {{private_network_name}} UUID
+  shell: |
+    . /home/stack/overcloudrc
+    openstack network list | grep "{{private_network_name}}" | awk '{print $2}'
+  register: private_network_uuid
+
+- name: Configure Browbeat workload install vars
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items:
+    - regexp: "install_browbeat_workloads:.*"
+      replace: "install_browbeat_workloads: true"
+    - regexp: "pbench_internal_url:.*"
+      replace: "pbench_internal_url: {{pbench_internal_url}}"
+    - regexp: "browbeat_network:.*"
+      replace: "browbeat_network: {{private_network_uuid.stdout}}"
