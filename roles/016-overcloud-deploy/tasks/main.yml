@@ -10,4 +10,4 @@
 - name: "Deploy Overcloud Scenario: {{deploy_scenario_human[deploy_scenario]}}"
   shell: |
     . /home/stack/stackrc
-    ./home/stack/deploy{{deploy_scenario}}.sh
+    /home/stack/deploy{{deploy_scenario}}.sh

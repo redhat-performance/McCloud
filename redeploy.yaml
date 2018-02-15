@@ -36,30 +36,30 @@
       when: upload_guest_images
     - role: 024-overcloud-create-security-group
       when: create_security_group
-    - role: 025-overcloud-create-networks/tasks/main.yml
+    - role: 025-overcloud-create-networks
       when: create_networks
-    - role: 026-undercloud-route-external-traffic/tasks/main.yml
+    - role: 026-undercloud-route-external-traffic
       when: route_external_traffic_from_undercloud
-    - role: 027-browbeat-workload-guests-config/tasks/main.yml
+    - role: 027-browbeat-workload-guests-config
       when:
         - create_networks
         - browbeat_workload_guests
         - deploy_browbeat
-    - role: 028-browbeat-install/tasks/main.yml
+    - role: 028-browbeat-install
       when: deploy_browbeat
-    - role: 029-browbeat-adjust-nova-allocation-ratios/tasks/main.yml
+    - role: 029-browbeat-adjust-nova-allocation-ratios
       when:
         - deploy_browbeat
         - adjust_nova_allocation['enabled']
-    - role: 030-browbeat-collect-metadata/tasks/main.yml
+    - role: 030-browbeat-collect-metadata
       when:
         - deploy_browbeat
         - browbeat_collect_metadata
-    - role: 031-browbeat-install-microcode/tasks/main.yml
+    - role: 031-browbeat-install-microcode
       when:
         - deploy_browbeat
         - update_microcode
-    - role: 032-browbeat-adjust-security/tasks/main.yml
+    - role: 032-browbeat-adjust-security
       when:
         - deploy_browbeat
         - adjust_security['enabled']

@@ -21,12 +21,6 @@
     before: "- name: Compute"
 
 # Files
-- name: Copy node pinning definitions to Undercloud
-  copy:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
-  with_items: "{{deploy_node_pinning_yamls}}"
-
 - name: Copy over static Tripleo Heat Template configuration files and scripts
   copy:
     src: "{{item.src}}"
