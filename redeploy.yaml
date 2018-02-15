@@ -1,24 +1,7 @@
 ---
 #
-# Deploy playbook using roles (Work In Progress)
+# Redeploy an Overcloud
 #
-
-# Tasks as root
-- hosts: undercloud
-  gather_facts: true
-  vars_files:
-    - vars/data.yaml
-    - vars/main.yaml
-    - vars/main.local.yaml
-  remote_user: root
-  roles:
-    - role: 000-undercloud-repos
-    - role: 001-undercloud-terminal-multiplexers
-    - role: 002-undercloud-update-reboot
-    - role: 003-undercloud-setup-stack-user
-    - role: 004-undercloud-install-tripleo
-    - role: 005-undercloud-setup-hostname
-    - role: 006-undercloud-private-external-vlan
 
 # Tasks as stack user
 - hosts: undercloud
@@ -29,23 +12,8 @@
     - vars/main.local.yaml
   remote_user: stack
   roles:
-    - role: 007-undercloud-install
-    - role: 008-undercloud-setup-dns
-    - role: 009-undercloud-import-nodes
-    - role: 010-undercloud-templates-files
-    - role: 011-undercloud-introspect-overcloud-nodes
-      when: introspection['enabled']
-    - role: 012-undercloud-setup-container-registry
-      when: version >= 12
-    - role: 013-undercloud-deploy-workarounds
-    - role: 014-browbeat-setup
-      when: deploy_browbeat
-    - role: 015-browbeat-deploy-undercloud-collectd
-      when:
-        - deploy_browbeat
-        - deploy_undercloud_collectd
+    # Add Role to check if overcloud already existing
 
-# Overcloud Ready for Deployment now:
     - role: 016-overcloud-deploy
       when: deploy_overcloud
     - role: 017-browbeat-generate-overcloud-hosts
@@ -95,27 +63,3 @@
       when:
         - deploy_browbeat
         - adjust_security['enabled']
-
-    # Speed Ups:
-    # * Concurrent collect installs (across node types)
-    # * Browbeat workload vms built beforehand
-    # * Microcode pre-installed
-    # Healthcheck
-    #  * Get Token
-    #  * Add Network
-    #  * Boot Instance
-    #  * Ping Instance
-    #  * Delete Instance, Network
-    # Run Browbeat
-    # Shaker Image Build/Run
-    # Redeploy - Check if overcloud existing
-    # Redeploy install tmux check
-    # Bugs/Thoughts
-    # * Capture Memory usage?
-    # * Auto install: sysstat, strace
-    # * Fail if containers are not pulled down (missing containers)
-    # * Artifacting:
-    #    * /home/stack/log/*
-    #    * /home/stack/browbeat/results/*
-    #    * /home/stack/browbeat/metadata/*
-    #    * Local deploy microcloud timings (Ansible timings)

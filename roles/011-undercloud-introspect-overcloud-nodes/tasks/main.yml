@@ -10,7 +10,8 @@
   when: introspection['bulk_introspection']
 
 - name: Run introspection with retry script
-  shell: { time bash /home/stack/introspect.sh 2>&1 | tee -a /home/stack/log/005-introspection-script.log ; } 2>> /home/stack/log/005-introspection-script.log
+  shell: |
+    { time bash /home/stack/introspect.sh 2>&1 | tee -a /home/stack/log/005-introspection-script.log ; } 2>> /home/stack/log/005-introspection-script.log
   when: not introspection['bulk_introspection']
 
 - name: Generate node-data
