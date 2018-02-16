@@ -8,6 +8,7 @@
     repo: https://github.com/openstack/browbeat.git
     dest: /home/stack/browbeat
     version: master
+    force: true
 
 - name: Copy version.json into metadata directory
   copy:

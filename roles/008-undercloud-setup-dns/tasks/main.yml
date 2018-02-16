@@ -1,6 +1,6 @@
 ---
 #
-# Setup Undercloud DNS 
+# Setup Undercloud DNS
 #
 
 - name: Get neutron subnet uuid
@@ -13,3 +13,37 @@
   shell: |
     . /home/stack/stackrc
     neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
+
+- name: (OSP10/Newton) Obtain ctlplane UUID
+  shell: |
+    . /home/stack/stackrc
+    neutron net-list | grep ctlplane | awk '{print $2}'
+  register: neutron_ctlplane_uuid
+  when: version == 10
+
+- name: (OSP10/Newton) Configure ironic.conf for Disk Metadata cleaning
+  become: true
+  ini_file:
+    dest: /etc/ironic/ironic.conf
+    section: "{{item.section}}"
+    option: "{{item.option}}"
+    value: "{{item.value}}"
+    backup: yes
+  with_items:
+    - section: neutron
+      option: cleaning_network_uuid
+      value: "{{neutron_ctlplane_uuid.stdout}}"
+    - section: deploy
+      option: erase_devices_priority
+      value: 0
+    - section: deploy
+      option: erase_devices_metadata_priority
+      value: 10
+  when: version == 10
+
+- name: (OSP10/Newton) Restart Ironic Conductor
+  become: true
+  service:
+    name: openstack-ironic-conductor
+    state: restarted
+  when: version == 10
