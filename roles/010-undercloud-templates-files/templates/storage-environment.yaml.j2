@@ -2,7 +2,7 @@
 ## backends. Defaults to Ceph used as a backend for Cinder, Glance and
 ## Nova ephemeral storage.
 resource_registry:
-{%if version == 12 %}
+{% if version == 12 %}
   OS::TripleO::Services::CephMon: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mon.yaml
   OS::TripleO::Services::CephOSD: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-osd.yaml
   OS::TripleO::Services::CephClient: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-client.yaml
@@ -21,7 +21,31 @@ resource_registry:
   #OS::TripleO::Services::CephClient: ../puppet/services/ceph-client.yaml
 {% endif %}
 parameter_defaults:
+{% if version == 12 %}
   CephPoolDefaultPgNum: 32
+{% elif version == 11 or version == 10 %}
+  CephPools:
+    vms:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+    volumes:
+      size: 3
+      pg_num: 32
+      pgp_num: 32
+    backups:
+      size: 3
+      pg_num: 16
+      pgp_num: 16
+    images:
+      size: 3
+      pg_num: 32
+      pgp_num: 32
+    metrics:
+      size: 3
+      pg_num: 32
+      pgp_num: 32
+{% endif %}
 
   #### BACKEND SELECTION ####
 
