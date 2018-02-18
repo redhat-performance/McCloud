@@ -3,6 +3,23 @@
 # Deploy playbook using roles (Work In Progress)
 #
 
+# Wait for Undercloud to be provisioned via Beaker
+- hosts: undercloud
+  gather_facts: false
+  remote_user: root
+  vars:
+    wait_for_ready: true
+  tasks:
+    # 12 minute timeout
+    - name: Wait for Machine Ready
+      local_action:
+        module: wait_for
+        host: "{{inventory_hostname}}"
+        port: 22
+        delay: 15
+        timeout: 720
+      when: wait_for_ready
+
 # Tasks as root
 - hosts: undercloud
   gather_facts: true
