@@ -3,9 +3,18 @@
 # Create a security group which allows icmp and ssh traffic
 #
 
-- name: Create Overcloud security group
+- name: (OSP11/OSP12) Create Overcloud security group
   shell: |
     . /home/stack/overcloudrc
     openstack security group create {{security_group_name}}
     openstack security group rule create --protocol icmp {{security_group_name}}
     openstack security group rule create --protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0 {{security_group_name}}
+  when: version == 11 or version == 12
+
+- name: (OSP10) Create Overcloud security group
+  shell: |
+    . /home/stack/overcloudrc
+    openstack security group create {{security_group_name}}
+    openstack security group rule create --protocol icmp {{security_group_name}}
+    openstack security group rule create --protocol tcp --dst-port 22:22 --src-ip 0.0.0.0/0 {{security_group_name}}
+  when: version == 10
