@@ -55,7 +55,7 @@ browbeat_vars:
   - regexp: "regex_info: false"
     replace: "regex_info: true"
 
-# Browbeat vars when CephStorage is enabled
+# Browbeat vars when CephStorage is deployed
 browbeat_cephstorage_vars:
   # Images need to be raw format
   - regexp: "    convert_to_raw: .*"
@@ -70,8 +70,13 @@ browbeat_cephstorage_vars:
   - regexp: "ceph_controller_collectd_pool_plugin: false"
     replace: "ceph_controller_collectd_pool_plugin: true"
 
-# Browbeat vars when ObjectStorage is enabled
-browbeat_objectstorage_vars:
+# Browbeat vars for deployments with multiple controllers
+browbeat_multicontroller_vars:
+  - regexp: "ping_plugin:.*"
+    replace: "ping_plugin: true"
+
+# Browbeat vars when CephStorage is not deployed
+browbeat_non_cephstorage_vars:
   - regexp: "swift_stat_controller_collectd_plugin: false"
     replace: "swift_stat_controller_collectd_plugin: true"
 

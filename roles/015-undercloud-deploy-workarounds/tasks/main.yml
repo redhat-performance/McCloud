@@ -3,9 +3,16 @@
 # Apply any version specific deployment workarounds
 #
 
-- name: Pike - Apply ObjectStorage THT fix
+- name: Pike(12) - Apply ObjectStorage THT fix
   shell: find  /usr/share/openstack-tripleo-heat-templates/ -type f -exec sed -i 's/OS::TripleO::SwiftStorage/OS::TripleO::ObjectStorage/g' {} \;
   become: true
   when:
-    - version >= 12
+    - version == 12
     - pike_objectstorage_deploy_workaround
+
+- name: Newton(10) - Apply ObjectStorage THT fix
+  shell: find  /usr/share/openstack-tripleo-heat-templates/ -type f -exec sed -i 's/OS::TripleO::SwiftStorage/OS::TripleO::ObjectStorage/g' {} \;
+  become: true
+  when:
+    - version == 10
+    - newton_objectstorage_deploy_workaround

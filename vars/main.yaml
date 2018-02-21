@@ -6,7 +6,7 @@ rhos_release_rpm:
 
 rhel_version: 7.4
 
-# 12/13 Only:
+# Pike(12)/Queens(13):
 additional_insecure_registry:
 
 #version: 10
@@ -69,6 +69,7 @@ linpack_url: http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_m
 
 # "Possibly" temporary workarounds:
 pike_objectstorage_deploy_workaround: true
+newton_objectstorage_deploy_workaround: true
 
 ###########################################
 # Unlikely Configuration Items (Undercloud)

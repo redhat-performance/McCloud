@@ -3,15 +3,15 @@
 # Disable low admin quotas
 #
 
-- name: (OSP11/OSP12) Disable Overcloud admin quota
+- name: Ocata(11)/Pike(12)/Queens(13) Disable Overcloud admin quota
   shell: ". /home/stack/overcloudrc \n
     openstack quota set --properties -1 --server-groups -1 --ram -1 --key-pairs -1 --instances -1 --fixed-ips -1 --injected-file-size -1 --server-group-members -1
     --injected-files -1 --injected-files -1 --cores -1 --injected-path-size -1 --per-volume-gigabytes -1 --gigabytes -1 --backup-gigabytes -1 --snapshots -1
     --volumes -1 --backups -1 --subnetpools -1 --vips -1 --ports -1 --subnets -1 --networks -1 --floating-ips -1 --secgroup-rules -1 --secgroups -1 --routers -1
     --rbac-policies -1 admin"
-  when: version == 12 or version == 11
+  when: version == 11 or version == 12 or version == 13
 
-- name: (OSP10) Disable Overcloud admin quota
+- name: Newton(10) Disable Overcloud admin quota
   shell: ". /home/stack/overcloudrc \n
     openstack quota set --properties -1 --server-groups -1 --ram -1 --key-pairs -1 --instances -1 --fixed-ips -1 --injected-file-size -1 --server-group-members -1
     --injected-files -1 --injected-files -1 --cores -1 --injected-path-size -1  --gigabytes -1 --snapshots -1 --volumes -1  --subnetpools -1 --ports -1 --subnets -1

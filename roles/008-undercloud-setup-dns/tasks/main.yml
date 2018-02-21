@@ -14,14 +14,14 @@
     . /home/stack/stackrc
     neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
 
-- name: (OSP10/Newton) Obtain ctlplane UUID
+- name: Newton(10) Obtain ctlplane UUID
   shell: |
     . /home/stack/stackrc
     neutron net-list | grep ctlplane | awk '{print $2}'
   register: neutron_ctlplane_uuid
   when: version == 10
 
-- name: (OSP10/Newton) Configure ironic.conf for Disk Metadata cleaning
+- name: Newton(10) Configure ironic.conf for Disk Metadata cleaning
   become: true
   ini_file:
     dest: /etc/ironic/ironic.conf
@@ -41,7 +41,7 @@
       value: 10
   when: version == 10
 
-- name: (OSP10/Newton) Restart Ironic Conductor
+- name: Newton(10) Restart Ironic Conductor
   become: true
   service:
     name: openstack-ironic-conductor
