@@ -48,19 +48,19 @@
   roles:
     - role: 007-undercloud-install
     - role: 008-undercloud-setup-dns
-    - role: 009-undercloud-import-nodes
-    - role: 010-undercloud-templates-files
-    - role: 011-undercloud-introspect-overcloud-nodes
-      when: introspection['enabled']
-    - role: 012-undercloud-setup-container-registry
-      when: version >= 12
-    - role: 013-undercloud-deploy-workarounds
-    - role: 014-browbeat-setup
+    - role: 009-undercloud-templates-files
+    - role: 010-browbeat-setup
       when: deploy_browbeat
-    - role: 015-browbeat-deploy-undercloud-collectd
+    - role: 011-browbeat-deploy-undercloud-collectd
       when:
         - deploy_browbeat
         - deploy_undercloud_collectd
+    - role: 012-undercloud-import-nodes
+    - role: 013-undercloud-introspect-overcloud-nodes
+      when: introspection['enabled']
+    - role: 014-undercloud-setup-container-registry
+      when: version >= 12
+    - role: 015-undercloud-deploy-workarounds
 
 # Overcloud Ready for Deployment now:
     - role: 016-overcloud-deploy

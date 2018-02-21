@@ -10,7 +10,7 @@
     neutron subnet-create --name {{private_network_name}} {{private_network_name}} {{private_subnet}}
     neutron subnet-update {{private_network_name}} --dns-nameservers list=true {{dns_server}}
     neutron net-create {{public_network_name}} --shared --router:external --provider:network_type vlan --provider:physical_network datacentre --provider:segmentation_id {{external_vlan}}
-    neutron subnet-create --disable-dhcp --gateway {{public_gateway}} --allocation-pool start={{public_allocation_start}},end={{public_allocation_end}}  browbeat_public {{public_subnet}}
+    neutron subnet-create --disable-dhcp --gateway {{public_gateway}} --allocation-pool start={{public_allocation_start}},end={{public_allocation_end}} {{public_network_name}} {{public_subnet}}
     neutron router-create {{router_name}}
     neutron router-gateway-set {{router_name}} {{public_network_name}}
     neutron router-interface-add {{router_name}} {{private_network_name}}
