@@ -3,9 +3,16 @@
 # Deploy Overcloud
 #
 
+- name: Check if "install" tmux exists
+  become: true
+  shell: tmux ls | grep install
+  register: tmux_install_exists
+  ignore_errors: true
+
 - name: Setup "install" tmux
   become: true
   shell: "{{tmux_install_shell}}"
+  when: tmux_install_exists.failed
 
 - name: "Deploy Overcloud Scenario: {{deploy_scenario_human[deploy_scenario]}}"
   shell: |
