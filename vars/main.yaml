@@ -4,10 +4,30 @@
 ###########################################
 rhos_release_rpm:
 
-version: 12
 rhel_version: 7.4
+
+# 12/13 Only:
+additional_insecure_registry:
+
+#version: 10
+#rhos_release: 10-director
+#build: "2018-02-06.2" # Newton
+
+#version: 11
+#rhos_release: 11-director
+#build: "2018-02-08.3" # Ocata
+
+version: 12
 rhos_release: 12-director
-build: "2017-12-06.2"
+build: "2018-01-26.2" # Pike
+container_namespace: rhosp12
+containers_tag: 12.0-20180124.1
+
+#version: 13
+#rhos_release: 13-director
+#build: "2018-02-14.1" # Queens
+#container_namespace: rhosp13
+#containers_tag: 13.0-20180214.1
 
 # Deploy Scenario:
 deploy_scenario: 0
@@ -15,12 +35,6 @@ deploy_overcloud: true
 dns_server:
 instackenv_json:
 ntp_server: 0.pool.ntp.org
-
-# OSP12 Items:
-additional_insecure_registry:
-container_namespace: rhosp12
-containers_tag: 12.0-20171201.1
-# End OSP12 Items
 
 # Stack user password:
 # Make a new password: python -c "from passlib.hash import sha512_crypt; print sha512_crypt.encrypt('password')"
@@ -41,15 +55,16 @@ grafana_password: admin
 # Browbeat Adjustment vars
 adjust_nova_allocation:
   enabled: true
-  cpu_allocation_ratio: 100.0
-  ram_allocation_ratio: 100.0
-  disk_allocation_ratio: 100.0
+  cpu_allocation_ratio: 200.0
+  ram_allocation_ratio: 200.0
+  disk_allocation_ratio: 200.0
 update_microcode: true
 adjust_security:
   enabled: true
   security: true
 microcode_url: http://example.com.com/intel-ucode/
 pbench_internal_url:
+linpack_url: http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_mklb_p_2018.0.006.tgz
 # End Browbeat dependent vars
 
 # "Possibly" temporary workarounds:

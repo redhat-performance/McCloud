@@ -131,6 +131,7 @@
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Fail if containers are not pulled down (missing containers)
+    # * Fail if various timed playbooks fail
     # * Artifacting:
     #    * /home/stack/log/*
     #    * /home/stack/browbeat/results/*

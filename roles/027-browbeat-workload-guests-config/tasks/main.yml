@@ -17,7 +17,9 @@
   with_items:
     - regexp: "install_browbeat_workloads:.*"
       replace: "install_browbeat_workloads: true"
-    - regexp: "pbench_internal_url:.*"
-      replace: "pbench_internal_url: {{pbench_internal_url}}"
     - regexp: "browbeat_network:.*"
       replace: "browbeat_network: {{private_network_uuid.stdout}}"
+    - regexp: "pbench_internal_url:.*"
+      replace: "pbench_internal_url: {{pbench_internal_url}}"
+    - regexp: "linpack_url:.*"
+      replace: "linpack_url: {{linpack_url}}"
