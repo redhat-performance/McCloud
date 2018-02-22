@@ -36,10 +36,18 @@ else:
     print 'ERROR :: Missing OS_PROJECT_NAME or OS_TENANT_NAME in rc file'
     exit(1)
 
+user_domain_name = None
+if 'OS_USER_DOMAIN_NAME' in os.environ:
+    user_domain_name = os.environ['OS_USER_DOMAIN_NAME']
+project_domain_name = None
+if 'OS_PROJECT_DOMAIN_NAME' in os.environ:
+    project_domain_name = os.environ['OS_PROJECT_DOMAIN_NAME']
+
 # Establish Ironic API Connection
 ironic = client.get_client(
         1, os_username=os.environ['OS_USERNAME'], os_password=os.environ['OS_PASSWORD'],
-        os_auth_url=os.environ['OS_AUTH_URL'], os_project_name=project_name)
+        os_auth_url=os.environ['OS_AUTH_URL'], os_project_name=project_name,
+        os_user_domain_name=user_domain_name, os_project_domain_name=project_domain_name)
 
 nodes = ironic.node.list()
 missing = []
