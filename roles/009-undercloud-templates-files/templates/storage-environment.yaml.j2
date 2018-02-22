@@ -22,7 +22,24 @@ resource_registry:
 {% endif %}
 parameter_defaults:
 {% if version == 12 %}
-  CephPoolDefaultPgNum: 32
+  # CephPoolDefaultPgNum: 32
+  CephPools:
+    - name: images
+      pg_num: 32
+      rule_name: ""
+    - name: metrics
+      pg_num: 32
+      rule_name: ""
+    - name: backups
+      pg_num: 16
+      rule_name: ""
+    - name: vms
+      pg_num: 64
+      rule_name: ""
+    - name: volumes
+      pg_num: 32
+      rule_name: ""
+
 {% elif version == 11 %}
   CephPools:
     backups:
