@@ -9,3 +9,4 @@
     iptables -t nat -A POSTROUTING -o {{external_undercloud_interface}}  -j MASQUERADE
     iptables -A FORWARD -i {{external_undercloud_interface}} -o {{external_vlan_device}} -m state --state RELATED,ESTABLISHED -j ACCEPT
     iptables -A FORWARD -i {{external_vlan_device}} -o {{external_undercloud_interface}} -j ACCEPT
+    iptables-save > /etc/sysconfig/iptables
