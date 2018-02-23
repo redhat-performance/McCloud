@@ -46,6 +46,7 @@ deploy_undercloud_collectd: true
 deploy_overcloud_collectd: true
 deploy_grafana_dashboards: true
 browbeat_workload_guests: true
+browbeat_shaker_build: true
 browbeat_collect_metadata: true
 cloud_name:
 collectd_graphite_server:

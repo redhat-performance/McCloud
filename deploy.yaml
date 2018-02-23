@@ -92,23 +92,28 @@
     - role: 027-browbeat-workload-guests-config
       when:
         - create_networks
-        - browbeat_workload_guests
         - deploy_browbeat
+        - browbeat_workload_guests
     - role: 028-browbeat-install
       when: deploy_browbeat
-    - role: 029-browbeat-adjust-nova-allocation-ratios
+    - role: 029-browbeat-shaker-image-build
+      when:
+        - deploy_browbeat
+        - create_networks
+        - browbeat_shaker_build
+    - role: 030-browbeat-adjust-nova-allocation-ratios
       when:
         - deploy_browbeat
         - adjust_nova_allocation['enabled']
-    - role: 030-browbeat-collect-metadata
+    - role: 031-browbeat-collect-metadata
       when:
         - deploy_browbeat
         - browbeat_collect_metadata
-    - role: 031-browbeat-install-microcode
+    - role: 032-browbeat-install-microcode
       when:
         - deploy_browbeat
         - update_microcode
-    - role: 032-browbeat-adjust-security
+    - role: 033-browbeat-adjust-security
       when:
         - deploy_browbeat
         - adjust_security['enabled']
@@ -116,6 +121,7 @@
     # Speed Ups:
     # * Concurrent collect installs (across node types)
     # * Browbeat workload vms built beforehand
+    # * Shaker workload vms built beforehand
     # * Microcode pre-installed
     # Healthcheck
     #  * Get Token
@@ -124,9 +130,7 @@
     #  * Ping Instance
     #  * Delete Instance, Network
     # Run Browbeat
-    # Shaker Image Build/Run
     # Redeploy - Check if overcloud existing
-    # Redeploy install tmux check
     # Bugs/Thoughts
     # * Capture Memory usage?
     # * Auto install: sysstat, strace

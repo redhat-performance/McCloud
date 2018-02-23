@@ -1,9 +1,0 @@
----
-#
-# Collect Browbeat Metadata
-#
-
-- name: Browbeat collect metadata
-  shell: |
-    cd /home/stack/browbeat/ansible
-    { time ansible-playbook -i hosts gather/site.yml 2>&1 | tee -a /home/stack/log/105-browbeat-gather.log ; } 2>> /home/stack/log/105-browbeat-gather.log

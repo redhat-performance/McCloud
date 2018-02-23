@@ -1,0 +1,9 @@
+---
+#
+# Build Shaker Image for Browbeat
+#
+
+- name: Build Browbeat Shaker Images
+  shell: |
+    cd /home/stack/browbeat/ansible
+    { time ansible-playbook -i hosts install/shaker_build.yml 2>&1 | tee -a /home/stack/log/105-browbeat-shaker-image-build.log ; } 2>> /home/stack/log/105-browbeat-shaker-image-build.log
