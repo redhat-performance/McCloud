@@ -9,8 +9,10 @@ deploy_scenario_human:
   3: 3 Controllers / 3 CephStorage Nodes / 1 Compute
   4: 1 Controller / 3 ObjectStorage Nodes / 3 Computes
   5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
+  6: 1 Controller / 1 Networker / 5 Computes
+  7: 3 Controllers / 1 Networker / 3 Computes
 
-deploy_scenarios_single_controller: [0, 2, 4, 5]
+deploy_scenarios_single_controller: [0, 2, 4, 5, 6]
 deploy_scenarios_with_ceph: [2, 3]
 
 # Variables for Browbeat and Collectd Install
@@ -130,6 +132,10 @@ deploy_files:
     dest: /home/stack/pin-definitions/deploy4-pin.yaml
   - src: files/pin-definitions/deploy5-pin.yaml
     dest: /home/stack/pin-definitions/deploy5-pin.yaml
+  - src: files/pin-definitions/deploy6-pin.yaml
+    dest: /home/stack/pin-definitions/deploy6-pin.yaml
+  - src: files/pin-definitions/deploy7-pin.yaml
+    dest: /home/stack/pin-definitions/deploy7-pin.yaml
 
   - src: files/nic-configs/ceph-storage.yaml
     dest: /home/stack/templates/nic-configs/ceph-storage.yaml
@@ -141,6 +147,8 @@ deploy_files:
     dest: /home/stack/templates/nic-configs/controller.yaml
   - src: files/nic-configs/swift-storage.yaml
     dest: /home/stack/templates/nic-configs/swift-storage.yaml
+  - src: files/nic-configs/networker.yaml
+    dest: /home/stack/templates/nic-configs/networker.yaml
   - src: files/scheduler-hints.yaml
     dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
@@ -164,6 +172,10 @@ deploy_templates:
     dest: "/home/stack/templates/deploy4.yaml"
   - src: "templates/deploy-yaml/deploy5.yaml.j2"
     dest: "/home/stack/templates/deploy5.yaml"
+  - src: "templates/deploy-yaml/deploy6.yaml.j2"
+    dest: "/home/stack/templates/deploy6.yaml"
+  - src: "templates/deploy-yaml/deploy7.yaml.j2"
+    dest: "/home/stack/templates/deploy7.yaml"
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
     dest: "/home/stack/deploy0.sh"
@@ -182,6 +194,12 @@ deploy_templates:
     mode: "0744"
   - src: "templates/deploy-sh/deploy5.sh.j2"
     dest: "/home/stack/deploy5.sh"
+    mode: "0744"
+  - src: "templates/deploy-sh/deploy6.sh.j2"
+    dest: "/home/stack/deploy6.sh"
+    mode: "0744"
+  - src: "templates/deploy-sh/deploy7.sh.j2"
+    dest: "/home/stack/deploy7.sh"
     mode: "0744"
 
   - src: "templates/network-environment.yaml.j2"
@@ -258,15 +276,19 @@ tmux_install_shell: |
 
 # tmux script for each deployment scenario
 tmux_scripts:
-  - src: files/tmux-sh/deploy0-tmux.sh
+  - src: files/deploy0-tmux.sh
     dest: /root/deploy0-tmux.sh
-  - src: files/tmux-sh/deploy1-tmux.sh
+  - src: files/deploy1-tmux.sh
     dest: /root/deploy1-tmux.sh
-  - src: files/tmux-sh/deploy2-tmux.sh
+  - src: files/deploy2-tmux.sh
     dest: /root/deploy2-tmux.sh
-  - src: files/tmux-sh/deploy3-tmux.sh
+  - src: files/deploy3-tmux.sh
     dest: /root/deploy3-tmux.sh
-  - src: files/tmux-sh/deploy4-tmux.sh
+  - src: files/deploy4-tmux.sh
     dest: /root/deploy4-tmux.sh
-  - src: files/tmux-sh/deploy5-tmux.sh
+  - src: files/deploy5-tmux.sh
     dest: /root/deploy5-tmux.sh
+  - src: files/deploy6-tmux.sh
+    dest: /root/deploy6-tmux.sh
+  - src: files/deploy7-tmux.sh
+    dest: /root/deploy7-tmux.sh

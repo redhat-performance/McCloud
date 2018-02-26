@@ -31,7 +31,7 @@
     - redeploy_cleanup_existing_overcloud
     - not overcloud_exists.failed
 
-# Waits ~180s for stack to be cleaned up
+# Waits ~600s for stack to be cleaned up
 # ignore_errors as no longer matching overcloud means stack is deleted
 # Maybe inverse grep instead
 - name: (Redeploy) Wait for stack delete to complete
@@ -40,7 +40,7 @@
     openstack stack list | grep -q overcloud
   register: stack_still_exists
   until: stack_still_exists.rc != 0
-  retries: 36
+  retries: 120
   delay: 5
   ignore_errors: true
   when:
@@ -69,8 +69,8 @@
     openstack baremetal node list | egrep 'clean wait|cleaning'
   register: nodes_still_cleaning
   until: nodes_still_cleaning.rc != 0
-  retries: 60
-  delay: 10
+  retries: 120
+  delay: 5
   ignore_errors: true
   when:
     - redeploy_cleanup_existing_overcloud

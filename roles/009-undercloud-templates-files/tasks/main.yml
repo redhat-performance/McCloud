@@ -20,6 +20,16 @@
     replace: "#    - OS::TripleO::Services::SwiftStorage"
     before: "- name: Compute"
 
+- name: Create roles_data.networker.yaml
+  shell: |
+    . /home/stack/stackrc
+    openstack overcloud roles generate -o /home/stack/templates/roles_data.networker.yaml Controller Compute Networker
+
+- name: Create roles_data.computehci.yaml
+  shell: |
+    . /home/stack/stackrc
+    openstack overcloud roles generate -o /home/stack/templates/roles_data.computehci.yaml Controller ComputeHCI Compute CephStorage
+
 # Files
 - name: Copy over static Tripleo Heat Template configuration files and scripts
   copy:

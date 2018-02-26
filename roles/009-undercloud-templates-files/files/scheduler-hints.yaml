@@ -1,6 +1,8 @@
 parameter_defaults:
   ControllerSchedulerHints:
     'capabilities:node': 'controller-%index%'
+  NetworkerSchedulerHints:
+    'capabilities:node': 'networker-%index%'
   NovaComputeSchedulerHints:
     'capabilities:node': 'novacompute-%index%'
   BlockStorageSchedulerHints:
