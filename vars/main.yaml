@@ -32,6 +32,7 @@ containers_tag: 12.0-20180124.1
 # Deploy Scenario:
 deploy_scenario: 0
 deploy_overcloud: true
+redeploy_cleanup_existing_overcloud: true
 dns_server:
 instackenv_json:
 ntp_server: 0.pool.ntp.org

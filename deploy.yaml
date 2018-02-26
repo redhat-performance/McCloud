@@ -65,6 +65,7 @@
 # Overcloud Ready for Deployment now:
     - role: 016-overcloud-deploy
       when: deploy_overcloud
+      redeploy_cleanup_existing_overcloud: false
     - role: 017-browbeat-generate-overcloud-hosts
       when: deploy_browbeat
     - role: 018-browbeat-deploy-overcloud-collectd
@@ -130,7 +131,6 @@
     #  * Ping Instance
     #  * Delete Instance, Network
     # Run Browbeat
-    # Redeploy - Check if overcloud existing
     # Bugs/Thoughts
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
