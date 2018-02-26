@@ -12,8 +12,10 @@
     - vars/main.local.yaml
   remote_user: stack
   roles:
-    # Add Role to check if overcloud already existing
-
+    # Due to deploy_scenario potentially changing, we should setup browbeat
+    # with the specific deploy_scenario vars
+    - role: 010-browbeat-setup
+      when: deploy_browbeat
     - role: 016-overcloud-deploy
       when: deploy_overcloud
     - role: 017-browbeat-generate-overcloud-hosts

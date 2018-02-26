@@ -10,6 +10,9 @@ deploy_scenario_human:
   4: 1 Controller / 3 ObjectStorage Nodes / 3 Computes
   5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
 
+deploy_scenarios_single_controller: [0, 2, 4, 5]
+deploy_scenarios_with_ceph: [2, 3]
+
 # Variables for Browbeat and Collectd Install
 browbeat_vars:
   - regexp: "dns_server: [0-9]*.[0-9]*.[0-9]*.[0-9]*"
@@ -55,6 +58,16 @@ browbeat_vars:
   - regexp: "regex_info: false"
     replace: "regex_info: true"
 
+# Browbeat vars for deployments with single controller
+browbeat_single_controller_vars:
+  - regexp: "ping_plugin:.*"
+    replace: "ping_plugin: false"
+
+# Browbeat vars for deployments with multiple controllers
+browbeat_multi_controller_vars:
+  - regexp: "ping_plugin:.*"
+    replace: "ping_plugin: true"
+
 # Browbeat vars when CephStorage is deployed
 browbeat_cephstorage_vars:
   # Images need to be raw format
@@ -69,14 +82,24 @@ browbeat_cephstorage_vars:
     replace: "ceph_controller_collectd_pg_plugin: true"
   - regexp: "ceph_controller_collectd_pool_plugin: false"
     replace: "ceph_controller_collectd_pool_plugin: true"
-
-# Browbeat vars for deployments with multiple controllers
-browbeat_multicontroller_vars:
-  - regexp: "ping_plugin:.*"
-    replace: "ping_plugin: true"
+  # Disable Swift stat plugin
+  - regexp: "swift_stat_controller_collectd_plugin: true"
+    replace: "swift_stat_controller_collectd_plugin: false"
 
 # Browbeat vars when CephStorage is not deployed
 browbeat_non_cephstorage_vars:
+  # Images need to be raw format
+  - regexp: "    convert_to_raw: .*"
+    replace: "    convert_to_raw: false"
+  # Disable Ceph collectd plugins
+  - regexp: "ceph_controller_collectd_mon_plugin: true"
+    replace: "ceph_controller_collectd_mon_plugin: false"
+  - regexp: "ceph_controller_collectd_osd_plugin: true"
+    replace: "ceph_controller_collectd_osd_plugin: false"
+  - regexp: "ceph_controller_collectd_pg_plugin: true"
+    replace: "ceph_controller_collectd_pg_plugin: false"
+  - regexp: "ceph_controller_collectd_pool_plugin: true"
+    replace: "ceph_controller_collectd_pool_plugin: false"
   - regexp: "swift_stat_controller_collectd_plugin: false"
     replace: "swift_stat_controller_collectd_plugin: true"
 
@@ -84,6 +107,11 @@ browbeat_non_cephstorage_vars:
 browbeat_prepike_vars:
   - regexp: "apache_controller_collectd_plugin: false"
     replace: "apache_controller_collectd_plugin: true"
+
+# Browbeat vars for version >= 12
+browbeat_pike_vars:
+  - regexp: "apache_controller_collectd_plugin: true"
+    replace: "apache_controller_collectd_plugin: false"
 
 deploy_files:
   - src: files/pin.py

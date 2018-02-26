@@ -23,21 +23,29 @@
     replace: "{{item.replace}}"
   with_items: "{{browbeat_vars}}"
 
-- name: Configure Browbeat install vars for CephStorage Nodes
+- name: Configure Browbeat install vars for Single Controller Deployments
   replace:
     path: /home/stack/browbeat/ansible/install/group_vars/all.yml
     regexp: "{{item.regexp}}"
     replace: "{{item.replace}}"
-  with_items: "{{browbeat_cephstorage_vars}}"
-  when: (deploy_scenario == 2 or deploy_scenario == 3)
+  with_items: "{{browbeat_single_controller_vars}}"
+  when: deploy_scenario|int in deploy_scenarios_single_controller
 
 - name: Configure Browbeat install vars for Multi-Controller Deployments
   replace:
     path: /home/stack/browbeat/ansible/install/group_vars/all.yml
     regexp: "{{item.regexp}}"
     replace: "{{item.replace}}"
-  with_items: "{{browbeat_multicontroller_vars}}"
-  when: (deploy_scenario == 1 or deploy_scenario == 3)
+  with_items: "{{browbeat_multi_controller_vars}}"
+  when: deploy_scenario|int not in deploy_scenarios_single_controller
+
+- name: Configure Browbeat install vars for CephStorage Nodes
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_cephstorage_vars}}"
+  when: deploy_scenario|int in deploy_scenarios_with_ceph
 
 - name: Configure Browbeat install vars for Non-CephStorage Deployments
   replace:
@@ -45,7 +53,7 @@
     regexp: "{{item.regexp}}"
     replace: "{{item.replace}}"
   with_items: "{{browbeat_non_cephstorage_vars}}"
-  when: (deploy_scenario != 2 and deploy_scenario != 3)
+  when: deploy_scenario|int not in deploy_scenarios_with_ceph
 
 - name: Configure Browbeat install vars for osp_version < 12
   replace:
@@ -53,4 +61,12 @@
     regexp: "{{item.regexp}}"
     replace: "{{item.replace}}"
   with_items: "{{browbeat_prepike_vars}}"
-  when: version < 12
+  when: version|int < 12
+
+- name: Configure Browbeat install vars for osp_version >= 12
+  replace:
+    path: /home/stack/browbeat/ansible/install/group_vars/all.yml
+    regexp: "{{item.regexp}}"
+    replace: "{{item.replace}}"
+  with_items: "{{browbeat_pike_vars}}"
+  when: version|int >= 12
