@@ -64,7 +64,7 @@ update_microcode: true
 adjust_security:
   enabled: true
   security: true
-microcode_url: http://example.com.com/intel-ucode/
+microcode_rpm:
 pbench_internal_url:
 linpack_url: http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_mklb_p_2018.0.006.tgz
 # End Browbeat dependent vars
