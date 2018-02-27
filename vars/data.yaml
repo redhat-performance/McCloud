@@ -38,6 +38,8 @@ browbeat_vars:
     replace: "grafana_username: {{grafana_username}}"
   - regexp: "grafana_password:.*"
     replace: "grafana_password: {{grafana_password}}"
+  - regexp: "grafana_apikey:.*"
+    replace: "grafana_apikey: {{grafana_apikey}}"
 
   - regexp: "collectd_compute: false"
     replace: "collectd_compute: true"

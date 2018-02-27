@@ -24,31 +24,31 @@
       when:
         - deploy_browbeat
         - deploy_overcloud_collectd
-    - role: 019-browbeat-deploy-grafana-dashboards
-      when:
-        - deploy_browbeat
-        - deploy_grafana_dashboards
-    - role: 020-overcloud-disable-admin-quota
+    - role: 019-overcloud-disable-admin-quota
       when: disable_quota
-    - role: 021-overcloud-create-keypair
+    - role: 020-overcloud-create-keypair
       when: create_keypair
-    - role: 022-overcloud-create-flavors
+    - role: 021-overcloud-create-flavors
       when: create_flavors
-    - role: 023-overcloud-upload-images
+    - role: 022-overcloud-upload-images
       when: upload_guest_images
-    - role: 024-overcloud-create-security-group
+    - role: 023-overcloud-create-security-group
       when: create_security_group
-    - role: 025-overcloud-create-networks
+    - role: 024-overcloud-create-networks
       when: create_networks
-    - role: 026-undercloud-route-external-traffic
+    - role: 025-undercloud-route-external-traffic
       when: route_external_traffic_from_undercloud
-    - role: 027-browbeat-workload-guests-config
+    - role: 026-browbeat-workload-guests-config
       when:
         - create_networks
         - deploy_browbeat
         - browbeat_workload_guests
-    - role: 028-browbeat-install
+    - role: 027-browbeat-install
       when: deploy_browbeat
+    - role: 028-browbeat-deploy-grafana-dashboards
+      when:
+        - deploy_browbeat
+        - deploy_grafana_dashboards
     - role: 029-browbeat-shaker-image-build
       when:
         - deploy_browbeat
