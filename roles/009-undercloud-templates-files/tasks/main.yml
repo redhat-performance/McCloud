@@ -24,11 +24,13 @@
   shell: |
     . /home/stack/stackrc
     openstack overcloud roles generate -o /home/stack/templates/roles_data.networker.yaml Controller Compute Networker
+    sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.networker.yaml
 
 - name: Create roles_data.computehci.yaml
   shell: |
     . /home/stack/stackrc
     openstack overcloud roles generate -o /home/stack/templates/roles_data.computehci.yaml Controller ComputeHCI Compute CephStorage
+    sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.computehci.yaml
 
 # Files
 - name: Copy over static Tripleo Heat Template configuration files and scripts
