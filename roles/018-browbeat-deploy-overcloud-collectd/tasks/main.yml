@@ -6,4 +6,4 @@
 - name: Deploy collectd on Overcloud
   shell: |
     cd /home/stack/browbeat/ansible
-    { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 10 --tag controller,cephstorage,objectstorage,blockstorage,compute 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
+    { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 10 --skip-tags undercloud 2>&1 | tee -a /home/stack/log/103-collectd-overcloud-install.log ; } 2>> /home/stack/log/103-collectd-overcloud-install.log
