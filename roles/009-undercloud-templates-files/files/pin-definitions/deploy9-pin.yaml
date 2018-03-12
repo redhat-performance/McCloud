@@ -1,0 +1,8 @@
+# 3 Controllers / 4 ComputeHCIs
+perf-sm5039-1-2-mm: controller-0
+perf-sm5039-1-3-mm: controller-1
+perf-sm5039-1-4-mm: controller-2
+perf-sm5039-1-5-mm: computehci-0
+perf-sm5039-1-6-mm: computehci-1
+perf-sm5039-1-7-mm: computehci-2
+perf-sm5039-1-8-mm: computehci-3

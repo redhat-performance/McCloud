@@ -2,14 +2,14 @@ parameter_defaults:
   DockerInsecureRegistryAddress: 192.168.24.1:8787
   DnsServers: ["{{dns_server}}"]
 
-  # 1 Controller / 1 Networker / 5 Computes
+  # 1 Controller / 6 ComputeHCIs
   ControllerCount: 1
-  NetworkerCount: 1
+  NetworkerCount: 0
   CephStorageCount: 0
   ObjectStorageCount: 0
   BlockStorageCount: 0
-  ComputeCount: 5
-  ComputeHCICount: 0
+  ComputeCount: 0
+  ComputeHCICount: 6
 
   SwiftMountCheck: true
   SwiftUseLocalDir: false

@@ -5,6 +5,8 @@ parameter_defaults:
     'capabilities:node': 'networker-%index%'
   NovaComputeSchedulerHints:
     'capabilities:node': 'novacompute-%index%'
+  ComputeHCISchedulerHints:
+    'capabilities:node': 'computehci-%index%'
   BlockStorageSchedulerHints:
     'capabilities:node': 'blockstorage-%index%'
   ObjectStorageSchedulerHints:

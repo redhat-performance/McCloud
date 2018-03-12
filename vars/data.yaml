@@ -11,6 +11,8 @@ deploy_scenario_human:
   5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
   6: 1 Controller / 1 Networker / 5 Computes
   7: 3 Controllers / 1 Networker / 3 Computes
+  8: 1 Controller / 6 ComputeHCIs
+  9: 3 Controllers / 4 ComputeHCIs
 
 deploy_scenarios_single_controller: [0, 2, 4, 5, 6]
 deploy_scenarios_with_ceph: [2, 3]
@@ -138,6 +140,10 @@ deploy_files:
     dest: /home/stack/pin-definitions/deploy6-pin.yaml
   - src: files/pin-definitions/deploy7-pin.yaml
     dest: /home/stack/pin-definitions/deploy7-pin.yaml
+  - src: files/pin-definitions/deploy8-pin.yaml
+    dest: /home/stack/pin-definitions/deploy8-pin.yaml
+  - src: files/pin-definitions/deploy9-pin.yaml
+    dest: /home/stack/pin-definitions/deploy9-pin.yaml
 
   - src: files/nic-configs/ceph-storage.yaml
     dest: /home/stack/templates/nic-configs/ceph-storage.yaml
@@ -145,12 +151,14 @@ deploy_files:
     dest: /home/stack/templates/nic-configs/cinder-storage.yaml
   - src: files/nic-configs/compute.yaml
     dest: /home/stack/templates/nic-configs/compute.yaml
+  - src: files/nic-configs/computehci.yaml
+    dest: /home/stack/templates/nic-configs/computehci.yaml
   - src: files/nic-configs/controller.yaml
     dest: /home/stack/templates/nic-configs/controller.yaml
-  - src: files/nic-configs/swift-storage.yaml
-    dest: /home/stack/templates/nic-configs/swift-storage.yaml
   - src: files/nic-configs/networker.yaml
     dest: /home/stack/templates/nic-configs/networker.yaml
+  - src: files/nic-configs/swift-storage.yaml
+    dest: /home/stack/templates/nic-configs/swift-storage.yaml
   - src: files/scheduler-hints.yaml
     dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
@@ -178,6 +186,10 @@ deploy_templates:
     dest: "/home/stack/templates/deploy6.yaml"
   - src: "templates/deploy-yaml/deploy7.yaml.j2"
     dest: "/home/stack/templates/deploy7.yaml"
+  - src: "templates/deploy-yaml/deploy8.yaml.j2"
+    dest: "/home/stack/templates/deploy8.yaml"
+  - src: "templates/deploy-yaml/deploy9.yaml.j2"
+    dest: "/home/stack/templates/deploy9.yaml"
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
     dest: "/home/stack/deploy0.sh"
@@ -202,6 +214,12 @@ deploy_templates:
     mode: "0744"
   - src: "templates/deploy-sh/deploy7.sh.j2"
     dest: "/home/stack/deploy7.sh"
+    mode: "0744"
+  - src: "templates/deploy-sh/deploy8.sh.j2"
+    dest: "/home/stack/deploy8.sh"
+    mode: "0744"
+  - src: "templates/deploy-sh/deploy9.sh.j2"
+    dest: "/home/stack/deploy9.sh"
     mode: "0744"
 
   - src: "templates/network-environment.yaml.j2"
@@ -294,3 +312,7 @@ tmux_scripts:
     dest: /root/deploy6-tmux.sh
   - src: files/deploy7-tmux.sh
     dest: /root/deploy7-tmux.sh
+  - src: files/deploy8-tmux.sh
+    dest: /root/deploy8-tmux.sh
+  - src: files/deploy9-tmux.sh
+    dest: /root/deploy9-tmux.sh
