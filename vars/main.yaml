@@ -19,9 +19,9 @@ additional_insecure_registry:
 
 version: 12
 rhos_release: 12-director
-build: "2018-01-26.2" # Pike
+build: "2018-03-10.1" # Pike
 container_namespace: rhosp12
-containers_tag: 12.0-20180124.1
+containers_tag: 12.0-20180309.1
 
 #version: 13
 #rhos_release: 13-director

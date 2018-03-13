@@ -14,8 +14,8 @@ deploy_scenario_human:
   8: 1 Controller / 6 ComputeHCIs
   9: 3 Controllers / 4 ComputeHCIs
 
-deploy_scenarios_single_controller: [0, 2, 4, 5, 6]
-deploy_scenarios_with_ceph: [2, 3]
+deploy_scenarios_single_controller: [0, 2, 4, 5, 6, 8]
+deploy_scenarios_with_ceph: [2, 3, 8, 9]
 
 # Variables for Browbeat and Collectd Install
 browbeat_vars:
