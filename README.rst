@@ -13,9 +13,11 @@ Completes:
 * Browbeat Deployment
 * Opens “Install” tmux session and deploys each scenario tmux script
 * Shaker / Browbeat Workloads pre-installed
-* 8 deployment scenarios supported across 3 different major versions of OpenStack
+* 10 deployment scenarios supported across 3 different major versions of OpenStack
 
 Initial Deployment Usage:
+
+* Assumes pre-provisioned Baremetal machine for Undercloud (Waits until machine is ready if kicked )
 
 ::
 
@@ -26,6 +28,8 @@ Initial Deployment Usage:
     $ ansible-playbook -i hosts.local deploy.yaml
 
 Redeployment Usage:
+
+* Assumes Undercloud machine was already built once using deploy.yaml playbook
 
 ::
 
@@ -45,4 +49,6 @@ Deployments vs OpenStack Versions
 5  1 Controller / 3 BlockStorage Nodes / 3 Computes   Yes     Yes    Yes   No
 6  1 Controller / 1 Networker / 5 Computes            No      No     Yes   No
 7  3 Controllers / 1 Networker / 3 Computes           No      No     Yes   No
+8  1 Controller / 6 ComputeHCIs                       No      No     Yes   No
+9  3 Controllers / 4 ComputeHCIs                      No      No     Yes   No
 =  =================================================  ======  =====  ====  ======
