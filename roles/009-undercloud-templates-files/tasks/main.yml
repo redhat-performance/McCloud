@@ -8,7 +8,9 @@
   shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs
 
 - name: Copy original roles_data.yaml into /home/stack/templates
-  shell: cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
+  shell: |
+    sudo sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /usr/share/openstack-tripleo-heat-templates/roles_data.yaml
+    cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
 
 - name: Copy roles_data.yaml to roles_data.objectstorage.yaml
   shell: cp /home/stack/templates/roles_data.yaml /home/stack/templates/roles_data.objectstorage.yaml
