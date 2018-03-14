@@ -145,6 +145,14 @@ deploy_files:
   - src: files/pin-definitions/deploy9-pin.yaml
     dest: /home/stack/pin-definitions/deploy9-pin.yaml
 
+  - src: files/scheduler-hints.yaml
+    dest: /home/stack/templates/scheduler-hints.yaml
+  - src: files/wipe-disks.yaml
+    dest: /home/stack/templates/firstboot/wipe-disks.yaml
+  - src: files/wipe-disk.sh
+    dest: /home/stack/templates/firstboot/wipe-disk.sh
+
+deploy_nic_configs:
   - src: files/nic-configs/ceph-storage.yaml
     dest: /home/stack/templates/nic-configs/ceph-storage.yaml
   - src: files/nic-configs/cinder-storage.yaml
@@ -159,12 +167,22 @@ deploy_files:
     dest: /home/stack/templates/nic-configs/networker.yaml
   - src: files/nic-configs/swift-storage.yaml
     dest: /home/stack/templates/nic-configs/swift-storage.yaml
-  - src: files/scheduler-hints.yaml
-    dest: /home/stack/templates/scheduler-hints.yaml
-  - src: files/wipe-disks.yaml
-    dest: /home/stack/templates/firstboot/wipe-disks.yaml
-  - src: files/wipe-disk.sh
-    dest: /home/stack/templates/firstboot/wipe-disk.sh
+
+deploy_nic_configs_queens:
+  - src: files/nic-configs-13/ceph-storage.yaml
+    dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+  # - src: files/nic-configs-13/cinder-storage.yaml
+  #   dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+  - src: files/nic-configs-13/compute.yaml
+    dest: /home/stack/templates/nic-configs/compute.yaml
+  # - src: files/nic-configs-13/computehci.yaml
+  #   dest: /home/stack/templates/nic-configs/computehci.yaml
+  - src: files/nic-configs-13/controller.yaml
+    dest: /home/stack/templates/nic-configs/controller.yaml
+  # - src: files/nic-configs-13/networker.yaml
+  #   dest: /home/stack/templates/nic-configs/networker.yaml
+  # - src: files/nic-configs-13/swift-storage.yaml
+  #   dest: /home/stack/templates/nic-configs/swift-storage.yaml
 
 deploy_templates:
   - src: "templates/introspect.sh.j2"

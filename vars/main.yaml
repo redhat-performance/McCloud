@@ -4,27 +4,29 @@
 ###########################################
 rhos_release_rpm:
 
-rhel_version: 7.4
-
 # Pike(12)/Queens(13):
 additional_insecure_registry:
 
 #version: 10
 #rhos_release: 10-director
+#rhel_version: 7.4
 #build: "2018-02-06.2" # Newton
 
 #version: 11
 #rhos_release: 11-director
+#rhel_version: 7.4
 #build: "2018-02-08.3" # Ocata
 
 version: 12
 rhos_release: 12-director
+rhel_version: 7.4
 build: "2018-03-10.1" # Pike
 container_namespace: rhosp12
 containers_tag: 12.0-20180309.1
 
 #version: 13
 #rhos_release: 13-director
+#rhel_version: 7.5
 #build: "2018-02-14.1" # Queens
 #container_namespace: rhosp13
 #containers_tag: 13.0-20180214.1

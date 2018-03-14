@@ -1,6 +1,6 @@
 ---
 #
-# Deploy playbook using roles (Work In Progress)
+# Deploy playbook for baremetal Undercloud
 #
 
 # Wait for Undercloud to be provisioned via Beaker
