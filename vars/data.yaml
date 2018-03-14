@@ -171,18 +171,18 @@ deploy_nic_configs:
 deploy_nic_configs_queens:
   - src: files/nic-configs-13/ceph-storage.yaml
     dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-  # - src: files/nic-configs-13/cinder-storage.yaml
-  #   dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+  - src: files/nic-configs-13/cinder-storage.yaml
+    dest: /home/stack/templates/nic-configs/cinder-storage.yaml
   - src: files/nic-configs-13/compute.yaml
     dest: /home/stack/templates/nic-configs/compute.yaml
-  # - src: files/nic-configs-13/computehci.yaml
-  #   dest: /home/stack/templates/nic-configs/computehci.yaml
+  - src: files/nic-configs-13/computehci.yaml
+    dest: /home/stack/templates/nic-configs/computehci.yaml
   - src: files/nic-configs-13/controller.yaml
     dest: /home/stack/templates/nic-configs/controller.yaml
-  # - src: files/nic-configs-13/networker.yaml
-  #   dest: /home/stack/templates/nic-configs/networker.yaml
-  # - src: files/nic-configs-13/swift-storage.yaml
-  #   dest: /home/stack/templates/nic-configs/swift-storage.yaml
+  - src: files/nic-configs-13/networker.yaml
+    dest: /home/stack/templates/nic-configs/networker.yaml
+  - src: files/nic-configs-13/swift-storage.yaml
+    dest: /home/stack/templates/nic-configs/swift-storage.yaml
 
 deploy_templates:
   - src: "templates/introspect.sh.j2"

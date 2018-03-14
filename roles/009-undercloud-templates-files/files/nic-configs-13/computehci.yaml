@@ -1,6 +1,6 @@
 heat_template_version: queens
 description: >
-  Software Config to drive os-net-config to configure VLANs for the CephStorage role.
+  Software Config to drive os-net-config to configure VLANs for the Controller role.
 parameters:
   ControlPlaneIp:
     default: ''
@@ -121,6 +121,31 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: StorageMgmtIpSubnet
+              - type: ovs_bridge
+                name: br-ex
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: enp1s0f0
+                  primary: true
+                - type: vlan
+                  vlan_id:
+                    get_param: InternalApiNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: InternalApiIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: TenantNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: TenantIpSubnet
+                # - type: vlan
+                #   vlan_id:
+                #     get_param: ExternalNetworkVlanID
+                #   addresses:
+                #   - ip_netmask:
+                #       get_param: ExternalIpSubnet
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
