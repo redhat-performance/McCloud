@@ -1,0 +1,18 @@
+---
+#
+# Clones Browbeat Config Repo and Runs Browbeat
+#
+
+- name: Clone browbeat-config on undercloud
+  git:
+    repo: "{{browbeat_config_repo}}"
+    dest: /home/stack/browbeat-config
+    version: master
+    accept_hostkey: true
+    force: true
+
+- name: Run Browbeat
+  shell: |
+    cd /home/stack/browbeat/
+    . .browbeat-venv/bin/activate
+    /home/stack/browbeat/browbeat.py -s /home/stack/browbeat-config/{{browbeat_config_file}}

@@ -76,3 +76,7 @@
         - deploy_browbeat
         - deploy_scenario|int not in deploy_scenarios_with_ceph
         - update_microcode
+    - role: 100-browbeat-run
+      when:
+        - deploy_browbeat
+        - browbeat_run

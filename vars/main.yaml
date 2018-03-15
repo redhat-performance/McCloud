@@ -51,6 +51,9 @@ deploy_grafana_dashboards: true
 browbeat_workload_guests: true
 browbeat_shaker_build: true
 browbeat_collect_metadata: true
+browbeat_config_repo:
+browbeat_config_file:
+browbeat_run: true
 cloud_name:
 collectd_graphite_server:
 grafana_host:

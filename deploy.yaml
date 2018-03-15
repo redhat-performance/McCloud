@@ -124,6 +124,10 @@
         - deploy_browbeat
         - deploy_scenario|int not in deploy_scenarios_with_ceph
         - update_microcode
+    - role: 100-browbeat-run
+      when:
+        - deploy_browbeat
+        - browbeat_run
 
     # Speed Ups:
     # * Concurrent collect installs (across node types)
@@ -136,7 +140,6 @@
     #  * Boot Instance
     #  * Ping Instance
     #  * Delete Instance, Network
-    # Run Browbeat
     # Bugs/Thoughts
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
