@@ -39,3 +39,34 @@
     . /home/stack/stackrc
     { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/004-configure-boot.log ; } 2>> /home/stack/log/004-configure-boot.log
   when: version < 13
+
+- name: Queens(13) Set Nodes to provide
+  shell: |
+    . /home/stack/stackrc
+    { time openstack overcloud node provide --all-manageable 2>&1 | tee -a /home/stack/log/005-overcloud-node-provide.log ; } 2>> /home/stack/log/005-overcloud-node-provide.log
+  when: version >= 13
+
+# Wait 120s for the nodes to enter cleanup
+- name: Queens(13) Wait for nodes to enter cleanup
+  shell: |
+    . /home/stack/stackrc
+    openstack baremetal node list | grep 'clean wait'
+  register: nodes_start_cleanup
+  until: nodes_start_cleanup.rc == 0
+  retries: 24
+  delay: 5
+  when: version >= 13
+
+# Waits ~600s for nodes to no longer show cleaning status
+# ignore_errors as failed means no nodes were found in clean wait|cleaning state
+# Can not wait for available as we need to wait for all nodes to be available
+- name: Queens(13) Wait for nodes to finish cleanup
+  shell: |
+    . /home/stack/stackrc
+    openstack baremetal node list | egrep 'clean wait|cleaning'
+  register: nodes_still_cleaning
+  until: nodes_still_cleaning.rc != 0
+  retries: 120
+  delay: 5
+  ignore_errors: true
+  when: version >= 13

@@ -29,7 +29,7 @@
 - name: Pull images using the container_images.yaml
   shell: |
     . /home/stack/stackrc;
-    { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/006-container-image-upload.log ; } 2>> /home/stack/log/006-container-image-upload.log
+    { time openstack overcloud container image upload --config-file overcloud_containers.yaml 2>&1 | tee -a /home/stack/log/007-container-image-upload.log ; } 2>> /home/stack/log/007-container-image-upload.log
   become: true
   register: pull_images
   until: pull_images.rc == 0
