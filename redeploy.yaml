@@ -70,3 +70,9 @@
       when:
         - deploy_browbeat
         - adjust_security['enabled']
+    # Only on when microcode has been upodated as that initiates a reboot
+    - role: 034-cinder-remount-loopback
+      when:
+        - deploy_browbeat
+        - deploy_scenario|int not in deploy_scenarios_with_ceph
+        - update_microcode

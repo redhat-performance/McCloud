@@ -1,0 +1,14 @@
+---
+#
+# Fix Cinder loopback devices after reboot
+#
+
+- name: Ensure Cinder loopback devices are mounted in case of reboot in non-Ceph Environments
+  shell: |
+    cd /home/stack/browbeat/ansible
+    ansible -i hosts controller -m shell -b -a "losetup -f /var/lib/cinder/cinder-volumes"
+
+- name: Restart openstack-cinder-volume service
+  shell: |
+    cd /home/stack/browbeat/ansible
+    ansible -i hosts controller -m shell -b -a "systemctl try-restart openstack-cinder-volume"
