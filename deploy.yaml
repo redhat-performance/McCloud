@@ -134,7 +134,7 @@
         - browbeat_run
 
     # Speed Ups:
-    # * Concurrent collect installs (across node types)
+    # * Concurrent collectd installs (across node types)
     # * Browbeat workload vms built beforehand
     # * Shaker workload vms built beforehand
     # * Microcode pre-installed

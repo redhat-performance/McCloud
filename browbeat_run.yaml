@@ -1,0 +1,17 @@
+---
+#
+# Run Browbeat Playbook
+#
+
+- hosts: undercloud
+  gather_facts: false
+  vars_files:
+    - vars/data.yaml
+    - vars/main.yaml
+    - vars/main.local.yaml
+  remote_user: stack
+  roles:
+    - role: 100-browbeat-run
+      when:
+        - deploy_browbeat
+        - browbeat_run
