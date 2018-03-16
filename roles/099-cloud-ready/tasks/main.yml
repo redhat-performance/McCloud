@@ -1,0 +1,17 @@
+---
+#
+# Waits until the Cloud is ready
+#
+
+# Wait about 4 minutes for the cloud to return a valid token
+# thus indicating it is ready for benchmarking
+- name: Wait for Overcloud ready
+  shell: |
+    cd /home/stack
+    . /home/stack/overcloudrc
+    openstack token issue
+  register: overcloud_ready
+  until: overcloud_ready.rc == 0
+  retries: 120
+  delay: 2
+  ignore_errors: true
