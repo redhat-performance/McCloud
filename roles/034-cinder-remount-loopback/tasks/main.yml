@@ -11,4 +11,4 @@
 - name: Restart openstack-cinder-volume service
   shell: |
     cd /home/stack/browbeat/ansible
-    ansible -i hosts controller -m shell -b -a "systemctl try-restart openstack-cinder-volume"
+    ansible -i hosts controller[0] -m shell -b -a "pcs resource restart openstack-cinder-volume"
