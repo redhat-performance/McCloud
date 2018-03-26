@@ -44,26 +44,26 @@
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_files}}"
 
-# Nic-configs Files
-- name: Queens(13) Copy over static Tripleo Heat Template nic-config files
+# Files specific to hardware
+- name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
   copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: stack
     group: stack
     mode: "{{item.mode | default('0644')}}"
-  with_items: "{{deploy_nic_configs_queens}}"
-  when: version >= 13
+  with_items: "{{deploy_hardware_specific_files[hardware_deployed]}}"
 
-- name: Newton(10)/Ocata(11)/Pike(12) Copy over static Tripleo Heat Template nic-config files
+# Nic-configs Files
+- name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"
   copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: stack
     group: stack
     mode: "{{item.mode | default('0644')}}"
-  with_items: "{{deploy_nic_configs}}"
-  when: version < 13
+  with_items: "{{deploy_hardware_specific_nic_configs[hardware_deployed][version]}}"
+  when: version >= 13
 
 # Templates
 - name: Template out Tripleo Heat Templates and other Scripts/Files
@@ -74,6 +74,16 @@
     group: stack
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_templates}}"
+
+# Hardware Specific Templates
+- name: Template out Tripleo Heat Templates and other Scripts/Files for "{{hardware_deployed}}"
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_hardware_specific_templates[hardware_deployed]}}"
 
 - name: Place version metadata json file in /home/stack
   become: true

@@ -3,16 +3,22 @@
 
 # Deployment Scenarios with a human readable format
 deploy_scenario_human:
-  0: 1 Controller / 6 Computes
-  1: 3 Controllers / 4 Computes
-  2: 1 Controller / 3 CephStorage Nodes / 3 Computes
-  3: 3 Controllers / 3 CephStorage Nodes / 1 Compute
-  4: 1 Controller / 3 ObjectStorage Nodes / 3 Computes
-  5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
-  6: 1 Controller / 1 Networker / 5 Computes
-  7: 3 Controllers / 1 Networker / 3 Computes
-  8: 1 Controller / 6 ComputeHCIs
-  9: 3 Controllers / 4 ComputeHCIs
+  microcloud:
+    0: 1 Controller / 6 Computes
+    1: 3 Controllers / 4 Computes
+    2: 1 Controller / 3 CephStorage Nodes / 3 Computes
+    3: 3 Controllers / 3 CephStorage Nodes / 1 Compute
+    4: 1 Controller / 3 ObjectStorage Nodes / 3 Computes
+    5: 1 Controller / 3 BlockStorage Nodes / 3 Computes
+    6: 1 Controller / 1 Networker / 5 Computes
+    7: 3 Controllers / 1 Networker / 3 Computes
+    8: 1 Controller / 6 ComputeHCIs
+    9: 3 Controllers / 4 ComputeHCIs
+  scalelab:
+    0: 1 Controller / X Computes
+    1: 3 Controllers / X Computes
+    2: 1 Controller / X CephStorage Nodes / Y Computes
+    3: 3 Controllers / X CephStorage Nodes / Y Computes
 
 deploy_scenarios_single_controller: [0, 2, 4, 5, 6, 8]
 deploy_scenarios_with_ceph: [2, 3, 8, 9]
@@ -123,28 +129,6 @@ deploy_files:
   - src: files/pin.py
     dest: /home/stack/pin.py
     mode: "0744"
-
-  - src: files/pin-definitions/deploy0-pin.yaml
-    dest: /home/stack/pin-definitions/deploy0-pin.yaml
-  - src: files/pin-definitions/deploy1-pin.yaml
-    dest: /home/stack/pin-definitions/deploy1-pin.yaml
-  - src: files/pin-definitions/deploy2-pin.yaml
-    dest: /home/stack/pin-definitions/deploy2-pin.yaml
-  - src: files/pin-definitions/deploy3-pin.yaml
-    dest: /home/stack/pin-definitions/deploy3-pin.yaml
-  - src: files/pin-definitions/deploy4-pin.yaml
-    dest: /home/stack/pin-definitions/deploy4-pin.yaml
-  - src: files/pin-definitions/deploy5-pin.yaml
-    dest: /home/stack/pin-definitions/deploy5-pin.yaml
-  - src: files/pin-definitions/deploy6-pin.yaml
-    dest: /home/stack/pin-definitions/deploy6-pin.yaml
-  - src: files/pin-definitions/deploy7-pin.yaml
-    dest: /home/stack/pin-definitions/deploy7-pin.yaml
-  - src: files/pin-definitions/deploy8-pin.yaml
-    dest: /home/stack/pin-definitions/deploy8-pin.yaml
-  - src: files/pin-definitions/deploy9-pin.yaml
-    dest: /home/stack/pin-definitions/deploy9-pin.yaml
-
   - src: files/scheduler-hints.yaml
     dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
@@ -152,62 +136,154 @@ deploy_files:
   - src: files/wipe-disk.sh
     dest: /home/stack/templates/firstboot/wipe-disk.sh
 
-deploy_nic_configs:
-  - src: files/nic-configs/ceph-storage.yaml
-    dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-  - src: files/nic-configs/cinder-storage.yaml
-    dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-  - src: files/nic-configs/compute.yaml
-    dest: /home/stack/templates/nic-configs/compute.yaml
-  - src: files/nic-configs/computehci.yaml
-    dest: /home/stack/templates/nic-configs/computehci.yaml
-  - src: files/nic-configs/controller.yaml
-    dest: /home/stack/templates/nic-configs/controller.yaml
-  - src: files/nic-configs/networker.yaml
-    dest: /home/stack/templates/nic-configs/networker.yaml
-  - src: files/nic-configs/swift-storage.yaml
-    dest: /home/stack/templates/nic-configs/swift-storage.yaml
+deploy_hardware_specific_files:
+  microcloud:
+    - src: files/microcloud/pin-definitions/deploy0-pin.yaml
+      dest: /home/stack/pin-definitions/deploy0-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy1-pin.yaml
+      dest: /home/stack/pin-definitions/deploy1-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy2-pin.yaml
+      dest: /home/stack/pin-definitions/deploy2-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy3-pin.yaml
+      dest: /home/stack/pin-definitions/deploy3-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy4-pin.yaml
+      dest: /home/stack/pin-definitions/deploy4-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy5-pin.yaml
+      dest: /home/stack/pin-definitions/deploy5-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy6-pin.yaml
+      dest: /home/stack/pin-definitions/deploy6-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy7-pin.yaml
+      dest: /home/stack/pin-definitions/deploy7-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy8-pin.yaml
+      dest: /home/stack/pin-definitions/deploy8-pin.yaml
+    - src: files/microcloud/pin-definitions/deploy9-pin.yaml
+      dest: /home/stack/pin-definitions/deploy9-pin.yaml
+  scalelab:
+    - src: files/scalelab/pin-definitions/deploy0-pin.yaml
+      dest: /home/stack/pin-definitions/deploy0-pin.yaml
+    - src: files/scalelab/pin-definitions/deploy1-pin.yaml
+      dest: /home/stack/pin-definitions/deploy1-pin.yaml
+    - src: files/scalelab/pin-definitions/deploy2-pin.yaml
+      dest: /home/stack/pin-definitions/deploy2-pin.yaml
+    - src: files/scalelab/pin-definitions/deploy3-pin.yaml
+      dest: /home/stack/pin-definitions/deploy3-pin.yaml
 
-deploy_nic_configs_queens:
-  - src: files/nic-configs-13/ceph-storage.yaml
-    dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-  - src: files/nic-configs-13/cinder-storage.yaml
-    dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-  - src: files/nic-configs-13/compute.yaml
-    dest: /home/stack/templates/nic-configs/compute.yaml
-  - src: files/nic-configs-13/computehci.yaml
-    dest: /home/stack/templates/nic-configs/computehci.yaml
-  - src: files/nic-configs-13/controller.yaml
-    dest: /home/stack/templates/nic-configs/controller.yaml
-  - src: files/nic-configs-13/networker.yaml
-    dest: /home/stack/templates/nic-configs/networker.yaml
-  - src: files/nic-configs-13/swift-storage.yaml
-    dest: /home/stack/templates/nic-configs/swift-storage.yaml
+deploy_hardware_specific_nic_configs:
+  microcloud:
+    13:
+      - src: files/microcloud/nic-configs-13/ceph-storage.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+      - src: files/microcloud/nic-configs-13/cinder-storage.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+      - src: files/microcloud/nic-configs-13/compute.yaml
+        dest: /home/stack/templates/nic-configs/compute.yaml
+      - src: files/microcloud/nic-configs-13/computehci.yaml
+        dest: /home/stack/templates/nic-configs/computehci.yaml
+      - src: files/microcloud/nic-configs-13/controller.yaml
+        dest: /home/stack/templates/nic-configs/controller.yaml
+      - src: files/microcloud/nic-configs-13/networker.yaml
+        dest: /home/stack/templates/nic-configs/networker.yaml
+      - src: files/microcloud/nic-configs-13/swift-storage.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+    12:
+      - src: files/microcloud/nic-configs/ceph-storage.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+      - src: files/microcloud/nic-configs/cinder-storage.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+      - src: files/microcloud/nic-configs/compute.yaml
+        dest: /home/stack/templates/nic-configs/compute.yaml
+      - src: files/microcloud/nic-configs/computehci.yaml
+        dest: /home/stack/templates/nic-configs/computehci.yaml
+      - src: files/microcloud/nic-configs/controller.yaml
+        dest: /home/stack/templates/nic-configs/controller.yaml
+      - src: files/microcloud/nic-configs/networker.yaml
+        dest: /home/stack/templates/nic-configs/networker.yaml
+      - src: files/microcloud/nic-configs/swift-storage.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+    11:
+      - src: files/microcloud/nic-configs/ceph-storage.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+      - src: files/microcloud/nic-configs/cinder-storage.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+      - src: files/microcloud/nic-configs/compute.yaml
+        dest: /home/stack/templates/nic-configs/compute.yaml
+      - src: files/microcloud/nic-configs/computehci.yaml
+        dest: /home/stack/templates/nic-configs/computehci.yaml
+      - src: files/microcloud/nic-configs/controller.yaml
+        dest: /home/stack/templates/nic-configs/controller.yaml
+      - src: files/microcloud/nic-configs/networker.yaml
+        dest: /home/stack/templates/nic-configs/networker.yaml
+      - src: files/microcloud/nic-configs/swift-storage.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+    10:
+      - src: files/microcloud/nic-configs/ceph-storage.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+      - src: files/microcloud/nic-configs/cinder-storage.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+      - src: files/microcloud/nic-configs/compute.yaml
+        dest: /home/stack/templates/nic-configs/compute.yaml
+      - src: files/microcloud/nic-configs/computehci.yaml
+        dest: /home/stack/templates/nic-configs/computehci.yaml
+      - src: files/microcloud/nic-configs/controller.yaml
+        dest: /home/stack/templates/nic-configs/controller.yaml
+      - src: files/microcloud/nic-configs/networker.yaml
+        dest: /home/stack/templates/nic-configs/networker.yaml
+      - src: files/microcloud/nic-configs/swift-storage.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+  scalelab:
+    12:
+      - src: files/scalelab/nic-configs/ceph-storage.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
+      - src: files/scalelab/nic-configs/cinder-storage.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
+      - src: files/scalelab/nic-configs/compute.yaml
+        dest: /home/stack/templates/nic-configs/compute.yaml
+      - src: files/scalelab/nic-configs/controller.yaml
+        dest: /home/stack/templates/nic-configs/controller.yaml
+      - src: files/scalelab/nic-configs/swift-storage.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+
+deploy_hardware_specific_templates:
+  microcloud:
+    - src: "templates/microcloud/deploy-yaml/deploy0.yaml.j2"
+      dest: "/home/stack/templates/deploy0.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy1.yaml.j2"
+      dest: "/home/stack/templates/deploy1.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy2.yaml.j2"
+      dest: "/home/stack/templates/deploy2.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy3.yaml.j2"
+      dest: "/home/stack/templates/deploy3.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy4.yaml.j2"
+      dest: "/home/stack/templates/deploy4.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy5.yaml.j2"
+      dest: "/home/stack/templates/deploy5.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy6.yaml.j2"
+      dest: "/home/stack/templates/deploy6.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy7.yaml.j2"
+      dest: "/home/stack/templates/deploy7.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy8.yaml.j2"
+      dest: "/home/stack/templates/deploy8.yaml"
+    - src: "templates/microcloud/deploy-yaml/deploy9.yaml.j2"
+      dest: "/home/stack/templates/deploy9.yaml"
+    - src: "templates/microcloud/network-environment.yaml.j2"
+      dest: "/home/stack/templates/network-environment.yaml"
+    - src: "templates/microcloud/storage-environment.yaml.j2"
+      dest: "/home/stack/templates/storage-environment.yaml"
+  scalelab:
+    - src: "templates/scalelab/deploy-yaml/deploy0.yaml.j2"
+      dest: "/home/stack/templates/deploy0.yaml"
+    - src: "templates/scalelab/deploy-yaml/deploy1.yaml.j2"
+      dest: "/home/stack/templates/deploy1.yaml"
+    - src: "templates/scalelab/deploy-yaml/deploy2.yaml.j2"
+      dest: "/home/stack/templates/deploy2.yaml"
+    - src: "templates/scalelab/deploy-yaml/deploy3.yaml.j2"
+      dest: "/home/stack/templates/deploy3.yaml"
+    - src: "templates/scalelab/network-environment.yaml.j2"
+      dest: "/home/stack/templates/network-environment.yaml"
 
 deploy_templates:
   - src: "templates/introspect.sh.j2"
     dest: "/home/stack/introspect.sh"
-
-  - src: "templates/deploy-yaml/deploy0.yaml.j2"
-    dest: "/home/stack/templates/deploy0.yaml"
-  - src: "templates/deploy-yaml/deploy1.yaml.j2"
-    dest: "/home/stack/templates/deploy1.yaml"
-  - src: "templates/deploy-yaml/deploy2.yaml.j2"
-    dest: "/home/stack/templates/deploy2.yaml"
-  - src: "templates/deploy-yaml/deploy3.yaml.j2"
-    dest: "/home/stack/templates/deploy3.yaml"
-  - src: "templates/deploy-yaml/deploy4.yaml.j2"
-    dest: "/home/stack/templates/deploy4.yaml"
-  - src: "templates/deploy-yaml/deploy5.yaml.j2"
-    dest: "/home/stack/templates/deploy5.yaml"
-  - src: "templates/deploy-yaml/deploy6.yaml.j2"
-    dest: "/home/stack/templates/deploy6.yaml"
-  - src: "templates/deploy-yaml/deploy7.yaml.j2"
-    dest: "/home/stack/templates/deploy7.yaml"
-  - src: "templates/deploy-yaml/deploy8.yaml.j2"
-    dest: "/home/stack/templates/deploy8.yaml"
-  - src: "templates/deploy-yaml/deploy9.yaml.j2"
-    dest: "/home/stack/templates/deploy9.yaml"
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
     dest: "/home/stack/deploy0.sh"
@@ -240,10 +316,6 @@ deploy_templates:
     dest: "/home/stack/deploy9.sh"
     mode: "0744"
 
-  - src: "templates/network-environment.yaml.j2"
-    dest: "/home/stack/templates/network-environment.yaml"
-  - src: "templates/storage-environment.yaml.j2"
-    dest: "/home/stack/templates/storage-environment.yaml"
 
 microcloud_flavors:
   - name: m1.xtiny

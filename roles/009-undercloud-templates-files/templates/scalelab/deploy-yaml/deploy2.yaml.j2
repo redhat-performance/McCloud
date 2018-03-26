@@ -1,0 +1,12 @@
+parameter_defaults:
+  DockerInsecureRegistryAddress: 192.168.24.1:8787
+  DnsServers: ["{{dns_server}}"]
+
+  # 1 Controller / X CephStorage Nodes / Y Computes
+  ControllerCount: 1
+  NetworkerCount: 0
+  CephStorageCount: 3
+  ObjectStorageCount: 0
+  BlockStorageCount: 0
+  ComputeCount: {{ComputeCount}}
+  ComputeHCICount: 0

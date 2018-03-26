@@ -32,6 +32,7 @@ containers_tag: 12.0-20180309.1
 #containers_tag: 2018-03-02.2
 
 # Deploy Scenario:
+hardware_deployed: microcloud
 deploy_scenario: 0
 deploy_overcloud: true
 redeploy_cleanup_existing_overcloud: true

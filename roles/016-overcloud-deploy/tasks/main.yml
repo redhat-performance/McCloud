@@ -76,7 +76,7 @@
     - redeploy_cleanup_existing_overcloud
     - not overcloud_exists.failed
 
-- name: "Deploy Overcloud Scenario: {{deploy_scenario_human[deploy_scenario]}}"
+- name: "Deploy Overcloud Scenario: {{deploy_scenario_human[hardware_deployed][deploy_scenario]}}"
   shell: |
     . /home/stack/stackrc
     /home/stack/deploy{{deploy_scenario}}.sh

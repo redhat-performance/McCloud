@@ -1,0 +1,16 @@
+# 3 Controllers / X Computes
+mgmt-b04-h19-1029p: controller-0
+mgmt-b04-h21-1029p: controller-1
+mgmt-b04-h22-1029p: controller-2
+mgmt-b04-h23-1029p: novacompute-0
+mgmt-b04-h25-1029p: novacompute-1
+mgmt-b04-h26-1029p: novacompute-2
+mgmt-b04-h27-1029p: novacompute-3
+mgmt-b04-h29-1029p: novacompute-4
+mgmt-b04-h30-1029p: novacompute-5
+mgmt-b04-h31-1029p: novacompute-6
+mgmt-b05-h01-1029p: novacompute-7
+mgmt-b05-h02-1029p: novacompute-8
+mgmt-b05-h03-1029p: novacompute-9
+mgmt-b05-h05-1029p: novacompute-10
+mgmt-b05-h31-1029p: novacompute-11
