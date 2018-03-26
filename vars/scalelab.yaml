@@ -1,0 +1,13 @@
+---
+#
+# Scalelab specific vars
+#
+
+# Node Types:
+ControllerType: 1029p
+ComputeType: 1029p
+CephStorageType: 1029p
+
+# Node Counts:
+ComputeCount: 14
+CephStorageCount: 0
