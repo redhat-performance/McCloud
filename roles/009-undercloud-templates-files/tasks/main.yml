@@ -63,7 +63,6 @@
     group: stack
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_hardware_specific_nic_configs[hardware_deployed][version]}}"
-  when: version >= 13
 
 # Templates
 - name: Template out Tripleo Heat Templates and other Scripts/Files
