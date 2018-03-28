@@ -44,6 +44,15 @@
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_files}}"
 
+- name: Get instackenv.json
+  get_url:
+    url: "{{instackenv_json}}"
+    dest: /home/stack/instackenv.json
+    owner: stack
+    group: stack
+
+# TODO: Insert Task to generate pin & deploy yamls
+
 # Files specific to hardware
 - name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
   copy:

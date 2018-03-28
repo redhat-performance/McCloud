@@ -42,10 +42,6 @@ browbeat_vars:
     replace: "graphite_prefix: {{cloud_name}}"
   - regexp: "grafana_host:.*"
     replace: "grafana_host: {{grafana_host}}"
-  - regexp: "grafana_username:.*"
-    replace: "grafana_username: {{grafana_username}}"
-  - regexp: "grafana_password:.*"
-    replace: "grafana_password: {{grafana_password}}"
   - regexp: "grafana_apikey:.*"
     replace: "grafana_apikey: {{grafana_apikey}}"
 

@@ -3,13 +3,6 @@
 # Imports and Configures Nodes
 #
 
-- name: Get instackenv.json
-  get_url:
-    url: "{{instackenv_json}}"
-    dest: /home/stack/instackenv.json
-    owner: stack
-    group: stack
-
 - name: Newton(10)/Ocata(11)/Pike(12) Check if credentials in instackenv.json are correct
   shell: openstack baremetal instackenv validate  -f  /home/stack/instackenv.json
   register: node_status

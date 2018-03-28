@@ -58,8 +58,6 @@ browbeat_run: true
 cloud_name:
 collectd_graphite_server:
 grafana_host:
-grafana_username: admin
-grafana_password: admin
 grafana_apikey:
 # Browbeat Adjustment vars
 adjust_nova_allocation:

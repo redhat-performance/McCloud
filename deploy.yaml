@@ -54,7 +54,6 @@
     - vars/data.yaml
     - vars/main.yaml
     - vars/main.local.yaml
-    - vars/scalelab.yaml
   remote_user: stack
   roles:
     - role: 007-undercloud-install
