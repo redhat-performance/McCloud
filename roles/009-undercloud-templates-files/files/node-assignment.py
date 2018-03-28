@@ -38,6 +38,7 @@ nr_pin = [
     "blockstorage-",
 ]
 
+
 def create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir):
     server_idx = 0
     ds = d_scenarios["scenarios"][scenario]
@@ -57,11 +58,11 @@ def create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir):
             else:
                 deploy_yaml.write("  {}: 0\n".format(n_role))
         # Computes
-        if "ComputeHCI" in ds and ds["ComputeHCI"] == True:
+        if "ComputeHCI" in ds and ds["ComputeHCI"]:
             npin = "computehci-"
             n_role = "ComputeHCI"
         else:
-            npin = "compute-"
+            npin = "novacompute-"
             n_role = "Compute"
         deploy_yaml.write("  {}: {}\n".format(n_role, len(servers) - server_idx))
         # Extra deploy yaml data
@@ -152,7 +153,7 @@ def main():
     print "INFO :: Writing pin-definitions in {}".format(pin_dir)
     print "INFO :: Creating deploy yamls in {}".format(dy_dir)
 
-   # Remove UC from instackenv (if if is accidently included into the instackenv.json)
+    # Remove UC from instackenv (if if is accidently included into the instackenv.json)
     if cliargs.undercloud_ipmi_addr:
         remove_undercloud(instackenv_json, cliargs.undercloud_ipmi_addr)
 
@@ -165,15 +166,16 @@ def main():
             try:
                 node_type = re.search(cliargs.pm_addr_regex, node_pin).group(1)
             except AttributeError:
-                node_type = ''
-                print "ERROR :: Unable to determine node_type with node({}) using regex '{}'".format(node_pin, cliargs.pm_addr_regex)
+                node_type = ""
+                print ("ERROR :: Unable to determine node_type with node({}) using regex '{}'"
+                       .format(node_pin, cliargs.pm_addr_regex))
                 sys.exit(1)
             servers.append({"node_type": node_type, "node_pin": node_pin})
 
     # Check if Nodes all of same type:
     node_type_set = set()
     for server in servers:
-        node_type_set.add(server['node_type'])
+        node_type_set.add(server["node_type"])
     print "INFO :: Node Type(s) Found: {}".format(", ".join(node_type_set))
 
     if len(node_type_set) == 1:
@@ -186,6 +188,7 @@ def main():
     else:
         print "ERROR :: Non-homogeneous instackenv.json not supported with this tooling (yet)."
         sys.exit(1)
+
 
 if __name__ == "__main__":
     sys.exit(main())
