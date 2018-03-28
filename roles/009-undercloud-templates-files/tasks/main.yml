@@ -44,15 +44,6 @@
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_files}}"
 
-- name: Get instackenv.json
-  get_url:
-    url: "{{instackenv_json}}"
-    dest: /home/stack/instackenv.json
-    owner: stack
-    group: stack
-
-# TODO: Insert Task to generate pin & deploy yamls
-
 # Files specific to hardware
 - name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
   copy:
@@ -62,6 +53,18 @@
     group: stack
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_hardware_specific_files[hardware_deployed]}}"
+
+- name: Get instackenv.json
+  get_url:
+    url: "{{instackenv_json}}"
+    dest: /home/stack/instackenv.json
+    owner: stack
+    group: stack
+
+- name: Generate Pin and Deploy Yamls Files off instackenv.json
+  shell: |
+    cd /home/stack/
+    python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/
 
 # Nic-configs Files
 - name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"

@@ -1,0 +1,90 @@
+---
+scenarios:
+  0:
+    ControllerCount: 1
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  1:
+    ControllerCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  2:
+    ControllerCount: 1
+    CephStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  #CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  3:
+    ControllerCount: 3
+    CephStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  #CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  4:
+    ControllerCount: 1
+    ObjectStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  5:
+    ControllerCount: 1
+    BlockStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  6:
+    ControllerCount: 1
+    NetworkerCount: 1
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  7:
+    ControllerCount: 3
+    NetworkerCount: 1
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  8:
+    ControllerCount: 1
+    ComputeHCI: true
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  #CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"
+  9:
+    ControllerCount: 3
+    ComputeHCI: true
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  #CinderLVMLoopDeviceSize: 151000"
+      - "  SwiftMountCheck: true"
+      - "  SwiftUseLocalDir: false"
+      - "  SwiftRawDisks: {'sdb': {}}"

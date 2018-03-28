@@ -1,8 +1,0 @@
-# 1 Controller / 6 Computes
-perf-sm5039-1-2-mm: controller-0
-perf-sm5039-1-3-mm: novacompute-0
-perf-sm5039-1-4-mm: novacompute-1
-perf-sm5039-1-5-mm: novacompute-2
-perf-sm5039-1-6-mm: novacompute-3
-perf-sm5039-1-7-mm: novacompute-4
-perf-sm5039-1-8-mm: novacompute-5

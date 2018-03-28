@@ -20,6 +20,10 @@ deploy_scenario_human:
     2: 1 Controller / X CephStorage Nodes / Y Computes
     3: 3 Controllers / X CephStorage Nodes / Y Computes
 
+node_assign_regex:
+  microcloud: "^perf-([a-z0-9]+)-[0-9]-[0-9]-mm$"
+  scalelab: "^mgmt-[a-z][0-9]+-h[0-9]+-([a-z0-9]+)$"
+
 deploy_scenarios_single_controller: [0, 2, 4, 5, 6, 8]
 deploy_scenarios_with_ceph: [2, 3, 8, 9]
 
@@ -125,6 +129,11 @@ deploy_files:
   - src: files/pin.py
     dest: /home/stack/pin.py
     mode: "0744"
+  - src: files/node-assignment.py
+    dest: /home/stack/node-assignment.py
+    mode: "0744"
+  - src: files/{{hardware_deployed}}/deploy-scenarios.yaml
+    dest: /home/stack/deploy-scenarios.yaml
   - src: files/scheduler-hints.yaml
     dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
@@ -134,35 +143,11 @@ deploy_files:
 
 deploy_hardware_specific_files:
   microcloud:
-    - src: files/microcloud/pin-definitions/deploy0-pin.yaml
-      dest: /home/stack/pin-definitions/deploy0-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy1-pin.yaml
-      dest: /home/stack/pin-definitions/deploy1-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy2-pin.yaml
-      dest: /home/stack/pin-definitions/deploy2-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy3-pin.yaml
-      dest: /home/stack/pin-definitions/deploy3-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy4-pin.yaml
-      dest: /home/stack/pin-definitions/deploy4-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy5-pin.yaml
-      dest: /home/stack/pin-definitions/deploy5-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy6-pin.yaml
-      dest: /home/stack/pin-definitions/deploy6-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy7-pin.yaml
-      dest: /home/stack/pin-definitions/deploy7-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy8-pin.yaml
-      dest: /home/stack/pin-definitions/deploy8-pin.yaml
-    - src: files/microcloud/pin-definitions/deploy9-pin.yaml
-      dest: /home/stack/pin-definitions/deploy9-pin.yaml
+    - src: files/microcloud/deploy-scenarios.yaml
+      dest: /home/stack/deploy-scenarios.yaml
   scalelab:
-    - src: files/scalelab/pin-definitions/deploy0-pin.yaml
-      dest: /home/stack/pin-definitions/deploy0-pin.yaml
-    - src: files/scalelab/pin-definitions/deploy1-pin.yaml
-      dest: /home/stack/pin-definitions/deploy1-pin.yaml
-    - src: files/scalelab/pin-definitions/deploy2-pin.yaml
-      dest: /home/stack/pin-definitions/deploy2-pin.yaml
-    - src: files/scalelab/pin-definitions/deploy3-pin.yaml
-      dest: /home/stack/pin-definitions/deploy3-pin.yaml
+    - src: files/scalelab/deploy-scenarios.yaml
+      dest: /home/stack/deploy-scenarios.yaml
 
 deploy_hardware_specific_nic_configs:
   microcloud:
@@ -241,39 +226,11 @@ deploy_hardware_specific_nic_configs:
 
 deploy_hardware_specific_templates:
   microcloud:
-    - src: "templates/microcloud/deploy-yaml/deploy0.yaml.j2"
-      dest: "/home/stack/templates/deploy0.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy1.yaml.j2"
-      dest: "/home/stack/templates/deploy1.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy2.yaml.j2"
-      dest: "/home/stack/templates/deploy2.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy3.yaml.j2"
-      dest: "/home/stack/templates/deploy3.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy4.yaml.j2"
-      dest: "/home/stack/templates/deploy4.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy5.yaml.j2"
-      dest: "/home/stack/templates/deploy5.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy6.yaml.j2"
-      dest: "/home/stack/templates/deploy6.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy7.yaml.j2"
-      dest: "/home/stack/templates/deploy7.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy8.yaml.j2"
-      dest: "/home/stack/templates/deploy8.yaml"
-    - src: "templates/microcloud/deploy-yaml/deploy9.yaml.j2"
-      dest: "/home/stack/templates/deploy9.yaml"
     - src: "templates/microcloud/network-environment.yaml.j2"
       dest: "/home/stack/templates/network-environment.yaml"
     - src: "templates/microcloud/storage-environment.yaml.j2"
       dest: "/home/stack/templates/storage-environment.yaml"
   scalelab:
-    - src: "templates/scalelab/deploy-yaml/deploy0.yaml.j2"
-      dest: "/home/stack/templates/deploy0.yaml"
-    - src: "templates/scalelab/deploy-yaml/deploy1.yaml.j2"
-      dest: "/home/stack/templates/deploy1.yaml"
-    - src: "templates/scalelab/deploy-yaml/deploy2.yaml.j2"
-      dest: "/home/stack/templates/deploy2.yaml"
-    - src: "templates/scalelab/deploy-yaml/deploy3.yaml.j2"
-      dest: "/home/stack/templates/deploy3.yaml"
     - src: "templates/scalelab/network-environment.yaml.j2"
       dest: "/home/stack/templates/network-environment.yaml"
 

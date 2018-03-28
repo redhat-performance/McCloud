@@ -1,0 +1,22 @@
+---
+scenarios:
+  0:
+    ControllerCount: 1
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+  1:
+    ControllerCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  CinderLVMLoopDeviceSize: 151000"
+  2:
+    ControllerCount: 1
+    CephStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+  3:
+    ControllerCount: 3
+    CephStorageCount: 3
+    deploy_yaml_extra:
+      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
