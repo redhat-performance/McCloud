@@ -60,10 +60,10 @@ def create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir):
         # Computes
         if "ComputeHCI" in ds and ds["ComputeHCI"]:
             npin = "computehci-"
-            n_role = "ComputeHCI"
+            n_role = "ComputeHCICount"
         else:
             npin = "novacompute-"
-            n_role = "Compute"
+            n_role = "ComputeCount"
         deploy_yaml.write("  {}: {}\n".format(n_role, len(servers) - server_idx))
         # Extra deploy yaml data
         for idx, server in enumerate(range(server_idx, len(servers))):
