@@ -5,7 +5,7 @@
 
 # Local Files (Local to Undercloud)
 - name: Copy original network configuration files
-  shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs
+  shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs/single-nic-vlans
 
 - name: Copy original roles_data.yaml into /home/stack/templates
   shell: |
@@ -64,7 +64,7 @@
 - name: Generate Pin and Deploy Yamls Files off instackenv.json
   shell: |
     cd /home/stack/
-    python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/ -u {{inventory_hostname_short}}
+    python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ -u {{inventory_hostname_short}}
 
 # Nic-configs Files
 - name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"

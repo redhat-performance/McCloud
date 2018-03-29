@@ -37,7 +37,16 @@ nr_pin = [
     "objectstorage-",
     "blockstorage-",
 ]
-
+# Used with matching network-environment yaml nic-config mapping to actual nic-configs via symlink
+roles = [
+    "controller",
+    "networker",
+    "compute",
+    "computehci",
+    "ceph-storage",
+    "cinder-storage",
+    "swift-storage",
+]
 
 def create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir):
     server_idx = 0
@@ -109,6 +118,12 @@ def main():
         "-y", "--deploy-yaml-output-directory", default="templates",
         help="Directory for deploy yamls. Defaults to 'templates'")
     parser.add_argument(
+        "-n", "--nic-configs-directory", default="templates/nic-configs",
+        help="Directory for nic-configs yamls. Defaults to 'templates/nic-configs'")
+    parser.add_argument(
+        "-l", "--symlink-nic-configs", action="store_true", default="true",
+        help="Directory for deploy yamls. Defaults to 'templates'")
+    parser.add_argument(
         "-u", "--undercloud-ipmi-addr", default=None,
         help="Undercloud pm_addr to remove mistakenly included underclouds in instackenv.")
     cliargs = parser.parse_args()
@@ -137,6 +152,11 @@ def main():
         os.makedirs(dy_dir)
     if not os.path.isdir(dy_dir):
         print "ERROR :: Deploy Yaml Output Directory exists as a file: {}".format(dy_dir)
+        sys.exit(1)
+
+    nc_dir = cliargs.nic_configs_directory
+    if not os.path.isdir(nc_dir):
+        print "ERROR :: nic-configs directory is not a directory: {}".format(nc_dir)
         sys.exit(1)
 
     if os.path.isfile(cliargs.scenarios_file):
@@ -185,6 +205,11 @@ def main():
             d_scenarios = yaml.load(stream)
             for scenario in d_scenarios["scenarios"]:
                 create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir)
+        if cliargs.symlink_nic_configs:
+            for role in roles:
+                nic_config = os.path.join(nc_dir, "{}.yaml".format(role))
+                actual_config = os.path.join(nc_dir, "{}-{}.yaml".format(role, list(node_type_set)[0]))
+                os.symlink(actual_config, nic_config)
     else:
         print "ERROR :: Non-homogeneous instackenv.json not supported with this tooling (yet)."
         sys.exit(1)

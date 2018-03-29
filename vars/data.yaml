@@ -152,77 +152,77 @@ deploy_hardware_specific_files:
 deploy_hardware_specific_nic_configs:
   microcloud:
     13:
-      - src: files/microcloud/nic-configs-13/ceph-storage.yaml
-        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-      - src: files/microcloud/nic-configs-13/cinder-storage.yaml
-        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-      - src: files/microcloud/nic-configs-13/compute.yaml
-        dest: /home/stack/templates/nic-configs/compute.yaml
-      - src: files/microcloud/nic-configs-13/computehci.yaml
-        dest: /home/stack/templates/nic-configs/computehci.yaml
-      - src: files/microcloud/nic-configs-13/controller.yaml
-        dest: /home/stack/templates/nic-configs/controller.yaml
-      - src: files/microcloud/nic-configs-13/networker.yaml
-        dest: /home/stack/templates/nic-configs/networker.yaml
-      - src: files/microcloud/nic-configs-13/swift-storage.yaml
-        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+      - src: files/microcloud/nic-configs-13/ceph-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/cinder-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/compute-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/compute-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/computehci-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/computehci-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/controller-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/controller-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/networker-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/networker-sm5039.yaml
+      - src: files/microcloud/nic-configs-13/swift-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-sm5039.yaml
     12:
-      - src: files/microcloud/nic-configs/ceph-storage.yaml
-        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-      - src: files/microcloud/nic-configs/cinder-storage.yaml
-        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-      - src: files/microcloud/nic-configs/compute.yaml
-        dest: /home/stack/templates/nic-configs/compute.yaml
-      - src: files/microcloud/nic-configs/computehci.yaml
-        dest: /home/stack/templates/nic-configs/computehci.yaml
-      - src: files/microcloud/nic-configs/controller.yaml
-        dest: /home/stack/templates/nic-configs/controller.yaml
-      - src: files/microcloud/nic-configs/networker.yaml
-        dest: /home/stack/templates/nic-configs/networker.yaml
-      - src: files/microcloud/nic-configs/swift-storage.yaml
-        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+      - src: files/microcloud/nic-configs/ceph-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/cinder-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/compute-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/compute-sm5039.yaml
+      - src: files/microcloud/nic-configs/computehci-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/computehci-sm5039.yaml
+      - src: files/microcloud/nic-configs/controller-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/controller-sm5039.yaml
+      - src: files/microcloud/nic-configs/networker-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/networker-sm5039.yaml
+      - src: files/microcloud/nic-configs/swift-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-sm5039.yaml
     11:
-      - src: files/microcloud/nic-configs/ceph-storage.yaml
-        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-      - src: files/microcloud/nic-configs/cinder-storage.yaml
-        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-      - src: files/microcloud/nic-configs/compute.yaml
-        dest: /home/stack/templates/nic-configs/compute.yaml
-      - src: files/microcloud/nic-configs/computehci.yaml
-        dest: /home/stack/templates/nic-configs/computehci.yaml
-      - src: files/microcloud/nic-configs/controller.yaml
-        dest: /home/stack/templates/nic-configs/controller.yaml
-      - src: files/microcloud/nic-configs/networker.yaml
-        dest: /home/stack/templates/nic-configs/networker.yaml
-      - src: files/microcloud/nic-configs/swift-storage.yaml
-        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+      - src: files/microcloud/nic-configs/ceph-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/cinder-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/compute-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/compute-sm5039.yaml
+      - src: files/microcloud/nic-configs/computehci-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/computehci-sm5039.yaml
+      - src: files/microcloud/nic-configs/controller-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/controller-sm5039.yaml
+      - src: files/microcloud/nic-configs/networker-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/networker-sm5039.yaml
+      - src: files/microcloud/nic-configs/swift-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-sm5039.yaml
     10:
-      - src: files/microcloud/nic-configs/ceph-storage.yaml
-        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-      - src: files/microcloud/nic-configs/cinder-storage.yaml
-        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-      - src: files/microcloud/nic-configs/compute.yaml
-        dest: /home/stack/templates/nic-configs/compute.yaml
-      - src: files/microcloud/nic-configs/computehci.yaml
-        dest: /home/stack/templates/nic-configs/computehci.yaml
-      - src: files/microcloud/nic-configs/controller.yaml
-        dest: /home/stack/templates/nic-configs/controller.yaml
-      - src: files/microcloud/nic-configs/networker.yaml
-        dest: /home/stack/templates/nic-configs/networker.yaml
-      - src: files/microcloud/nic-configs/swift-storage.yaml
-        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+      - src: files/microcloud/nic-configs/ceph-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/cinder-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-sm5039.yaml
+      - src: files/microcloud/nic-configs/compute-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/compute-sm5039.yaml
+      - src: files/microcloud/nic-configs/computehci-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/computehci-sm5039.yaml
+      - src: files/microcloud/nic-configs/controller-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/controller-sm5039.yaml
+      - src: files/microcloud/nic-configs/networker-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/networker-sm5039.yaml
+      - src: files/microcloud/nic-configs/swift-storage-sm5039.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-sm5039.yaml
   scalelab:
     12:
-      - src: files/scalelab/nic-configs/ceph-storage.yaml
-        dest: /home/stack/templates/nic-configs/ceph-storage.yaml
-      - src: files/scalelab/nic-configs/cinder-storage.yaml
-        dest: /home/stack/templates/nic-configs/cinder-storage.yaml
-      - src: files/scalelab/nic-configs/compute.yaml
-        dest: /home/stack/templates/nic-configs/compute.yaml
-      - src: files/scalelab/nic-configs/controller.yaml
-        dest: /home/stack/templates/nic-configs/controller.yaml
-      - src: files/scalelab/nic-configs/swift-storage.yaml
-        dest: /home/stack/templates/nic-configs/swift-storage.yaml
+      - src: files/scalelab/nic-configs/ceph-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
+      - src: files/scalelab/nic-configs/cinder-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-1029p.yaml
+      - src: files/scalelab/nic-configs/compute-1029p.yaml
+        dest: /home/stack/templates/nic-configs/compute-1029p.yaml
+      - src: files/scalelab/nic-configs/controller-1029p.yaml
+        dest: /home/stack/templates/nic-configs/controller-1029p.yaml
+      - src: files/scalelab/nic-configs/swift-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-1029p.yaml
 
 deploy_hardware_specific_templates:
   microcloud:
