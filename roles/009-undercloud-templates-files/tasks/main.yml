@@ -5,7 +5,9 @@
 
 # Local Files (Local to Undercloud)
 - name: Copy original network configuration files
-  shell: cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs/single-nic-vlans
+  shell: |
+    mkdir -p /home/stack/templates/nic-configs/single-nic-vlans
+    cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs/single-nic-vlans
 
 - name: Copy original roles_data.yaml into /home/stack/templates
   shell: |

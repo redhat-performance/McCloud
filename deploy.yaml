@@ -10,14 +10,14 @@
   vars:
     wait_for_ready: true
   tasks:
-    # 12 minute timeout
-    - name: Wait for Machine Ready
+    # 20 minute timeout
+    - name: Wait for Machine Ready (Incase machine is rebuilding)
       local_action:
         module: wait_for
         host: "{{inventory_hostname}}"
         port: 22
         delay: 15
-        timeout: 720
+        timeout: 1200
       when: wait_for_ready
     # Pre-deployment tooling may lay down vlans to test network before hand
     # Lets remove this to avoid confusion when debugging or vlan conflicts
