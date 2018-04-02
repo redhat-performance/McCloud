@@ -66,7 +66,7 @@
 - name: Generate Pin and Deploy Yamls Files off instackenv.json
   shell: |
     cd /home/stack/
-    python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ -u {{inventory_hostname_short}}
+    { time python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ -u {{inventory_hostname_short}} 2>&1 | tee -a /home/stack/log/003-generate-yamls.log ; } 2>> /home/stack/log/003-generate-yamls.log
 
 # Nic-configs Files
 - name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"

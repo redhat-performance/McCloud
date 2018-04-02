@@ -3,7 +3,7 @@
 # Deploy playbook for baremetal Undercloud
 #
 
-# Wait for Undercloud to be provisioned via Beaker
+# Wait for Undercloud to be provisioned via Beaker/Foreman
 - hosts: undercloud
   gather_facts: false
   remote_user: root
@@ -19,6 +19,11 @@
         delay: 15
         timeout: 1200
       when: wait_for_ready
+    # Depending on hardware rebuild, we may not have the ssh key exchanged
+    - name: Setup | authorized key upload
+      authorized_key:
+        user: root
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     # Pre-deployment tooling may lay down vlans to test network before hand
     # Lets remove this to avoid confusion when debugging or vlan conflicts
     - name: Clean Validation vlans

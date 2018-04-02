@@ -12,31 +12,31 @@
 - name: Queens(13) Import instackenv.json
   shell: |
     . /home/stack/stackrc
-    { time openstack overcloud node import /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/003-import-instackenv.log ; } 2>> /home/stack/log/003-import-instackenv.log
+    { time openstack overcloud node import /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/004-import-instackenv.log ; } 2>> /home/stack/log/004-import-instackenv.log
   when: version >= 13
 
 - name: Newton(10)/Ocata(11)/Pike(12) Import instackenv.json
   shell: |
     . /home/stack/stackrc
-    { time openstack baremetal import --json /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/003-import-instackenv.log ; } 2>> /home/stack/log/003-import-instackenv.log
+    { time openstack baremetal import --json /home/stack/instackenv.json 2>&1 | tee -a /home/stack/log/004-import-instackenv.log ; } 2>> /home/stack/log/004-import-instackenv.log
   when: version < 13
 
 - name: Queens(13) Configure boot
   shell: |
     . /home/stack/stackrc
-    { time openstack overcloud node configure --all-manageable 2>&1 | tee -a /home/stack/log/004-configure-boot.log ; } 2>> /home/stack/log/004-configure-boot.log
+    { time openstack overcloud node configure --all-manageable 2>&1 | tee -a /home/stack/log/005-configure-boot.log ; } 2>> /home/stack/log/005-configure-boot.log
   when: version >= 13
 
 - name: Newton(10)/Ocata(11)/Pike(12) Configure boot
   shell: |
     . /home/stack/stackrc
-    { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/004-configure-boot.log ; } 2>> /home/stack/log/004-configure-boot.log
+    { time openstack baremetal configure boot 2>&1 | tee -a /home/stack/log/005-configure-boot.log ; } 2>> /home/stack/log/005-configure-boot.log
   when: version < 13
 
 - name: Queens(13) Set Nodes to provide
   shell: |
     . /home/stack/stackrc
-    { time openstack overcloud node provide --all-manageable 2>&1 | tee -a /home/stack/log/005-overcloud-node-provide.log ; } 2>> /home/stack/log/005-overcloud-node-provide.log
+    { time openstack overcloud node provide --all-manageable 2>&1 | tee -a /home/stack/log/006-overcloud-node-provide.log ; } 2>> /home/stack/log/006-overcloud-node-provide.log
   when: version >= 13
 
 # Wait 120s for the nodes to enter cleanup

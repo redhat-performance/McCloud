@@ -100,6 +100,7 @@ def remove_undercloud(instackenv_json, uc_pm_addr):
 
 
 def main():
+    start_time = time.time()
     script_dir = os.path.dirname(os.path.realpath(__file__))
     parser = argparse.ArgumentParser(
         description="Reads instackenv and generates deployment yamls.", prog="node-assignment.py")
@@ -213,6 +214,8 @@ def main():
     else:
         print "ERROR :: Non-homogeneous instackenv.json not supported with this tooling (yet)."
         sys.exit(1)
+
+    print "INFO :: Took {} to generate yamls.".format(round(time.time() - start_time, 2))
 
 
 if __name__ == "__main__":
