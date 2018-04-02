@@ -17,8 +17,6 @@ deploy_scenario_human:
   scalelab:
     0: 1 Controller / X Computes
     1: 3 Controllers / X Computes
-    2: 1 Controller / X CephStorage Nodes / Y Computes
-    3: 3 Controllers / X CephStorage Nodes / Y Computes
 
 node_assign_regex:
   microcloud: "^perf-([a-z0-9]+)-[0-9]-[0-9]-mm$"
