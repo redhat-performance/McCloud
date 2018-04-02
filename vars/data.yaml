@@ -291,7 +291,7 @@ deploy_templates:
     mode: "0744"
 
 
-microcloud_flavors:
+overcloud_flavors:
   - name: m1.xtiny
     cpu: 1
     memory: 64
@@ -321,7 +321,7 @@ microcloud_flavors:
     memory: 16384
     disk: 160
 
-microcloud_guest_images:
+cloud_guest_images:
   centos7:
     name: centos7
     url: http://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2

@@ -7,5 +7,5 @@
   shell: |
     . /home/stack/overcloudrc
     nova flavor-create {{item.name}} auto {{item.memory}} {{item.disk}} {{item.cpu}}
-  with_items: "{{microcloud_flavors}}"
+  with_items: "{{overcloud_flavors}}"
   ignore_errors: true
