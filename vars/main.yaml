@@ -27,9 +27,9 @@ containers_tag: 12.0-20180309.1
 #version: 13
 #rhos_release: 13-director
 #rhel_version: 7.5
-#build: "2018-03-02.2" # Queens
+#build: "2018-03-20.2" # Queens
 #container_namespace: rhosp13
-#containers_tag: 2018-03-02.2
+#containers_tag: 2018-03-20.2
 
 # Deploy Scenario:
 hardware_deployed: microcloud
