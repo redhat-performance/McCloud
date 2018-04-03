@@ -1,0 +1,30 @@
+---
+#
+# Rebuild playbook
+#
+# ansible-playbook -i "foreman.example.com," rebuild.yaml -e "undercloud_hostname=undercloud.example.com ipmi_user=quads ipmi_password=10101"
+#
+
+- hosts: all
+  gather_facts: false
+  remote_user: root
+  vars_files:
+    - vars/data.yaml
+    - vars/main.yaml
+    - vars/main.local.yaml
+  tasks:
+    - name: Rebuild Scalelab Undercloud Machine
+      shell: |
+        hammer host update --name {{undercloud_hostname}} --build 1 --operatingsystem "RHEL 7"
+        ipmitool -I lanplus -H mgmt-{{undercloud_hostname}} -U {{ipmi_user}} -P {{ipmi_password}} chassis power cycle
+      when: hardware_deployed == "scalelab"
+
+    - name: Wait for Machine Rebuilding
+      local_action:
+        module: wait_for
+        host: "{{undercloud_hostname}}"
+        port: 22
+        delay: 2
+        timeout: 300
+        state: stopped
+      register: wait_for_data
