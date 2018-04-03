@@ -37,4 +37,6 @@
   shell: |
     . /home/stack/stackrc
     { time openstack overcloud node provide --all-manageable 2>&1 | tee -a /home/stack/log/006-overcloud-node-provide.log ; } 2>> /home/stack/log/006-overcloud-node-provide.log
-  when: version >= 13
+  when:
+    - version >= 13
+    - not introspection['enabled']
