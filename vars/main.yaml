@@ -7,29 +7,19 @@ rhos_release_rpm:
 # Pike(12)/Queens(13):
 additional_insecure_registry:
 
+# Newton(10)/Ocata(11)
 #version: 10
 #rhos_release: 10-director
 #rhel_version: 7.4
 #build: "2018-02-06.2" # Newton
 
-#version: 11
-#rhos_release: 11-director
-#rhel_version: 7.4
-#build: "2018-02-08.3" # Ocata
-
-version: 12
-rhos_release: 12-director
-rhel_version: 7.4
-build: "2018-03-10.1" # Pike
-container_namespace: rhosp12
-containers_tag: 12.0-20180309.1
-
-#version: 13
-#rhos_release: 13-director
-#rhel_version: 7.5
-#build: "2018-03-20.2" # Queens
-#container_namespace: rhosp13
-#containers_tag: 2018-03-20.2
+# Pike(12)/Queens(13):
+version: 13
+rhos_release: 13-director
+rhel_version: 7.5
+build: "2018-03-20.2" # Queens
+container_namespace: rhosp13
+containers_tag: 2018-03-20.2
 
 # Deploy Scenario:
 hardware_deployed: microcloud
@@ -50,6 +40,7 @@ deploy_browbeat: true
 deploy_undercloud_collectd: true
 deploy_overcloud_collectd: true
 deploy_grafana_dashboards: true
+# Note Workload Guests and Shaker dependent upon networking
 browbeat_workload_guests: true
 browbeat_shaker_build: true
 browbeat_collect_metadata: true
@@ -61,16 +52,17 @@ collectd_graphite_server:
 grafana_host:
 grafana_apikey:
 # Browbeat Adjustment vars
-adjust_nova_allocation:
-  enabled: true
-  cpu_allocation_ratio: 200.0
-  ram_allocation_ratio: 200.0
-  disk_allocation_ratio: 200.0
+# Adjust Nova Allocation
+ana_enabled: true
+ana_cpu_allocation_ratio: 200.0
+ana_ram_allocation_ratio: 200.0
+ana_disk_allocation_ratio: 200.0
+# Spectre/Meltdown Microcode+Security Vars
 update_microcode: true
-adjust_security:
-  enabled: true
-  security: true
+as_enabled: true
+as_security: true
 microcode_rpm:
+# Browbeat Workload URLs
 pbench_internal_url:
 linpack_url: http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_mklb_p_2018.0.006.tgz
 # End Browbeat dependent vars
@@ -80,8 +72,9 @@ pike_objectstorage_deploy_workaround: true
 newton_objectstorage_deploy_workaround: true
 
 ###########################################
-# Unlikely Configuration Items (Undercloud)
+# Configuration Items (Undercloud)
 ###########################################
+# Defaults are set for MicroCloud
 # Undercloud control plane interface:
 local_interface: enp2s0f1
 # Option for ironic node cleaning on overcloud nodes
@@ -95,14 +88,13 @@ external_vlan_device: enp1s0f0.{{external_vlan}}
 external_undercloud_interface: enp2s0f0
 private_external_address: 172.21.0.1
 private_external_netmask: 255.255.0.0
-# Homogeneous hardware means no need for introspection
-introspection:
-  enabled: false
-  # Bulk introspection or introspection with retry
-  bulk_introspection: true
+# Known Hardware and correctly configured instackenv means no need for introspection
+introspection_enabled: false
+# Bulk introspection or introspection with retry (Only if introspection enabled)
+bulk_introspection: true
 
 ###########################################
-# Unlikely Configuration Items (Overcloud)
+# Configuration Items (Overcloud)
 ###########################################
 # Overcloud External Network VIP
 external_network_vip: 172.21.0.10

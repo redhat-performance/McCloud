@@ -9,7 +9,7 @@
     { time openstack overcloud node introspect --all-manageable --provide 2>&1 | tee -a /home/stack/log/007-bulk-introspection.log ; } 2>> /home/stack/log/007-bulk-introspection.log
   when:
     - version >= 13
-    - introspection['bulk_introspection']
+    - bulk_introspection
 
 - name: Newton(10)/Ocata(11)/Pike(12) Run Bulk introspection
   shell:  |
@@ -17,12 +17,12 @@
     { time openstack baremetal introspection bulk start 2>&1 | tee -a /home/stack/log/007-bulk-introspection.log ; } 2>> /home/stack/log/007-bulk-introspection.log
   when:
     - version < 13
-    - introspection['bulk_introspection']
+    - bulk_introspection
 
 - name: Run introspection with retry script
   shell: |
     { time bash /home/stack/introspect.sh 2>&1 | tee -a /home/stack/log/007-introspection-script.log ; } 2>> /home/stack/log/007-introspection-script.log
-  when: not introspection['bulk_introspection']
+  when: not bulk_introspection
 
 - name: Generate node-data
   shell: |

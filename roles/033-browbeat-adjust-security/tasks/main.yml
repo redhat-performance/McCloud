@@ -6,4 +6,4 @@
 - name: Adjust Security
   shell: |
     cd /home/stack/browbeat/ansible
-    { time ansible-playbook -i hosts browbeat/adjust-security.yml -e 'security={{adjust_security['security']}}' 2>&1 | tee -a /home/stack/log/203-security-update.log ; } 2>> /home/stack/log/203-security-update.log
+    { time ansible-playbook -i hosts browbeat/adjust-security.yml -e 'security={{as_security}}' 2>&1 | tee -a /home/stack/log/203-security-update.log ; } 2>> /home/stack/log/203-security-update.log

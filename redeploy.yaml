@@ -57,7 +57,7 @@
     - role: 030-browbeat-adjust-nova-allocation-ratios
       when:
         - deploy_browbeat
-        - adjust_nova_allocation['enabled']
+        - ana_enabled
     - role: 031-browbeat-collect-metadata
       when:
         - deploy_browbeat
@@ -69,7 +69,7 @@
     - role: 033-browbeat-adjust-security
       when:
         - deploy_browbeat
-        - adjust_security['enabled']
+        - as_enabled
     - role: 050-cloud-ready
       when:
         - deploy_browbeat
