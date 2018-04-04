@@ -1,6 +1,6 @@
 ---
 #
-# Perform Iitrospection of Overcloud Nodes
+# Perform Introspection of Overcloud Nodes
 #
 
 - name: Queens(13) Run Bulk introspection

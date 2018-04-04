@@ -10,14 +10,14 @@
   vars:
     wait_for_ready: true
   tasks:
-    # 20 minute timeout
+    # 30 minute timeout (Incase large machine or foreman rebuild is longer than usual)
     - name: Wait for Machine Ready (Incase machine is rebuilding)
       local_action:
         module: wait_for
         host: "{{inventory_hostname}}"
         port: 22
         delay: 15
-        timeout: 1200
+        timeout: 1800
       when: wait_for_ready
     # Depending on hardware rebuild, we may not have the ssh key exchanged
     - name: Setup | authorized key upload
@@ -147,6 +147,8 @@
       when:
         - deploy_browbeat
         - browbeat_run
+    - role: 150-collect-artifacts
+      when: collect_artifacts
 
     # Speed Ups:
     # * Concurrent collectd installs (across node types)
@@ -164,8 +166,3 @@
     # * Auto install: sysstat, strace
     # * Fail if containers are not pulled down (missing containers)
     # * Fail if various timed playbooks fail
-    # * Artifacting:
-    #    * /home/stack/log/*
-    #    * /home/stack/browbeat/results/*
-    #    * /home/stack/browbeat/metadata/*
-    #    * Local deploy microcloud timings (Ansible timings)

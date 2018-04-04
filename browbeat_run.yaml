@@ -15,3 +15,5 @@
       when:
         - deploy_browbeat
         - browbeat_run
+    - role: 150-collect-artifacts
+      when: collect_artifacts

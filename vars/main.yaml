@@ -36,6 +36,7 @@ hardware_deployed: microcloud
 deploy_scenario: 0
 deploy_overcloud: true
 redeploy_cleanup_existing_overcloud: true
+collect_artifacts: true
 dns_server:
 instackenv_json:
 ntp_server: 0.pool.ntp.org
