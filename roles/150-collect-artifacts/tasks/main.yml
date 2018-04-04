@@ -36,6 +36,8 @@
       dest: "{{artifact_dir}}/browbeat-metadata"
     - src: /home/stack/browbeat/log/
       dest: "{{artifact_dir}}/browbeat-log"
+    - src: /home/stack/browbeat/ansible/install/group_vars/all.yml
+      dest: "{{artifact_dir}}/browbeat-install-vars.yml"
   when:
     - deploy_browbeat
     - browbeat_run

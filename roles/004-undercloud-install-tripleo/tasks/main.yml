@@ -15,6 +15,7 @@
     - /home/stack/templates/firstboot
     - /home/stack/pin-definitions
     - /home/stack/log
+    - "{{log_dir}}"
 
 - name: Install tripleo
   yum:

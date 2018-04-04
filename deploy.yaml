@@ -43,6 +43,14 @@
     - vars/main.yaml
     - vars/main.local.yaml
   remote_user: root
+  pre_tasks:
+    - name: Get timestamp
+      command: "date -u +%Y%m%d-%H%M%S"
+      delegate_to: localhost
+      register: current_ts
+    - name: Set log directory
+      set_fact:
+        log_dir: /home/stack/log/{{current_ts.stdout}}
   roles:
     - role: 000-undercloud-repos
     - role: 001-undercloud-terminal-multiplexers

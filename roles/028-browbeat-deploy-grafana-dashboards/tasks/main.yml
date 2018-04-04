@@ -6,4 +6,4 @@
 - name: Deploy Grafana Dashboards
   shell: |
     cd /home/stack/browbeat/ansible
-    { time  ansible-playbook -i hosts install/grafana-dashboards.yml -e 'upload_general=false upload_static=false upload_templated=false' 2>&1 | tee -a /home/stack/log/102-grafana-dashboards.log ; } 2>> /home/stack/log/102-grafana-dashboards.log
+    { time  ansible-playbook -i hosts install/grafana-dashboards.yml -e 'upload_general=false upload_static=false upload_templated=false' 2>&1 | tee -a {{log_dir}}/104-grafana-dashboards.log ; } 2>> {{log_dir}}/104-grafana-dashboards.log
