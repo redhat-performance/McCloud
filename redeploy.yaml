@@ -11,6 +11,20 @@
     - vars/main.yaml
     - vars/main.local.yaml
   remote_user: stack
+  pre_tasks:
+    - name: Get timestamp
+      command: "date -u +%Y%m%d-%H%M%S"
+      delegate_to: localhost
+      register: current_ts
+    - name: Set log directory
+      set_fact:
+        log_dir: /home/stack/log/{{current_ts.stdout}}
+    - name: Make sure {{log_dir}} exists
+      file:
+        path: "{{log_dir}}"
+        state: directory
+        owner: stack
+        group: stack
   roles:
     # Due to deploy_scenario potentially changing, we should setup browbeat
     # with the specific deploy_scenario vars
