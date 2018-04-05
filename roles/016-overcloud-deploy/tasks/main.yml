@@ -79,4 +79,4 @@
 - name: "Deploy Overcloud Scenario: {{deploy_scenario_human[hardware_deployed][deploy_scenario|int]}}"
   shell: |
     . /home/stack/stackrc
-    /home/stack/deploy{{deploy_scenario}}.sh
+    /home/stack/deploy{{deploy_scenario}}.sh {{log_dir}}

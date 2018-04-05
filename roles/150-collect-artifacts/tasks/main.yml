@@ -20,7 +20,7 @@
 
 - name: Collect deployment Artifacts
   synchronize:
-    src: /home/stack/log/
+    src: "{{log_dir}}"
     dest: "{{artifact_dir}}/deployment-log"
     mode: pull
 
