@@ -175,5 +175,6 @@
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Fail if containers are not pulled down (missing containers)
-    # * Fail if various timed playbooks fail
+    # * Fail on specific instances such as building under/over cloud, but always run post cloud creation
+    # * Improve name ordering of tasks 000, 050, 100, 200 ... etc
     # * Log more things kicked off in playbooks
