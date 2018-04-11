@@ -26,7 +26,7 @@
 - name: (Redeploy) Delete existing overcloud
   shell: |
     . /home/stack/stackrc
-    openstack stack delete overcloud -y
+    yes | openstack stack delete overcloud
   when:
     - redeploy_cleanup_existing_overcloud
     - not overcloud_exists.failed
