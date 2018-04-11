@@ -160,6 +160,15 @@
     - role: 150-collect-artifacts
       when: collect_artifacts
 
+    # Bugs/Thoughts
+    # * Detect failures before continuing deployment + Still collect artifacts
+    # * Fail if containers are not pulled down (missing containers)
+    # * Improve name ordering of tasks 000, 050, 100, 200 ... etc
+    # * Improve organization of different hardware configs
+    # * Log more things kicked off in playbooks
+    # * Handle heterogeneous hardware types
+    # * Capture Memory usage?
+    # * Auto install: sysstat, strace
     # Speed Ups:
     # * Concurrent collectd installs (across node types)
     # * Browbeat workload vms built beforehand
@@ -171,10 +180,3 @@
     #  * Boot Instance
     #  * Ping Instance
     #  * Delete Instance, Network
-    # Bugs/Thoughts
-    # * Capture Memory usage?
-    # * Auto install: sysstat, strace
-    # * Fail if containers are not pulled down (missing containers)
-    # * Fail on specific instances such as building under/over cloud, but always run post cloud creation
-    # * Improve name ordering of tasks 000, 050, 100, 200 ... etc
-    # * Log more things kicked off in playbooks
