@@ -3,7 +3,17 @@
 # Deploys collectd on the Overcloud
 #
 
-- name: Deploy collectd on Overcloud
-  shell: |
-    cd /home/stack/browbeat/ansible
-    { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 50 --skip-tags undercloud 2>&1 | tee -a {{log_dir}}/102-collectd-overcloud-install.log ; } 2>> {{log_dir}}/102-collectd-overcloud-install.log
+- name: Install Overcloud collectd Block
+  block:
+    - name: Deploy collectd on Overcloud
+      shell: |
+        set -o pipefail
+        cd /home/stack/browbeat/ansible
+        { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 50 --skip-tags undercloud 2>&1 | tee -a {{log_dir}}/102-collectd-overcloud-install.log ; } 2>> {{log_dir}}/102-collectd-overcloud-install.log
+  always:
+    - name: Collect Install Overcloud collectd Artifacts
+      synchronize:
+        src: "{{log_dir}}"
+        dest: "{{artifact_dir}}/deployment-log"
+        mode: pull
+      when: collect_artifacts

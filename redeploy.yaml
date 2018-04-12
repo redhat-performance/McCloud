@@ -16,6 +16,7 @@
       command: "date -u +%Y%m%d-%H%M%S"
       delegate_to: localhost
       register: current_ts
+    # Creates remote log directory
     - name: Set log directory
       set_fact:
         log_dir: /home/stack/log/{{current_ts.stdout}}
@@ -25,6 +26,15 @@
         state: directory
         owner: stack
         group: stack
+    # Local artifact directory
+    - name: Set Artifact Directory
+      set_fact:
+        artifact_dir: artifacts/{{version}}-deploy{{deploy_scenario}}-{{current_ts.stdout}}
+    - name: Ensure artifact directory exists
+      file:
+        path: "{{artifact_dir}}"
+        state: directory
+      delegate_to: localhost
   roles:
     # Due to deploy_scenario potentially changing, we should setup browbeat
     # with the specific deploy_scenario vars
@@ -98,5 +108,3 @@
       when:
         - deploy_browbeat
         - browbeat_run
-    - role: 150-collect-artifacts
-      when: collect_artifacts

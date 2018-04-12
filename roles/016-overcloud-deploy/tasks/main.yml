@@ -3,80 +3,110 @@
 # Deploy/Redeploy Overcloud
 #
 
-- name: Check if "install" tmux exists
-  become: true
-  shell: tmux ls | grep install
-  register: tmux_install_exists
-  ignore_errors: true
+- name: Deploy/Redeploy Block
+  block:
+    - name: Check if "install" tmux exists
+      become: true
+      shell: tmux ls | grep install
+      register: tmux_install_exists
+      ignore_errors: true
 
-- name: Setup "install" tmux
-  become: true
-  shell: "{{tmux_install_shell}}"
-  when: tmux_install_exists.failed
+    - name: Setup "install" tmux
+      become: true
+      shell: "{{tmux_install_shell}}"
+      when: tmux_install_exists.failed
 
-# ignore errors on this command as if no overcloud exists, then we can continue on
-- name: (Redeploy) Check if overcloud exists
-  shell: |
-    . /home/stack/stackrc
-    openstack stack list | grep -q overcloud
-  register: overcloud_exists
-  ignore_errors: true
-  when: redeploy_cleanup_existing_overcloud
+    # ignore errors on this command as if no overcloud exists, then we can continue on
+    - name: (Redeploy) Check if overcloud exists
+      shell: |
+        . /home/stack/stackrc
+        openstack stack list | grep -q overcloud
+      register: overcloud_exists
+      ignore_errors: true
+      when: redeploy_cleanup_existing_overcloud
 
-- name: (Redeploy) Delete existing overcloud
-  shell: |
-    . /home/stack/stackrc
-    yes | openstack stack delete overcloud
-  when:
-    - redeploy_cleanup_existing_overcloud
-    - not overcloud_exists.failed
+    - name: (Redeploy) Delete existing overcloud
+      shell: |
+        . /home/stack/stackrc
+        yes | openstack stack delete overcloud
+      when:
+        - redeploy_cleanup_existing_overcloud
+        - not overcloud_exists.failed
 
-# Waits ~600s for stack to be cleaned up
-# ignore_errors as no longer matching overcloud means stack is deleted
-# Maybe inverse grep instead
-- name: (Redeploy) Wait for stack delete to complete
-  shell: |
-    . /home/stack/stackrc
-    openstack stack list | grep -q overcloud
-  register: stack_still_exists
-  until: stack_still_exists.rc != 0
-  retries: 120
-  delay: 5
-  ignore_errors: true
-  when:
-    - redeploy_cleanup_existing_overcloud
-    - not overcloud_exists.failed
+    # Waits ~600s for stack to be cleaned up
+    # ignore_errors as no longer matching overcloud means stack is deleted
+    # Maybe inverse grep instead
+    - name: (Redeploy) Wait for stack delete to complete
+      shell: |
+        . /home/stack/stackrc
+        openstack stack list | grep -q overcloud
+      register: stack_still_exists
+      until: stack_still_exists.rc != 0
+      retries: 120
+      delay: 5
+      ignore_errors: true
+      when:
+        - redeploy_cleanup_existing_overcloud
+        - not overcloud_exists.failed
 
-# Wait 120s for the nodes to enter cleanup
-- name: (Redeploy) Wait for nodes to enter cleanup
-  shell: |
-    . /home/stack/stackrc
-    openstack baremetal node list | grep 'clean wait'
-  register: nodes_start_cleanup
-  until: nodes_start_cleanup.rc == 0
-  retries: 24
-  delay: 5
-  when:
-    - redeploy_cleanup_existing_overcloud
-    - not overcloud_exists.failed
+    # Wait 120s for the nodes to enter cleanup
+    - name: (Redeploy) Wait for nodes to enter cleanup
+      shell: |
+        . /home/stack/stackrc
+        openstack baremetal node list | grep 'clean wait'
+      register: nodes_start_cleanup
+      until: nodes_start_cleanup.rc == 0
+      retries: 24
+      delay: 5
+      when:
+        - redeploy_cleanup_existing_overcloud
+        - not overcloud_exists.failed
 
-# Waits ~600s for nodes to no longer show cleaning status
-# ignore_errors as failed means no nodes were found in clean wait|cleaning state
-# Can not wait for available as we need to wait for all nodes to be available
-- name: (Redeploy) Wait for nodes to finish cleanup
-  shell: |
-    . /home/stack/stackrc
-    openstack baremetal node list | egrep 'clean wait|cleaning'
-  register: nodes_still_cleaning
-  until: nodes_still_cleaning.rc != 0
-  retries: 120
-  delay: 5
-  ignore_errors: true
-  when:
-    - redeploy_cleanup_existing_overcloud
-    - not overcloud_exists.failed
+    # Waits ~600s for nodes to no longer show cleaning status
+    # ignore_errors as failed means no nodes were found in clean wait|cleaning state
+    # Can not wait for available as we need to wait for all nodes to be available
+    - name: (Redeploy) Wait for nodes to finish cleanup
+      shell: |
+        . /home/stack/stackrc
+        openstack baremetal node list | egrep 'clean wait|cleaning'
+      register: nodes_still_cleaning
+      until: nodes_still_cleaning.rc != 0
+      retries: 120
+      delay: 5
+      ignore_errors: true
+      when:
+        - redeploy_cleanup_existing_overcloud
+        - not overcloud_exists.failed
 
-- name: "Deploy Overcloud Scenario: {{deploy_scenario_human[hardware_deployed][deploy_scenario|int]}}"
-  shell: |
-    . /home/stack/stackrc
-    /home/stack/deploy{{deploy_scenario}}.sh {{log_dir}}
+    - name: "Deploy Overcloud Scenario: {{deploy_scenario_human[hardware_deployed][deploy_scenario|int]}}"
+      shell: |
+        . /home/stack/stackrc
+        /home/stack/deploy{{deploy_scenario}}.sh {{log_dir}}
+  rescue:
+     # Collect additional items to sweep into deployment-log for debugging in event of failure
+    - name: Collect OpenStack Ironic/Heat/Mistral/Nova log files
+      become: true
+      shell: |
+        mkdir -p {{log_dir}}/ironic
+        cp -r /var/log/ironic/* {{log_dir}}/ironic
+        mkdir -p {{log_dir}}/heat
+        cp -r /var/log/ironic/* {{log_dir}}/heat
+        mkdir -p {{log_dir}}/mistral
+        cp -r /var/log/mistral/* {{log_dir}}/mistral
+        mkdir -p {{log_dir}}/nova
+        cp -r /var/log/ironic/* {{log_dir}}/nova
+
+    - name: Dump OpenStack Data
+      shell:  |
+        set -o pipefail
+        . /home/stack/stackrc
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/baremetal-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/node-show.log
+        openstack server list --all 2>&1 | tee -a {{log_dir}}/server-node-list.log
+  always:
+    - name: Collect Deploy/Redeploy Artifacts
+      synchronize:
+        src: "{{log_dir}}"
+        dest: "{{artifact_dir}}/deployment-log"
+        mode: pull
+      when: collect_artifacts

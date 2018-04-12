@@ -35,7 +35,9 @@
     . /home/stack/overcloudrc
     openstack image create --public --disk-format={{cloud_guest_images[item].type}} --container-format=bare {{cloud_guest_images[item].name}} < /home/stack/{{cloud_guest_images[item].name}}.{{cloud_guest_images[item].type}}
   ignore_errors: true
-  when: deploy_browbeat and (deploy_scenario|int not in deploy_scenarios_with_ceph)
+  when:
+    - deploy_browbeat
+    - deploy_scenario|int not in deploy_scenarios_with_ceph
   with_items: "{{ cloud_guest_images }}"
 
 - name: (CephStorage) Upload raw image into cloud
@@ -43,5 +45,7 @@
     . /home/stack/overcloudrc
     openstack image create --public --disk-format=raw --container-format=bare {{cloud_guest_images[item].name}} < /home/stack/{{cloud_guest_images[item].name}}.raw
   ignore_errors: true
-  when: deploy_browbeat and (deploy_scenario|int in deploy_scenarios_with_ceph)
+  when:
+    - deploy_browbeat
+    - deploy_scenario|int in deploy_scenarios_with_ceph
   with_items: "{{ cloud_guest_images }}"

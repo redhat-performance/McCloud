@@ -14,11 +14,11 @@
   poll: 0
   ignore_errors: true
 
-# 8 minute timeout
+# 15 minute timeout
 - name: Wait for Machine Ready
   local_action:
     module: wait_for
     host: "{{inventory_hostname}}"
     port: 22
     delay: 15
-    timeout: 480
+    timeout: 900

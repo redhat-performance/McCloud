@@ -15,7 +15,9 @@
     password: "{{stack_password}}"
 
 - name: Sudo for stack user
-  shell: echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack; chmod 0440 /etc/sudoers.d/stack
+  shell: |
+    echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
+    chmod 0440 /etc/sudoers.d/stack
 
 - name: Setup authorized key upload
   authorized_key:

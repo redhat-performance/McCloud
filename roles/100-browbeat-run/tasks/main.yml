@@ -3,16 +3,41 @@
 # Clones Browbeat Config Repo and Runs Browbeat
 #
 
-- name: Clone browbeat-config on undercloud
-  git:
-    repo: "{{browbeat_config_repo}}"
-    dest: /home/stack/browbeat-config
-    version: master
-    accept_hostkey: true
-    force: true
+- name: Run Browbeat Block
+  block:
+    - name: Clone browbeat-config on undercloud
+      git:
+        repo: "{{browbeat_config_repo}}"
+        dest: /home/stack/browbeat-config
+        version: master
+        accept_hostkey: true
+        force: true
 
-- name: Run Browbeat
-  shell: |
-    cd /home/stack/browbeat/
-    . .browbeat-venv/bin/activate
-    { time /home/stack/browbeat/browbeat.py -s /home/stack/browbeat-config/{{browbeat_config_file}} 2>&1 | tee -a {{log_dir}}/300-browbeat-run.log ; } 2>> {{log_dir}}/300-browbeat-run.log
+    - name: Run Browbeat
+      shell: |
+        set -o pipefail
+        cd /home/stack/browbeat/
+        . .browbeat-venv/bin/activate
+        { time /home/stack/browbeat/browbeat.py -s /home/stack/browbeat-config/{{browbeat_config_file}} 2>&1 | tee -a {{log_dir}}/300-browbeat-run.log ; } 2>> {{log_dir}}/300-browbeat-run.log
+  always:
+    - name: Collect Browbeat Install Artifacts
+      synchronize:
+        src: "{{log_dir}}"
+        dest: "{{artifact_dir}}/deployment-log"
+        mode: pull
+      when: collect_artifacts
+
+    - name: Collect Browbeat Artifacts
+      synchronize:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        mode: pull
+      with_items:
+        - src: /home/stack/browbeat/results/
+          dest: "{{artifact_dir}}/browbeat-results"
+        - src: /home/stack/browbeat/metadata/
+          dest: "{{artifact_dir}}/browbeat-metadata"
+        - src: /home/stack/browbeat/log/
+          dest: "{{artifact_dir}}/browbeat-log"
+        - src: /home/stack/browbeat/ansible/install/group_vars/all.yml
+          dest: "{{artifact_dir}}/browbeat-install-vars.yml"
