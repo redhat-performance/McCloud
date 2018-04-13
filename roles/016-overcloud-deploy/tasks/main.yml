@@ -90,11 +90,11 @@
         mkdir -p {{log_dir}}/ironic
         cp -r /var/log/ironic/* {{log_dir}}/ironic
         mkdir -p {{log_dir}}/heat
-        cp -r /var/log/ironic/* {{log_dir}}/heat
+        cp -r /var/log/heat/* {{log_dir}}/heat
         mkdir -p {{log_dir}}/mistral
         cp -r /var/log/mistral/* {{log_dir}}/mistral
         mkdir -p {{log_dir}}/nova
-        cp -r /var/log/ironic/* {{log_dir}}/nova
+        cp -r /var/log/nova/* {{log_dir}}/nova
 
     - name: Dump OpenStack Data
       shell:  |
