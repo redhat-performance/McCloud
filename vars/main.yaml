@@ -92,6 +92,7 @@ private_external_netmask: 255.255.0.0
 introspection_enabled: false
 # Bulk introspection or introspection with retry (Only if introspection enabled)
 bulk_introspection: true
+bulk_introspection_timeout: 3600
 
 ###########################################
 # Configuration Items (Overcloud)
