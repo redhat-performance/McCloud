@@ -103,6 +103,10 @@
         openstack baremetal node list 2>&1 | tee -a {{log_dir}}/baremetal-node-list.log
         openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/node-show.log
         openstack server list --all 2>&1 | tee -a {{log_dir}}/server-node-list.log
+
+    - name: Ensure playbook stops under this condition
+      fail:
+        msg: "Overcloud deploy failures."
   always:
     - name: Collect Deploy/Redeploy Artifacts
       synchronize:
