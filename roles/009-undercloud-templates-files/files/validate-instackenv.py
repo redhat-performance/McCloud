@@ -149,6 +149,7 @@ def main():
                     print "ERROR :: ipmitool failed on {}".format(node["pm_addr"])
                     errors += 1
                     failed_nodes.append(node["pm_addr"])
+                    continue
                 baremetal_ips.append(node["pm_addr"])
             good_nodes.append(node)
 

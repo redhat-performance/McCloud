@@ -11,33 +11,31 @@
         cd /home/stack/
         { time python validate-instackenv.py -i /home/stack/instackenv.json -o /home/stack/instackenv.valid.json -f /home/stack/invalid-nodes.yaml -u {{inventory_hostname_short}} 2>&1 | tee -a {{log_dir}}/003-validate-instackenv.log ; } 2>> {{log_dir}}/003-validate-instackenv.log
   rescue:
+    # If we don't tolerate node failures, then fail here
+    - name: Check if invalid nodes tolerated
+      fail:
+        msg: "Invalid nodes and node_failure_tolerance is false"
+      when:
+        - not node_failure_tolerance
+
+    - name: Count invalid nodes
+      shell: cat /home/stack/invalid-nodes.yaml | wc -l
+      register: failed_node_count
+
+    # If we tolerate node failures, then check if we failed too many
+    - name: Check invalid node count
+      fail:
+        msg: "Too many invalid nodes - {{failed_node_count.stdout|int}}"
+      when:
+        - failed_node_count.stdout|int > node_failure_tolerance_count
+  always:
     - name: Collect validate-instackenv.py items
-      become: true
       shell: |
         cp /home/stack/instackenv.json {{log_dir}}/instackenv.json
         cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.json
         cp /home/stack/invalid-nodes.yaml {{log_dir}}/invalid-nodes.yaml
       ignore_errors: true
 
-    # If we don't tolerate node failures, then fail here
-    - name: Check if failed nodes tolerated
-      fail:
-        msg: "Failed nodes and node_failure_tolerance is false"
-      when:
-        - not node_failure_tolerance
-
-    - name: Count failed nodes
-      shell: cat /home/stack/failed-nodes.yaml | wc -l
-      register: failed_node_count
-
-    # If we tolerate node failures, then check if we failed too many
-    - name: Check Failed Node Count
-      fail:
-        msg: "Too many failed nodes"
-      when:
-        - node_failure_tolerance
-        - failed_node_count.stdout|int > node_failure_tolerance_count
-  always:
     - name: Collect validate instackenv.json Artifacts
       synchronize:
         src: "{{log_dir}}"
