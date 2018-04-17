@@ -124,11 +124,14 @@ browbeat_pike_vars:
     replace: "apache_controller_collectd_plugin: false"
 
 deploy_files:
-  - src: files/pin.py
-    dest: /home/stack/pin.py
+  - src: files/validate-instackenv.py
+    dest: /home/stack/validate-instackenv.py
     mode: "0744"
   - src: files/node-assignment.py
     dest: /home/stack/node-assignment.py
+    mode: "0744"
+  - src: files/pin.py
+    dest: /home/stack/pin.py
     mode: "0744"
   - src: files/{{hardware_deployed}}/deploy-scenarios.yaml
     dest: /home/stack/deploy-scenarios.yaml

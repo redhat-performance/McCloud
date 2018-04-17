@@ -31,6 +31,12 @@ dns_server:
 instackenv_json:
 ntp_server: 0.pool.ntp.org
 
+# Tolerate a node failure (Instackenv, ipmi, and introspection)
+# Basically, we can tolerate one node failing, any greater and we fail before deployment
+# Idea is to capture node failures before deployment but still tolerate them
+node_failure_tolerance: true
+node_failure_tolerance_count: 1
+
 # Stack user password:
 # Make a new password: python -c "from passlib.hash import sha512_crypt; print sha512_crypt.encrypt('password')"
 stack_password: $6$rounds=656000$3ZalBI1dHsb8kfJI$XbtraTo6qcAfAHR158Wf4mLoUrDQsTCIWSAZevFapJIq2OS/qATHQ39PwsJ6JusOBue3nxeNm5mTBM3m97EnQ.

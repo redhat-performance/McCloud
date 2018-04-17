@@ -175,7 +175,7 @@
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Hypervisor install for microcloud hardware (Remove beaker dependency)
-    # * Robust option for introspection (Node fails introspection, remove from deploy plan)
+    # * Robust option for introspection (Node fails introspection, remove from deploy if tolerated)
     # Speed Ups:
     # * Concurrent collectd installs (across node types)
     # * Browbeat workload vms built beforehand

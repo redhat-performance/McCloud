@@ -3,117 +3,102 @@
 # Organizes/places all templates and files on the Undercloud
 #
 
-- name: Template Files on Undercloud Block
-  block:
-    # Local Files (Local to Undercloud)
-    - name: Copy original network configuration files
-      shell: |
-        mkdir -p /home/stack/templates/nic-configs/single-nic-vlans
-        cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs/single-nic-vlans
+# Local Files (Local to Undercloud)
+- name: Copy original network configuration files
+  shell: |
+    mkdir -p /home/stack/templates/nic-configs/single-nic-vlans
+    cp -r /usr/share/openstack-tripleo-heat-templates/network/config/single-nic-vlans /home/stack/templates/nic-configs/single-nic-vlans
 
-    - name: Copy original roles_data.yaml into /home/stack/templates
-      shell: |
-        sudo sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /usr/share/openstack-tripleo-heat-templates/roles_data.yaml
-        cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
+- name: Copy original roles_data.yaml into /home/stack/templates
+  shell: |
+    sudo sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /usr/share/openstack-tripleo-heat-templates/roles_data.yaml
+    cp /usr/share/openstack-tripleo-heat-templates/roles_data.yaml /home/stack/templates/roles_data.yaml
 
-    - name: Copy roles_data.yaml to roles_data.objectstorage.yaml
-      shell: cp /home/stack/templates/roles_data.yaml /home/stack/templates/roles_data.objectstorage.yaml
+- name: Copy roles_data.yaml to roles_data.objectstorage.yaml
+  shell: cp /home/stack/templates/roles_data.yaml /home/stack/templates/roles_data.objectstorage.yaml
 
-    - name: Modify roles_data.objectstorage.yaml
-      replace:
-        path: /home/stack/templates/roles_data.objectstorage.yaml
-        regexp: "    - OS::TripleO::Services::SwiftStorage"
-        replace: "#    - OS::TripleO::Services::SwiftStorage"
-        before: "- name: Compute"
+- name: Modify roles_data.objectstorage.yaml
+  replace:
+    path: /home/stack/templates/roles_data.objectstorage.yaml
+    regexp: "    - OS::TripleO::Services::SwiftStorage"
+    replace: "#    - OS::TripleO::Services::SwiftStorage"
+    before: "- name: Compute"
 
-    - name: Create roles_data.networker.yaml
-      shell: |
-        . /home/stack/stackrc
-        openstack overcloud roles generate -o /home/stack/templates/roles_data.networker.yaml Controller Compute Networker
-        sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.networker.yaml
-      when: version > 11
+- name: Create roles_data.networker.yaml
+  shell: |
+    . /home/stack/stackrc
+    openstack overcloud roles generate -o /home/stack/templates/roles_data.networker.yaml Controller Compute Networker
+    sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.networker.yaml
+  when: version > 11
 
-    - name: Create roles_data.computehci.yaml
-      shell: |
-        . /home/stack/stackrc
-        openstack overcloud roles generate -o /home/stack/templates/roles_data.computehci.yaml Controller ComputeHCI Compute CephStorage
-        sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.computehci.yaml
-      when: version > 11
+- name: Create roles_data.computehci.yaml
+  shell: |
+    . /home/stack/stackrc
+    openstack overcloud roles generate -o /home/stack/templates/roles_data.computehci.yaml Controller ComputeHCI Compute CephStorage
+    sed -i "s/HostnameFormatDefault: '%stackname%-novacompute-%index%'/HostnameFormatDefault: '%stackname%-compute-%index%'/g" /home/stack/templates/roles_data.computehci.yaml
+  when: version > 11
 
-    # Files
-    - name: Copy over static Tripleo Heat Template configuration files and scripts
-      copy:
-        src: "{{item.src}}"
-        dest: "{{item.dest}}"
-        owner: stack
-        group: stack
-        mode: "{{item.mode | default('0644')}}"
-      with_items: "{{deploy_files}}"
+# Files
+- name: Copy over static Tripleo Heat Template configuration files and scripts
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_files}}"
 
-    # Files specific to hardware
-    - name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
-      copy:
-        src: "{{item.src}}"
-        dest: "{{item.dest}}"
-        owner: stack
-        group: stack
-        mode: "{{item.mode | default('0644')}}"
-      with_items: "{{deploy_hardware_specific_files[hardware_deployed]}}"
+# Files specific to hardware
+- name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_hardware_specific_files[hardware_deployed]}}"
 
-    - name: Get instackenv.json
-      get_url:
-        url: "{{instackenv_json}}"
-        dest: /home/stack/instackenv.json
-        owner: stack
-        group: stack
+- name: Get instackenv.json
+  get_url:
+    url: "{{instackenv_json}}"
+    dest: /home/stack/instackenv.json
+    owner: stack
+    group: stack
 
-    - name: Generate Pin and Deploy Yamls Files off instackenv.json
-      shell: |
-        set -o pipefail
-        cd /home/stack/
-        { time python node-assignment.py -i /home/stack/instackenv.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/deploy-scenarios.yaml -p /home/stack/pin-definitions/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ -u {{inventory_hostname_short}} 2>&1 | tee -a {{log_dir}}/003-generate-yamls.log ; } 2>> {{log_dir}}/003-generate-yamls.log
+# Nic-configs Files
+- name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"
+  copy:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_hardware_specific_nic_configs[hardware_deployed][version]}}"
 
-    # Nic-configs Files
-    - name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"
-      copy:
-        src: "{{item.src}}"
-        dest: "{{item.dest}}"
-        owner: stack
-        group: stack
-        mode: "{{item.mode | default('0644')}}"
-      with_items: "{{deploy_hardware_specific_nic_configs[hardware_deployed][version]}}"
+# Templates
+- name: Template out Tripleo Heat Templates and other Scripts/Files
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_templates}}"
 
-    # Templates
-    - name: Template out Tripleo Heat Templates and other Scripts/Files
-      template:
-        src: "{{item.src}}"
-        dest: "{{item.dest}}"
-        owner: stack
-        group: stack
-        mode: "{{item.mode | default('0644')}}"
-      with_items: "{{deploy_templates}}"
+# Hardware Specific Templates
+- name: Template out Tripleo Heat Templates and other Scripts/Files for "{{hardware_deployed}}"
+  template:
+    src: "{{item.src}}"
+    dest: "{{item.dest}}"
+    owner: stack
+    group: stack
+    mode: "{{item.mode | default('0644')}}"
+  with_items: "{{deploy_hardware_specific_templates[hardware_deployed]}}"
 
-    # Hardware Specific Templates
-    - name: Template out Tripleo Heat Templates and other Scripts/Files for "{{hardware_deployed}}"
-      template:
-        src: "{{item.src}}"
-        dest: "{{item.dest}}"
-        owner: stack
-        group: stack
-        mode: "{{item.mode | default('0644')}}"
-      with_items: "{{deploy_hardware_specific_templates[hardware_deployed]}}"
-
-    - name: Place version metadata json file in /home/stack
-      become: true
-      template:
-        src: "templates/version.json.j2"
-        dest: "{{version_directory}}/version.json"
-        owner: stack
-        group: stack
-  always:
-    - name: Collect Template Files on Undercloud Artifacts
-      synchronize:
-        src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
-        mode: pull
-      when: collect_artifacts
+- name: Place version metadata json file in /home/stack
+  become: true
+  template:
+    src: "templates/version.json.j2"
+    dest: "{{version_directory}}/version.json"
+    owner: stack
+    group: stack

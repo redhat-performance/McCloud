@@ -83,22 +83,6 @@ def create_homogeneous_yamls(servers, d_scenarios, scenario, pin_dir, dy_dir):
                 deploy_yaml.write("{}\n".format(line))
 
 
-def remove_undercloud(instackenv_json, uc_pm_addr):
-    nodes = []
-    with open(instackenv_json, "r") as rf:
-        instackenv = json.load(rf)
-        for node in instackenv["nodes"]:
-            if uc_pm_addr in node["pm_addr"][0:node["pm_addr"].find(".")]:
-                print "WARN :: Found Undercloud included in the instackenv"
-                continue
-            nodes.append(node)
-    with open(instackenv_json, "w") as wf:
-        data = {
-            "nodes": nodes,
-        }
-        json.dump(data, wf, indent=4, sort_keys=True)
-
-
 def main():
     start_time = time.time()
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -124,9 +108,6 @@ def main():
     parser.add_argument(
         "-l", "--symlink-nic-configs", action="store_true", default="true",
         help="Directory for deploy yamls. Defaults to 'templates'")
-    parser.add_argument(
-        "-u", "--undercloud-ipmi-addr", default=None,
-        help="Undercloud pm_addr to remove mistakenly included underclouds in instackenv.")
     cliargs = parser.parse_args()
 
     print "INFO :: Node-assignment.py reading in {}".format(cliargs.instackenv)
@@ -173,10 +154,6 @@ def main():
     print "INFO :: Deploy Scenarios file: {}".format(ds_yaml_file)
     print "INFO :: Writing pin-definitions in {}".format(pin_dir)
     print "INFO :: Creating deploy yamls in {}".format(dy_dir)
-
-    # Remove UC from instackenv (if if is accidently included into the instackenv.json)
-    if cliargs.undercloud_ipmi_addr:
-        remove_undercloud(instackenv_json, cliargs.undercloud_ipmi_addr)
 
     # Assemble servers list of node pins/types
     servers = []
