@@ -2,18 +2,25 @@ deploy-microcloud
 =================
 
 Ansible files to deploy a Tripleo Undercloud and Overcloud on the
-Microcloud System.
+Microcloud Hardware and ScaleLab Hardware.
 
 Completes:
 
 * Tripleo Undercloud Install
-* Node Introspection
+* Node introspection
 * Node pinning based on overcloud deployment scenario
 * Overcloud deployment based on scenario
+* 10 deployment scenarios supported(See Matrix Below) across 4 major versions of OpenStack
+* Opens “Install” tmux session and deploy scenario tmux scripts included
 * Browbeat Deployment
-* Opens “Install” tmux session and deploys each scenario tmux script
-* Shaker / Browbeat Workloads pre-installed
-* 10 deployment scenarios supported across 3 different major versions of OpenStack
+* Rally, PerfKit, Shaker and Browbeat workloads pre-installed
+* Browbeat Tooling (collectd install, Spectre/MeltDown microcode+security setting)
+* Private external networking setup
+* Runs Browbeat scenario post install
+* Artifacts and timings for tasks
+* Options can be toggled off for vanilla overcloud if needed
+* Handles instackenv/ipmi invalid hardware
+
 
 Initial Deployment Usage:
 
@@ -36,19 +43,35 @@ Redeployment Usage:
     $ # Edit vars/main.local.yml to adjust deployment parameters
     $ ansible-playbook -i hosts.local redeploy.yaml
 
+
+Microcloud Hardware
+-------------------
+
 =  =================================================  ======  =====  ====  ======
 Deployments vs OpenStack Versions
 ---------------------------------------------------------------------------------
 #  deployment scenario                                Newton  Ocata  Pike  Queens
 =  =================================================  ======  =====  ====  ======
-0  1 Controller / 6 Computes                          Yes     Yes    Yes   No
-1  3 Controllers / 4 Computes                         Yes     Yes    Yes   No
-2  1 Controller / 3 CephStorage Nodes / 3 Computes    Yes     Yes    Yes   No
-3  3 Controllers / 3 CephStorage Nodes / 1 Compute    Yes     Yes    Yes   No
-4  1 Controller / 3 ObjectStorage Nodes / 3 Computes  Yes     Yes    Yes   No
-5  1 Controller / 3 BlockStorage Nodes / 3 Computes   Yes     Yes    Yes   No
-6  1 Controller / 1 Networker / 5 Computes            No      No     Yes   No
-7  3 Controllers / 1 Networker / 3 Computes           No      No     Yes   No
-8  1 Controller / 6 ComputeHCIs                       No      No     Yes   No
-9  3 Controllers / 4 ComputeHCIs                      No      No     Yes   No
+0  1 Controller / X Computes                          Yes     Yes    Yes   Yes
+1  3 Controllers / X Computes                         Yes     Yes    Yes   Yes
+2  1 Controller / 3 CephStorage Nodes / X Computes    Yes     Yes    Yes   No
+3  3 Controllers / 3 CephStorage Nodes / X Compute    Yes     Yes    Yes   No
+4  1 Controller / 3 ObjectStorage Nodes / X Computes  Yes     Yes    Yes   No
+5  1 Controller / 3 BlockStorage Nodes / X Computes   Yes     Yes    Yes   No
+6  1 Controller / 1 Networker / X Computes            No      No     Yes   No
+7  3 Controllers / 1 Networker / X Computes           No      No     Yes   No
+8  1 Controller / X ComputeHCIs                       No      No     Yes   No
+9  3 Controllers / X ComputeHCIs                      No      No     Yes   No
+=  =================================================  ======  =====  ====  ======
+
+ScaleLab Hardware - SLC1, SLC1m, SLC1h
+--------------------------------------
+
+=  =================================================  ======  =====  ====  ======
+Deployments vs OpenStack Versions
+---------------------------------------------------------------------------------
+#  deployment scenario                                Newton  Ocata  Pike  Queens
+=  =================================================  ======  =====  ====  ======
+0  1 Controller / X Computes                          Yes     Yes    Yes   Yes
+1  3 Controllers / X Computes                         Yes     Yes    Yes   Yes
 =  =================================================  ======  =====  ====  ======
