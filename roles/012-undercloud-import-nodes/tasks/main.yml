@@ -45,6 +45,14 @@
 
 - name: Import/Configure Nodes Block
   block:
+    - name: Convert instackenv for no introspection requirement
+      shell: |
+        set -o pipefail
+        cat /home/stack/instackenv.valid.json | jq  '{ nodes: [ .nodes[] | .cpu="4" | .memory="60000" | .disk="50" |  .  ]}' > /home/stack/intermediate.json
+        python -m json.tool /home/stack/intermediate.json /home/stack/instackenv.valid.json
+        rm -f /home/stack/intermediate.json
+      when: instackenv_no_introspection
+
     - name: Import instackenv.json
       shell: |
         set -o pipefail
