@@ -21,12 +21,12 @@
 # portion of the value will be assigned to the network interface
 # defined by local_interface, with the netmask defined by the prefix
 # portion of the value. (string value)
-#local_ip = 192.0.2.1/24
+local_ip = 192.168.0.1/16
 
 # Network gateway for the Neutron-managed network for Overcloud
 # instances. This should match the local_ip above when using
 # masquerading. (string value)
-#network_gateway = 192.0.2.1
+network_gateway = 192.168.0.1
 
 # Virtual IP address to use for the public endpoints of Undercloud
 # services.  Only used if undercloud_service_certficate is set.
@@ -83,7 +83,7 @@ local_interface = {{local_interface}}
 # 192.0.2.0/24 explicitly to avoid it changing in future releases, and
 # all other network options related to the CIDR (e.g. local_ip) must
 # also be set to maintain a valid configuration. (string value)
-#network_cidr = 192.0.2.0/24
+network_cidr = 192.168.0.0/16
 
 # Network that will be masqueraded for external access, if required.
 # This should be the subnet used for PXE booting. (string value)
@@ -91,11 +91,11 @@ local_interface = {{local_interface}}
 
 # Start of DHCP allocation range for PXE and DHCP of Overcloud
 # instances. (string value)
-dhcp_start = 192.0.2.51
+dhcp_start = 192.168.10.1
 
 # End of DHCP allocation range for PXE and DHCP of Overcloud
 # instances. (string value)
-dhcp_end = 192.0.2.250
+dhcp_end = 192.168.19.250
 
 # Path to hieradata override file. If set, the file will be copied
 # under /etc/puppet/hieradata and set as the first file in the hiera
@@ -119,7 +119,7 @@ dhcp_end = 192.0.2.250
 # process.  Should not overlap with the range defined by dhcp_start
 # and dhcp_end, but should be in the same network. (string value)
 # Deprecated group/name - [DEFAULT]/discovery_iprange
-inspection_iprange = 192.0.2.5,192.0.2.50
+inspection_iprange = 192.168.1.1,192.168.9.250
 
 # Whether to enable extra hardware collection during the inspection
 # process. Requires python-hardware or python-hardware-detect package

@@ -16,7 +16,7 @@
 # portion of the value will be assigned to the network interface
 # defined by local_interface, with the netmask defined by the prefix
 # portion of the value. (string value)
-#local_ip = 192.168.24.1/24
+local_ip = 192.168.0.1/16
 
 # Virtual IP or DNS address to use for the public endpoints of
 # Undercloud services. Only used with SSL. (string value)
@@ -370,19 +370,19 @@ clean_nodes = {{node_cleaning}}
 # Network CIDR for the Neutron-managed subnet for Overcloud instances.
 # (string value)
 # Deprecated group/name - [DEFAULT]/network_cidr
-#cidr = 192.168.24.0/24
+cidr = 192.168.0.0/16
 
 # Start of DHCP allocation range for PXE and DHCP of Overcloud
 # instances on this network. (string value)
 # Deprecated group/name - [DEFAULT]/dhcp_start
 #dhcp_start = 192.168.24.5
-dhcp_start = 192.168.24.51
+dhcp_start = 192.168.10.1
 
 # End of DHCP allocation range for PXE and DHCP of Overcloud instances
 # on this network. (string value)
 # Deprecated group/name - [DEFAULT]/dhcp_end
 #dhcp_end = 192.168.24.24
-dhcp_end = 192.168.24.250
+dhcp_end = 192.168.19.250
 
 # Temporary IP range that will be given to nodes on this network
 # during the inspection process. Should not overlap with the range
@@ -390,12 +390,12 @@ dhcp_end = 192.168.24.250
 # subnet. (string value)
 # Deprecated group/name - [DEFAULT]/inspection_iprange
 #inspection_iprange = 192.168.24.100,192.168.24.120
-inspection_iprange = 192.168.24.5,192.168.24.50
+inspection_iprange = 192.168.1.1,192.168.9.250
 
 # Network gateway for the Neutron-managed network for Overcloud
 # instances on this network. (string value)
 # Deprecated group/name - [DEFAULT]/network_gateway
-#gateway = 192.168.24.1
+gateway = 192.168.0.1
 
 # The network will be masqueraded for external access. (boolean value)
 #masquerade = false
