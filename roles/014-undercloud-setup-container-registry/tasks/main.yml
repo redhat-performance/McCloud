@@ -11,7 +11,7 @@
         path: /etc/sysconfig/docker
         state: present
         regexp: '^INSECURE_REGISTRY='
-        line: 'INSECURE_REGISTRY="--insecure-registry 192.168.24.1:8787 --insecure-registry 192.168.24.3:8787 --insecure-registry {{additional_insecure_registry}}"'
+        line: 'INSECURE_REGISTRY="--insecure-registry 192.168.0.1:8787 --insecure-registry 192.168.0.3:8787 --insecure-registry {{additional_insecure_registry}}"'
 
     - name: Restart Docker registry
       become: true
@@ -22,7 +22,7 @@
     - name: Create template to pull images to local registry
       shell: |
         . /home/stack/stackrc;
-        openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --push-destination 192.168.24.1:8787 --images-file overcloud_containers.yaml
+        openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --push-destination 192.168.0.1:8787 --images-file overcloud_containers.yaml
 
     # (akrzos) I could not get this command to respond without:
     # "Error while fetching server API version: ('Connection aborted.', error(13, 'Permission denied'))"
@@ -42,7 +42,7 @@
     - name: Create template for using images from local registry
       shell: |
         . /home/stack/stackrc;
-        openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.24.1:8787/{{container_namespace}} --prefix openstack --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml
+        openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.0.1:8787/{{container_namespace}} --prefix openstack --env-file ~/docker_registry.yaml -r ~/templates/roles_data.yaml
   always:
     - name: Collect Setup Container Registry Artifacts
       synchronize:
