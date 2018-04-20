@@ -34,9 +34,10 @@ parameter_defaults:
   ExternalInterfaceDefaultRoute: 172.21.0.1
   PublicVirtualFixedIPs: [{'ip_address':'{{external_network_vip}}'}]
   # Gateway router for the provisioning network (or Undercloud IP)
-  ControlPlaneDefaultRoute: 192.0.2.1
+  ControlPlaneDefaultRoute: 192.168.0.1
+  ControlPlaneSubnetCidr: 16
   # The IP address of the EC2 metadata server. Generally the IP of the Undercloud
-  EC2MetadataIp: 192.0.2.1
+  EC2MetadataIp: 192.168.0.1
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["{{dns_server}}"]
   InternalApiNetworkVlanID: 301
