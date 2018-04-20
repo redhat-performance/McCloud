@@ -106,9 +106,11 @@
       shell:  |
         set -o pipefail
         . /home/stack/stackrc
-        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/baremetal-node-list.log
-        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/node-show.log
-        openstack server list --all 2>&1 | tee -a {{log_dir}}/server-node-list.log
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/openstack-baremetal-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/openstack-baremetal-node-show.log
+        openstack server list --all 2>&1 | tee -a {{log_dir}}/openstack-server-node-list.log
+        openstack stack resource list overcloud 2>&1 | tee -a {{log_dir}}/openstack-stack-resource-list.log
+        openstack stack failures list overcloud 2>&1 | tee -a {{log_dir}}/openstack-stack-failures-list.log
 
     - name: Ensure playbook stops under this condition
       fail:
