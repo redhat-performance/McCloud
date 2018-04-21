@@ -3,7 +3,7 @@ scenarios:
   0:
     ControllerCount: 1
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -11,7 +11,7 @@ scenarios:
   1:
     ControllerCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -20,7 +20,7 @@ scenarios:
     ControllerCount: 1
     CephStorageCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  #CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -29,7 +29,7 @@ scenarios:
     ControllerCount: 3
     CephStorageCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  #CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -38,7 +38,7 @@ scenarios:
     ControllerCount: 1
     ObjectStorageCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -47,7 +47,7 @@ scenarios:
     ControllerCount: 1
     BlockStorageCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -56,7 +56,7 @@ scenarios:
     ControllerCount: 1
     NetworkerCount: 1
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -65,7 +65,7 @@ scenarios:
     ControllerCount: 3
     NetworkerCount: 1
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -74,7 +74,7 @@ scenarios:
     ControllerCount: 1
     ComputeHCI: true
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  #CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"
@@ -83,7 +83,7 @@ scenarios:
     ControllerCount: 3
     ComputeHCI: true
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  #CinderLVMLoopDeviceSize: 151000"
       - "  SwiftMountCheck: true"
       - "  SwiftUseLocalDir: false"

@@ -3,10 +3,10 @@ scenarios:
   0:
     ControllerCount: 1
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
   1:
     ControllerCount: 3
     deploy_yaml_extra:
-      - "  DockerInsecureRegistryAddress: 192.168.24.1:8787"
+      - "  DockerInsecureRegistryAddress: 192.168.0.1:8787"
       - "  CinderLVMLoopDeviceSize: 151000"
