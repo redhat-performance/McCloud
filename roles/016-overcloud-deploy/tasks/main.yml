@@ -100,6 +100,8 @@
         cp -r /var/log/mistral/* {{log_dir}}/mistral
         mkdir -p {{log_dir}}/nova
         cp -r /var/log/nova/* {{log_dir}}/nova
+        mkdir -p {{log_dir}}/templates
+        cp -r /home/stack/templates/* {{log_dir}}/templates
 
     - name: Dump OpenStack Data
       shell:  |
