@@ -51,7 +51,7 @@
     # Defines remote log directory
     - name: Set log directory
       set_fact:
-        log_dir: /home/stack/log/{{current_ts.stdout}}
+        log_dir: /home/stack/mccloud/log/{{current_ts.stdout}}
     # Local artifact directory
     - name: Set Artifact Directory
       set_fact:

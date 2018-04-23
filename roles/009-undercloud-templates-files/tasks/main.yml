@@ -48,16 +48,6 @@
     mode: "{{item.mode | default('0644')}}"
   with_items: "{{deploy_files}}"
 
-# Files specific to hardware
-- name: Copy over static Tripleo Heat Template configuration files and scripts for "{{hardware_deployed}}"
-  copy:
-    src: "{{item.src}}"
-    dest: "{{item.dest}}"
-    owner: stack
-    group: stack
-    mode: "{{item.mode | default('0644')}}"
-  with_items: "{{deploy_hardware_specific_files[hardware_deployed]}}"
-
 - name: Get instackenv.json
   get_url:
     url: "{{instackenv_json}}"

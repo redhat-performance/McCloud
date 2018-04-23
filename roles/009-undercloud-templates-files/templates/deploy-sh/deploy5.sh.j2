@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 ts=$(date -u +%Y%m%d-%H%M%S)
 if [ -z "$1" ]; then
-  log=/home/stack/log/099-deploy5-${ts}.log
+  log=/home/stack/mccloud/log/099-deploy5-${ts}.log
 else
   log="$1/099-deploy5-${ts}.log"
 fi
 date -u >> ${log}
 
 # Ensure Nodes Pinned Correctly
-{ time /home/stack/pin.py /home/stack/pin-definitions/deploy5-pin.yaml 2>&1 | tee -a ${log} ; } 2>> ${log}
+{ time /home/stack/mccloud/pin.py /home/stack/templates/pin/deploy5-pin.yaml 2>&1 | tee -a ${log} ; } 2>> ${log}
 
 date -u >> ${log}
 

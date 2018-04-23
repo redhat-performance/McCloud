@@ -19,7 +19,7 @@
     # Creates remote log directory
     - name: Set log directory
       set_fact:
-        log_dir: /home/stack/log/{{current_ts.stdout}}
+        log_dir: /home/stack/mccloud/log/{{current_ts.stdout}}
     - name: Make sure {{log_dir}} exists
       file:
         path: "{{log_dir}}"

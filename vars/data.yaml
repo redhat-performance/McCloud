@@ -125,30 +125,22 @@ browbeat_pike_vars:
 
 deploy_files:
   - src: files/validate-instackenv.py
-    dest: /home/stack/validate-instackenv.py
+    dest: /home/stack/mccloud/validate-instackenv.py
     mode: "0744"
   - src: files/node-assignment.py
-    dest: /home/stack/node-assignment.py
+    dest: /home/stack/mccloud/node-assignment.py
     mode: "0744"
   - src: files/pin.py
-    dest: /home/stack/pin.py
+    dest: /home/stack/mccloud/pin.py
     mode: "0744"
   - src: files/{{hardware_deployed}}/deploy-scenarios.yaml
-    dest: /home/stack/deploy-scenarios.yaml
+    dest: /home/stack/mccloud/deploy-scenarios.yaml
   - src: files/scheduler-hints.yaml
     dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
     dest: /home/stack/templates/firstboot/wipe-disks.yaml
   - src: files/wipe-disk.sh
     dest: /home/stack/templates/firstboot/wipe-disk.sh
-
-deploy_hardware_specific_files:
-  microcloud:
-    - src: files/microcloud/deploy-scenarios.yaml
-      dest: /home/stack/deploy-scenarios.yaml
-  scalelab:
-    - src: files/scalelab/deploy-scenarios.yaml
-      dest: /home/stack/deploy-scenarios.yaml
 
 deploy_hardware_specific_nic_configs:
   microcloud:
@@ -362,37 +354,37 @@ deploy_hardware_specific_templates:
 
 deploy_templates:
   - src: "templates/introspect.sh.j2"
-    dest: "/home/stack/introspect.sh"
+    dest: "/home/stack/mccloud/introspect.sh"
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
-    dest: "/home/stack/deploy0.sh"
+    dest: "/home/stack/mccloud/deploy0.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy1.sh.j2"
-    dest: "/home/stack/deploy1.sh"
+    dest: "/home/stack/mccloud/deploy1.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy2.sh.j2"
-    dest: "/home/stack/deploy2.sh"
+    dest: "/home/stack/mccloud/deploy2.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy3.sh.j2"
-    dest: "/home/stack/deploy3.sh"
+    dest: "/home/stack/mccloud/deploy3.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy4.sh.j2"
-    dest: "/home/stack/deploy4.sh"
+    dest: "/home/stack/mccloud/deploy4.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy5.sh.j2"
-    dest: "/home/stack/deploy5.sh"
+    dest: "/home/stack/mccloud/deploy5.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy6.sh.j2"
-    dest: "/home/stack/deploy6.sh"
+    dest: "/home/stack/mccloud/deploy6.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy7.sh.j2"
-    dest: "/home/stack/deploy7.sh"
+    dest: "/home/stack/mccloud/deploy7.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy8.sh.j2"
-    dest: "/home/stack/deploy8.sh"
+    dest: "/home/stack/mccloud/deploy8.sh"
     mode: "0744"
   - src: "templates/deploy-sh/deploy9.sh.j2"
-    dest: "/home/stack/deploy9.sh"
+    dest: "/home/stack/mccloud/deploy9.sh"
     mode: "0744"
 
 
@@ -444,7 +436,7 @@ tmux_install_shell: |
   tmux send-keys "cd /var/log" C-m
   tmux new-window -t install:2 -n 'deploy-microcloud-log'
   tmux send-keys "su - stack" C-m
-  tmux send-keys "cd /home/stack/log" C-m
+  tmux send-keys "cd /home/stack/mccloud/log" C-m
   tmux new-window -t install:3 -n 'undercloud'
   tmux send-keys "su - stack" C-m
   tmux send-keys ". stackrc" C-m
