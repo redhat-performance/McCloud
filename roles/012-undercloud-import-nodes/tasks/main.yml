@@ -33,7 +33,6 @@
       shell: |
         cp /home/stack/instackenv.json {{log_dir}}/instackenv.json
         cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.json
-        cp /home/stack/invalid-nodes.yaml {{log_dir}}/invalid-nodes.yaml
       ignore_errors: true
 
     - name: Collect validate instackenv.json Artifacts
