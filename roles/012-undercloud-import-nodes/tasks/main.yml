@@ -137,7 +137,26 @@
       fail:
         msg: "Too many invalid nodes - {{total_node_failure_count|int}}"
       when: total_node_failure_count|int > node_failure_tolerance_count
+
+    # If node_failure_tolerance_count cleared, we need to remove the "failed nodes" from instackenv.valid.json and OpenStack Ironic
+    - name: Remove failed no introspection node provide nodes
+      shell: |
+        set -o pipefail
+        . /home/stack/stackrc
+        openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c uuid -c driver_info % > {{log_dir}}/006-nodes-to-delete.log
+        for node_ipmi in `openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c driver_info -f yaml % | grep "ipmi_address" | awk '{print $2}'`
+        do
+          cat /home/stack/instackenv.valid.json | jq  '{ nodes: [ .nodes[] | select(.pm_addr=="$node_ipmi" | not) | .cpu="4" | .memory="60000" | .disk="50" |  .  ]}' > /home/stack/intermediate.json
+          python -m json.tool /home/stack/intermediate.json /home/stack/instackenv.valid.json
+          rm -f /home/stack/intermediate.json
+        done
+        openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node delete % 2>&1 | tee -a {{log_dir}}/006-node-delete.log
   always:
+    - name: Recollect instackenv.valid.json
+      shell: |
+        cp /home/stack/instackenv.valid.json {{log_dir}}/node-provide-instackenv.valid.json
+      ignore_errors: true
+
     - name: Collect No Introspection node provide Artifacts
       synchronize:
         src: "{{log_dir}}"
