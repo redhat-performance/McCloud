@@ -94,7 +94,7 @@ external_vlan_device: enp1s0f0.{{external_vlan}}
 external_undercloud_interface: enp2s0f0
 private_external_address: 172.21.0.1
 private_external_netmask: 255.255.0.0
-# Set baremetal nodes to provide timeout
+# Set baremetal nodes to provide timeout (when introspection disabled only)
 node_provide_timeout: 1800
 # Modify instackenv.json file to not require introspection
 instackenv_no_introspection: true

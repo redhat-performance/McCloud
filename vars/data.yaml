@@ -1,6 +1,10 @@
 ---
 # Vars that should never be touched when running
 
+# Total count of node failures accumlated as various tasks are run that can detect node failures
+# if this exceeds node_failure_tolerance_count then playbook should fail
+total_node_failure_count: 0
+
 # Deployment Scenarios with a human readable format
 deploy_scenario_human:
   microcloud:
