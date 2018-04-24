@@ -167,6 +167,10 @@
       when:
         - deploy_browbeat
         - browbeat_run
+  post_tasks:
+    - debug:
+        msg: "Deployed with {{total_node_failure_count}} failures"
+      when: total_node_failure_count|int > 0
 
     # Bugs/Thoughts
     # * Improve name ordering of tasks 000, 050, 100, 200 ... etc

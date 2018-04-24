@@ -61,7 +61,7 @@ for node in `ironic --json node-list | jq -r '.[]| select(.["provision_state"] =
 done
 
 introspect 15m
-introspect 30m
-introspect 60m
+introspect 15m
+introspect 15m
 
 ### --stop_docs

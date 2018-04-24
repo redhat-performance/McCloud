@@ -25,9 +25,9 @@
         total_node_failure_count: "{{total_node_failure_count|int + failed_node_count.stdout|int}}"
 
     # If we tolerate node failures, then check if we failed too many
-    - name: Check failed node count ({{ total_node_failure_count|int}} > {{node_failure_tolerance_count}})
+    - name: "Check failed node count (Failure Count: {{ total_node_failure_count|int}} > Tolerance: {{node_failure_tolerance_count}})"
       fail:
-        msg: "Too many invalid nodes - {{total_node_failure_count|int}}"
+        msg: "Too many failed nodes - {{total_node_failure_count|int}}"
       when: total_node_failure_count|int > node_failure_tolerance_count
   always:
     - name: Collect validate-instackenv.py items
@@ -101,7 +101,7 @@
         . /home/stack/stackrc
         { time timeout {{node_provide_timeout}} openstack overcloud node provide --all-manageable 2>&1 | tee -a {{log_dir}}/006-overcloud-node-provide.log ; } 2>> {{log_dir}}/006-overcloud-node-provide.log
 
-    - name: Count stuck/failed nodes in clean failed/clean wait
+    - name: Check for stuck/failed nodes in clean failed/clean wait
       shell: |
         . /home/stack/stackrc
         openstack baremetal node list | egrep "clean failed|clean wait" -i -c
@@ -127,7 +127,7 @@
         msg: "Failed nodes and node_failure_tolerance is false"
       when: not node_failure_tolerance
 
-    - name: Count failed cleaning nodes (Or nodes stuck in clean wait after timeout)
+    - name: Count failed nodes (nodes stuck in clean failed/wait after timeout)
       shell: |
         . /home/stack/stackrc
         openstack baremetal node list | egrep "clean failed|clean wait" -i -c
@@ -139,9 +139,9 @@
         total_node_failure_count: "{{total_node_failure_count|int + failed_node_count.stdout|int}}"
 
     # If we tolerate node failures, then check if we failed too many
-    - name: Check invalid node count ({{ total_node_failure_count|int}} > {{node_failure_tolerance_count}})
+    - name: "Check failed node count (Failure Count: {{ total_node_failure_count|int}} > Tolerance: {{node_failure_tolerance_count}})"
       fail:
-        msg: "Too many invalid nodes - {{total_node_failure_count|int}}"
+        msg: "Too many failed nodes - {{total_node_failure_count|int}}"
       when: total_node_failure_count|int > node_failure_tolerance_count
 
     # If node_failure_tolerance_count cleared, we need to remove the "failed nodes" from instackenv.valid.json and OpenStack Ironic
