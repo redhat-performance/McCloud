@@ -9,6 +9,7 @@
       shell: |
         set -o pipefail
         { time python /home/stack/mccloud/node-assignment.py -i /home/stack/instackenv.valid.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/mccloud/deploy-scenarios.yaml -p /home/stack/templates/pin/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ 2>&1 | tee -a {{log_dir}}/009-generate-yamls.log ; } 2>> {{log_dir}}/009-generate-yamls.log
+      when: not is_redeploy
 
     - name: Check if "install" tmux exists
       become: true
@@ -28,13 +29,16 @@
         openstack stack list | grep -q overcloud
       register: overcloud_exists
       ignore_errors: true
-      when: redeploy_cleanup_existing_overcloud
+      when:
+        - is_redeploy
+        - redeploy_cleanup_existing_overcloud
 
     - name: (Redeploy) Delete existing overcloud
       shell: |
         . /home/stack/stackrc
         yes | openstack stack delete overcloud
       when:
+        - is_redeploy
         - redeploy_cleanup_existing_overcloud
         - not overcloud_exists.failed
 
@@ -51,6 +55,7 @@
       delay: 5
       ignore_errors: true
       when:
+        - is_redeploy
         - redeploy_cleanup_existing_overcloud
         - not overcloud_exists.failed
 
@@ -64,6 +69,7 @@
       retries: 24
       delay: 5
       when:
+        - is_redeploy
         - redeploy_cleanup_existing_overcloud
         - not overcloud_exists.failed
 
@@ -80,6 +86,7 @@
       delay: 5
       ignore_errors: true
       when:
+        - is_redeploy
         - redeploy_cleanup_existing_overcloud
         - not overcloud_exists.failed
 

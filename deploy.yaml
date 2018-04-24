@@ -98,9 +98,7 @@
 # Overcloud Ready for Deployment now:
     - role: 016-overcloud-deploy
       when: deploy_overcloud
-      # Force var to false for overcloud deploy role in this context
-      redeploy_cleanup_existing_overcloud: false
-
+      is_redeploy: false
     - role: 017-browbeat-generate-overcloud-hosts
       when: deploy_browbeat
     - role: 018-browbeat-deploy-overcloud-collectd

@@ -42,6 +42,7 @@
       when: deploy_browbeat
     - role: 016-overcloud-deploy
       when: deploy_overcloud
+      is_redeploy: true
     - role: 017-browbeat-generate-overcloud-hosts
       when: deploy_browbeat
     - role: 018-browbeat-deploy-overcloud-collectd
