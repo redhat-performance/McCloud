@@ -8,7 +8,7 @@
     - name: Generate pin and deploy yamls files off instackenv.valid.json
       shell: |
         set -o pipefail
-        { time python /home/stack/mccloud/node-assignment.py -i /home/stack/instackenv.valid.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/mccloud/deploy-scenarios.yaml -p /home/stack/templates/pin/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ 2>&1 | tee -a {{log_dir}}/009-generate-yamls.log ; } 2>> {{log_dir}}/009-generate-yamls.log
+        { time python /home/stack/mccloud/node-assignment.py -i /home/stack/instackenv.valid.json -r "{{node_assign_regex[hardware_deployed]}}" -s /home/stack/mccloud/deploy-scenarios.yaml -p /home/stack/templates/pin/ -y /home/stack/templates/ -n /home/stack/templates/nic-configs/ 2>&1 | tee -a {{log_dir}}/016-0-generate-yamls.log ; } 2>> {{log_dir}}/016-0-generate-yamls.log
       when: not is_redeploy
 
     - name: Check if "install" tmux exists
@@ -95,7 +95,7 @@
         . /home/stack/stackrc
         /home/stack/mccloud/deploy{{deploy_scenario}}.sh {{log_dir}}
   rescue:
-     # Collect additional items to sweep into deployment-log for debugging in event of failure
+     # Collect additional items to sweep into mccloud-log for debugging in event of failure
     - name: Collect OpenStack Ironic/Heat/Mistral/Nova log files
       become: true
       shell: |
@@ -114,11 +114,11 @@
       shell:  |
         set -o pipefail
         . /home/stack/stackrc
-        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/openstack-baremetal-node-list.log
-        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/openstack-baremetal-node-show.log
-        openstack server list --all 2>&1 | tee -a {{log_dir}}/openstack-server-node-list.log
-        openstack stack resource list overcloud 2>&1 | tee -a {{log_dir}}/openstack-stack-resource-list.log
-        openstack stack failures list overcloud 2>&1 | tee -a {{log_dir}}/openstack-stack-failures-list.log
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/016-0-openstack-baremetal-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/016-0-openstack-baremetal-node-show.log
+        openstack server list --all 2>&1 | tee -a {{log_dir}}/016-0-openstack-server-node-list.log
+        openstack stack resource list overcloud 2>&1 | tee -a {{log_dir}}/016-0-openstack-stack-resource-list.log
+        openstack stack failures list overcloud 2>&1 | tee -a {{log_dir}}/016-0-openstack-stack-failures-list.log
 
     - name: Ensure playbook stops under this condition
       fail:
@@ -127,6 +127,6 @@
     - name: Collect Deploy/Redeploy Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts

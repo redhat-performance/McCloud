@@ -9,11 +9,11 @@
       shell: |
         set -o pipefail
         cd /home/stack/browbeat/ansible
-        { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a {{log_dir}}/103-browbeat-install.log ; } 2>> {{log_dir}}/103-browbeat-install.log
+        { time ansible-playbook -i hosts install/browbeat.yml 2>&1 | tee -a {{log_dir}}/027-0-browbeat-install.log ; } 2>> {{log_dir}}/027-0-browbeat-install.log
   always:
     - name: Collect Browbeat Install Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts

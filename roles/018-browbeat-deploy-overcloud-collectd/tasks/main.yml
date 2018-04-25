@@ -9,11 +9,11 @@
       shell: |
         set -o pipefail
         cd /home/stack/browbeat/ansible
-        { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 50 --skip-tags undercloud 2>&1 | tee -a {{log_dir}}/102-collectd-overcloud-install.log ; } 2>> {{log_dir}}/102-collectd-overcloud-install.log
+        { time ansible-playbook -i hosts install/collectd-openstack.yml --forks 50 --skip-tags undercloud 2>&1 | tee -a {{log_dir}}/018-0-collectd-overcloud-install.log ; } 2>> {{log_dir}}/018-0-collectd-overcloud-install.log
   always:
     - name: Collect Install Overcloud collectd Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts

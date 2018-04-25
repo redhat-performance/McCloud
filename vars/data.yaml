@@ -5,6 +5,9 @@
 # if this exceeds node_failure_tolerance_count then playbook should fail
 total_node_failure_count: 0
 
+# Password installed onto overcloud images for access through remote console
+overcloud_image_password: password
+
 # Deployment Scenarios with a human readable format
 deploy_scenario_human:
   microcloud:

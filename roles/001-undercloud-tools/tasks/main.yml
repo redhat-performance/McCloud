@@ -3,12 +3,13 @@
 # Install and terminal multiplexers (tmux and screen) and copy over tmux_scripts
 #
 
-- name: Install terminal multiplexers
+- name: Install terminal multiplexers and tools
   yum:
     name: "{{item}}"
   with_items:
     - tmux
     - screen
+    - libguestfs-tools
 
 - name: Deploy .tmux.conf
   copy:

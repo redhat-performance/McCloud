@@ -63,7 +63,7 @@
       delegate_to: localhost
   roles:
     - role: 000-undercloud-repos
-    - role: 001-undercloud-terminal-multiplexers
+    - role: 001-undercloud-tools
     - role: 002-undercloud-update-reboot
     - role: 003-undercloud-setup-stack-user
     - role: 004-undercloud-install-tripleo
@@ -166,19 +166,19 @@
         - deploy_browbeat
         - browbeat_run
   post_tasks:
-    - debug:
+    - name: "Deployed with {{total_node_failure_count}} failures"
+      debug:
         msg: "Deployed with {{total_node_failure_count}} failures"
       when: total_node_failure_count|int > 0
 
     # Bugs/Thoughts
-    # * Improve name ordering of tasks 000, 050, 100, 200 ... etc
     # * Improve organization of different hardware configs
     # * Handle heterogeneous hardware types
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Hypervisor install for microcloud hardware (Remove beaker dependency)
     # * Robust option for introspection (Node fails introspection, remove from deploy if tolerated)
-    # Speed Ups:
+    # Speed Ups Ideas:
     # * Concurrent collectd installs (across node types)
     # * Browbeat workload vms built beforehand
     # * Shaker workload vms built beforehand

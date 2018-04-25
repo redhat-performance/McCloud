@@ -9,11 +9,11 @@
       shell: |
         set -o pipefail
         cd /home/stack/browbeat/ansible
-        { time  ansible-playbook -i hosts install/grafana-dashboards.yml -e 'upload_general=false upload_static=false upload_templated=false' 2>&1 | tee -a {{log_dir}}/104-grafana-dashboards.log ; } 2>> {{log_dir}}/104-grafana-dashboards.log
+        { time  ansible-playbook -i hosts install/grafana-dashboards.yml -e 'upload_general=false upload_static=false upload_templated=false' 2>&1 | tee -a {{log_dir}}/028-0-grafana-dashboards.log ; } 2>> {{log_dir}}/028-0-grafana-dashboards.log
   always:
     - name: Collect Deploy Grafana Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts

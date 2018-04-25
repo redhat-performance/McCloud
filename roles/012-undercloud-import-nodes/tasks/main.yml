@@ -9,7 +9,7 @@
       shell: |
         set -o pipefail
         cd /home/stack/
-        { time python /home/stack/mccloud/validate-instackenv.py -i /home/stack/instackenv.json -o /home/stack/instackenv.valid.json -f {{log_dir}}/invalid-nodes.yaml -u {{inventory_hostname_short}} 2>&1 | tee -a {{log_dir}}/003-validate-instackenv.log ; } 2>> {{log_dir}}/003-validate-instackenv.log
+        { time python /home/stack/mccloud/validate-instackenv.py -i /home/stack/instackenv.json -o /home/stack/instackenv.valid.json -f {{log_dir}}/012-invalid-nodes.yaml -u {{inventory_hostname_short}} 2>&1 | tee -a {{log_dir}}/012-0-validate-instackenv.log ; } 2>> {{log_dir}}/012-0-validate-instackenv.log
   rescue:
     - name: Check if failed nodes tolerated
       fail:
@@ -17,7 +17,7 @@
       when: not node_failure_tolerance
 
     - name: Count failed nodes (invalid instackenv nodes)
-      shell: cat {{log_dir}}/invalid-nodes.yaml | wc -l
+      shell: cat {{log_dir}}/012-invalid-nodes.yaml | wc -l
       register: failed_node_count
 
     - name: Accumlate node failures into total_node_failure_count
@@ -39,7 +39,7 @@
     - name: Collect validate instackenv.json Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts
 
@@ -57,16 +57,16 @@
       shell: |
         set -o pipefail
         . /home/stack/stackrc
-        { time openstack overcloud node import /home/stack/instackenv.valid.json 2>&1 | tee -a {{log_dir}}/004-import-instackenv.log ; } 2>> {{log_dir}}/004-import-instackenv.log
+        { time openstack overcloud node import /home/stack/instackenv.valid.json 2>&1 | tee -a {{log_dir}}/012-1-import-instackenv.log ; } 2>> {{log_dir}}/012-1-import-instackenv.log
 
     - name: Configure boot
       shell: |
         set -o pipefail
         . /home/stack/stackrc
-        { time openstack overcloud node configure --all-manageable 2>&1 | tee -a {{log_dir}}/005-configure-boot.log ; } 2>> {{log_dir}}/005-configure-boot.log
+        { time openstack overcloud node configure --all-manageable 2>&1 | tee -a {{log_dir}}/012-2-configure-boot.log ; } 2>> {{log_dir}}/012-2-configure-boot.log
       when: version >= 13
   rescue:
-    # Collect additional items to sweep into deployment-log for debugging
+    # Collect additional items to sweep into mccloud-log for debugging
     - name: Collect OpenStack Ironic log files
       become: true
       shell: |
@@ -77,8 +77,8 @@
       shell:  |
         set -o pipefail
         . /home/stack/stackrc
-        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/node-list.log
-        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/node-show.log
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/012-0-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/012-0-node-show.log
 
     # None "typical" failure here so fail playbook out (no node failure tolerance)
     - name: Ensure playbook stops under this condition
@@ -88,7 +88,7 @@
     - name: Collect Import/Configure Nodes Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts
 
@@ -99,7 +99,7 @@
       shell: |
         set -o pipefail
         . /home/stack/stackrc
-        { time timeout {{node_provide_timeout}} openstack overcloud node provide --all-manageable 2>&1 | tee -a {{log_dir}}/006-overcloud-node-provide.log ; } 2>> {{log_dir}}/006-overcloud-node-provide.log
+        { time timeout {{node_provide_timeout}} openstack overcloud node provide --all-manageable 2>&1 | tee -a {{log_dir}}/012-3-overcloud-node-provide.log ; } 2>> {{log_dir}}/012-3-overcloud-node-provide.log
 
     - name: Check for stuck/failed nodes in clean failed/clean wait
       shell: |
@@ -108,7 +108,7 @@
       register: nodes_stuck
       failed_when: nodes_stuck.rc == 0
   rescue:
-    # Collect additional items to sweep into deployment-log for debugging failure
+    # Collect additional items to sweep into mccloud-log for debugging failure
     - name: Collect OpenStack Ironic log files
       become: true
       shell: |
@@ -119,8 +119,8 @@
       shell:  |
         set -o pipefail
         . /home/stack/stackrc
-        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/006-node-list.log
-        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/006-node-show.log
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/012-1-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/012-1-node-show.log
 
     - name: Check if failed nodes tolerated
       fail:
@@ -149,25 +149,25 @@
       shell: |
         set -o pipefail
         . /home/stack/stackrc
-        openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c uuid -c driver_info % > {{log_dir}}/006-nodes-to-delete.log
+        openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c uuid -c driver_info % > {{log_dir}}/012-0-nodes-to-delete.log
         for node_ipmi in `openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c driver_info -f yaml % | grep "ipmi_address" | awk '{print $2}'`
         do
           cat /home/stack/instackenv.valid.json | jq  "{ nodes: [ .nodes[] | select(.pm_addr==\"${node_ipmi}\" | not) | .cpu=\"4\" | .memory=\"60000\" | .disk=\"50\" |  .  ]}" > /home/stack/intermediate.json
           python -m json.tool /home/stack/intermediate.json /home/stack/instackenv.valid.json
           rm -f /home/stack/intermediate.json
         done
-        openstack baremetal node list | egrep "clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node abort % 2>&1 | tee -a {{log_dir}}/006-node-abort.log
-        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node maintenance set % 2>&1 | tee -a {{log_dir}}/006-node-maintenance-set.log
-        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node delete % 2>&1 | tee -a {{log_dir}}/006-node-delete-clean-failed.log
+        openstack baremetal node list | egrep "clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node abort % 2>&1 | tee -a {{log_dir}}/012-0-node-abort.log
+        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node maintenance set % 2>&1 | tee -a {{log_dir}}/012-0-node-maintenance-set.log
+        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node delete % 2>&1 | tee -a {{log_dir}}/012-0-node-delete-clean-failed.log
   always:
     - name: Recollect instackenv.valid.json
       shell: |
-        cp /home/stack/instackenv.valid.json {{log_dir}}/node-provide-instackenv.valid.json
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.nodeprovide.json
       ignore_errors: true
 
     - name: Collect No Introspection node provide Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts

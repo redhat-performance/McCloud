@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 ts=$(date -u +%Y%m%d-%H%M%S)
 if [ -z "$1" ]; then
-  log=/home/stack/mccloud/log/099-deploy6-${ts}.log
+  log=/home/stack/mccloud/log/016-deploy6-${ts}.log
 else
-  log="$1/099-deploy6-${ts}.log"
+  log="$1/016-deploy6-${ts}.log"
 fi
 date -u >> ${log}
 

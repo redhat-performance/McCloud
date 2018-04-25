@@ -8,7 +8,7 @@
     - name: Install undercloud
       shell: |
         set -o pipefail
-        { time openstack undercloud install 2>&1 | tee -a {{log_dir}}/001-install-undercloud.log ; } 2>> {{log_dir}}/001-install-undercloud.log
+        { time openstack undercloud install 2>&1 | tee -a {{log_dir}}/007-0-install-undercloud.log ; } 2>> {{log_dir}}/007-0-install-undercloud.log
 
     # Allows more ssh connections through the undercloud which can occur in specific circumstances
     # Ex: Ansible jump hosting through Undercloud to multiple Overcloud machines
@@ -41,15 +41,22 @@
         - /usr/share/rhosp-director-images/overcloud-full-latest-{{version}}.0.tar
         - /usr/share/rhosp-director-images/ironic-python-agent-latest-{{version}}.0.tar
 
+    - name: Add root password directly to overcloud image
+      shell: |
+        cd /home/stack/images
+        virt-customize -a overcloud-full.qcow2 --root-password password:{{overcloud_image_password}}
+      environment:
+        LIBGUESTFS_BACKEND: direct
+
     - name: Upload overcloud images
       shell: |
         set -o pipefail
         . /home/stack/stackrc
-        { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a {{log_dir}}/002-upload-images.log ; } 2>> {{log_dir}}/002-upload-images.log
+        { time openstack overcloud image upload --image-path /home/stack/images/ 2>&1 | tee -a {{log_dir}}/007-1-upload-images.log ; } 2>> {{log_dir}}/007-1-upload-images.log
   always:
     - name: Collect Install Undercloud Artifacts
       synchronize:
         src: "{{log_dir}}"
-        dest: "{{artifact_dir}}/deployment-log"
+        dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts
