@@ -1,0 +1,91 @@
+---
+#
+# Perform Introspection of Overcloud Nodes
+#
+
+- name: Introspection Script Block
+  block:
+    - name: Run introspection with retry script
+      shell: |
+        set -o pipefail
+        { time bash /home/stack/mccloud/introspect.sh 2>&1 | tee -a {{log_dir}}/013-1-introspection-script.log ; } 2>> {{log_dir}}/013-1-introspection-script.log
+  rescue:
+     # Collect additional items to sweep into mccloud-log for debugging in event of failure
+    - name: Collect OpenStack Ironic log files
+      become: true
+      shell: |
+        mkdir -p {{log_dir}}/ironic
+        cp -r /var/log/ironic/* {{log_dir}}/ironic
+
+    - name: Dump baremetal node list
+      shell:  |
+        set -o pipefail
+        . /home/stack/stackrc
+        openstack baremetal node list 2>&1 | tee -a {{log_dir}}/013-0-node-list.log
+        openstack baremetal node list | grep None | awk '{print $2}' | xargs -I % openstack baremetal node show % 2>&1 | tee -a {{log_dir}}/013-0-node-show.log
+
+    - name: Check if failed nodes tolerated
+      fail:
+        msg: "Failed nodes and node_failure_tolerance is false"
+      when: not node_failure_tolerance
+
+    - name: Count failed nodes (nodes stuck in clean failed/wait after timeout)
+      shell: |
+        . /home/stack/stackrc
+        openstack baremetal node list | egrep "clean failed|clean wait" -i -c
+      ignore_errors: true
+      register: failed_node_count
+
+    - name: Accumlate node failures into total_node_failure_count
+      set_fact:
+        total_node_failure_count: "{{total_node_failure_count|int + failed_node_count.stdout|int}}"
+
+    # If we tolerate node failures, then check if we failed too many
+    - name: "Check failed node count (Failure Count: {{ total_node_failure_count|int}} > Tolerance: {{node_failure_tolerance_count}})"
+      fail:
+        msg: "Too many failed nodes - {{total_node_failure_count|int}}"
+      when: total_node_failure_count|int > node_failure_tolerance_count
+
+    # If node_failure_tolerance_count cleared, we need to remove the "failed nodes" from instackenv.valid.json and OpenStack Ironic
+    - name: Remove failed introspection nodes
+      shell: |
+        set -o pipefail
+        . /home/stack/stackrc
+        openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c uuid -c driver_info % > {{log_dir}}/013-0-nodes-to-delete.log
+        for node_ipmi in `openstack baremetal node list | egrep "clean failed|clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node show -c driver_info -f yaml % | grep "ipmi_address" | awk '{print $2}'`
+        do
+          cat /home/stack/instackenv.valid.json | jq  "{ nodes: [ .nodes[] | select(.pm_addr==\"${node_ipmi}\" | not) | .cpu=\"4\" | .memory=\"60000\" | .disk=\"50\" |  .  ]}" > /home/stack/intermediate.json
+          python -m json.tool /home/stack/intermediate.json /home/stack/instackenv.valid.json
+          rm -f /home/stack/intermediate.json
+        done
+        openstack baremetal node list | egrep "clean wait" -i | awk '{print $2}' | xargs -I % openstack baremetal node abort % 2>&1 | tee -a {{log_dir}}/013-0-node-abort.log
+        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node maintenance set % 2>&1 | tee -a {{log_dir}}/013-0-node-maintenance-set.log
+        openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node delete % 2>&1 | tee -a {{log_dir}}/013-0-node-delete-clean-failed.log
+  always:
+    - name: Collect Introspection Script Artifacts
+      synchronize:
+        src: "{{log_dir}}"
+        dest: "{{artifact_dir}}/mccloud-log"
+        mode: pull
+      when: collect_artifacts
+
+- name: Introspection-data Block
+  block:
+    - name: Generate introspection-data
+      shell: |
+        . /home/stack/stackrc
+        mkdir /home/stack/introspection-data
+        for i in `openstack baremetal node list | grep 'None' | awk '{print $2}'`; do openstack baremetal introspection data save $i > /home/stack/introspection-data/$i; done
+  always:
+    - name: Copy introspection data
+      become: true
+      shell: |
+        mkdir -p {{log_dir}}/introspection-data
+        cp -r /home/stack/introspection-data/* {{log_dir}}/introspection-data
+
+    - name: Collect Introspection-data Artifacts
+      synchronize:
+        src: "{{log_dir}}"
+        dest: "{{artifact_dir}}/mccloud-log"
+        mode: pull
+      when: collect_artifacts

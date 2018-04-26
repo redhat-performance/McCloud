@@ -89,8 +89,14 @@
         - deploy_browbeat
         - deploy_undercloud_collectd
     - role: 012-undercloud-import-nodes
-    - role: 013-undercloud-introspect-overcloud-nodes
-      when: introspection_enabled
+    - role: 013-undercloud-bulkintrospect-overcloud-nodes
+      when:
+        - introspection_enabled
+        - bulk_introspection
+    - role: 013-undercloud-introspectionscript-overcloud-nodes
+      when:
+        - introspection_enabled
+        - not bulk_introspection
     - role: 014-undercloud-setup-container-registry
       when: version >= 12
     - role: 015-undercloud-deploy-workarounds
@@ -177,7 +183,6 @@
     # * Capture Memory usage?
     # * Auto install: sysstat, strace
     # * Hypervisor install for microcloud hardware (Remove beaker dependency)
-    # * Robust option for introspection (Node fails introspection, remove from deploy if tolerated)
     # Speed Ups Ideas:
     # * Concurrent collectd installs (across node types)
     # * Browbeat workload vms built beforehand
