@@ -79,6 +79,11 @@
         openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node maintenance set % 2>&1 | tee -a {{log_dir}}/013-3-node-maintenance-set.log
         openstack baremetal node list | egrep "clean failed" -i | awk '{print $2}' | xargs -I % openstack baremetal node delete % 2>&1 | tee -a {{log_dir}}/013-3-node-delete-clean-failed.log
   always:
+    - name: Recollect instackenv.valid.json
+      shell: |
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.nodeprovide.json
+      ignore_errors: true
+
     - name: Collect Bulk Introspection Artifacts
       synchronize:
         src: "{{log_dir}}"
