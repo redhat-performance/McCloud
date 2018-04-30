@@ -142,8 +142,6 @@ deploy_files:
     mode: "0744"
   - src: files/{{hardware_deployed}}/deploy-scenarios.yaml
     dest: /home/stack/mccloud/deploy-scenarios.yaml
-  - src: files/scheduler-hints.yaml
-    dest: /home/stack/templates/scheduler-hints.yaml
   - src: files/wipe-disks.yaml
     dest: /home/stack/templates/firstboot/wipe-disks.yaml
   - src: files/wipe-disk.sh
@@ -362,6 +360,8 @@ deploy_hardware_specific_templates:
 deploy_templates:
   - src: "templates/introspect.sh.j2"
     dest: "/home/stack/mccloud/introspect.sh"
+  - src: templates/scheduler-hints.yaml.j2
+    dest: /home/stack/templates/scheduler-hints.yaml
 
   - src: "templates/deploy-sh/deploy0.sh.j2"
     dest: "/home/stack/mccloud/deploy0.sh"

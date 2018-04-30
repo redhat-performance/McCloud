@@ -3,8 +3,13 @@ parameter_defaults:
     'capabilities:node': 'controller-%index%'
   NetworkerSchedulerHints:
     'capabilities:node': 'networker-%index%'
+{% if version == 10 %}
   NovaComputeSchedulerHints:
     'capabilities:node': 'novacompute-%index%'
+{% else %}
+  ComputeSchedulerHints:
+    'capabilities:node': 'novacompute-%index%'
+{% endif %}
   ComputeHCISchedulerHints:
     'capabilities:node': 'computehci-%index%'
   BlockStorageSchedulerHints:
