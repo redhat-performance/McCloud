@@ -10,6 +10,31 @@
     - version == 12
     - pike_objectstorage_deploy_workaround
 
+- name: Pike(12)/Ocata(11) - Tune Keystone processes from singular to '{{tune_undercloud_keystone_processes_count}}' fix
+  become: true
+  lineinfile:
+    path: "{{item}}"
+    state: present
+    regexp: '^([\t\s]*WSGIDaemonProcess.*)processes=[0-9]+ threads=[0-9]+(.*)$'
+    line: '\1processes={{tune_undercloud_keystone_processes_count}} threads=6\2'
+    backup: true
+    backrefs: true
+  with_items:
+    - /etc/httpd/conf.d/10-keystone_wsgi_admin.conf
+    - /etc/httpd/conf.d/10-keystone_wsgi_main.conf
+  when:
+    - version == 12 or version == 11
+    - undercloud_keystone_processes_workaround
+
+- name: Pike(12)/Ocata(11) - Restart httpd hosting Keystone
+  become: true
+  service:
+    name: httpd
+    state: restarted
+  when:
+    - version == 12 or version == 11
+    - undercloud_keystone_processes_workaround
+
 - name: Newton(10) - Apply ObjectStorage THT fix
   shell: find /usr/share/openstack-tripleo-heat-templates/ -type f -exec sed -i 's/OS::TripleO::SwiftStorage/OS::TripleO::ObjectStorage/g' {} \;
   become: true

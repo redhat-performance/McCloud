@@ -75,6 +75,9 @@ linpack_url: http://registrationcenter-download.intel.com/akdlm/irc_nas/9752/l_m
 
 # "Possibly" temporary workarounds:
 pike_objectstorage_deploy_workaround: true
+# Pike(12)/Ocata(11) Undercloud Keystone
+undercloud_keystone_processes_workaround: true
+tune_undercloud_keystone_processes_count: 24
 newton_objectstorage_deploy_workaround: true
 
 ###########################################
