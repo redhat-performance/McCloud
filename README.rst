@@ -68,8 +68,8 @@ Deployments vs OpenStack Versions
 =  =================================================  ======  =====  ====  ======
 0  1 Controller / X Computes                          Yes     Yes    Yes   Yes
 1  3 Controllers / X Computes                         Yes     Yes    Yes   Yes
-2  1 Controller / 3 CephStorage Nodes / X Computes    Yes     Yes    Yes   No
-3  3 Controllers / 3 CephStorage Nodes / X Compute    Yes     Yes    Yes   No
+2  1 Controller / 3 CephStorage Nodes / X Computes    Yes     Yes    Yes   Yes
+3  3 Controllers / 3 CephStorage Nodes / X Compute    Yes     Yes    Yes   Yes
 4  1 Controller / 3 ObjectStorage Nodes / X Computes  Yes     Yes    Yes   No
 5  1 Controller / 3 BlockStorage Nodes / X Computes   Yes     Yes    Yes   No
 6  1 Controller / 1 Networker / X Computes            No      No     Yes   No
