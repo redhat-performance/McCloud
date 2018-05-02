@@ -2,16 +2,16 @@ mccloud
 =================
 
 Ansible files to deploy a Tripleo Undercloud and Overcloud on the
-Microcloud Hardware and ScaleLab Hardware.
+Microcloud and ScaleLab.
 
 Completes:
 
 * Tripleo Undercloud install
 * Overcloud deployment based on scenario
-* Node failure tolerance (incorrect ipmi, nonresponsive ipmi, clean wait/failed)
+* Node failure tolerance (incorrect ipmi, nonresponsive ipmi, clean wait/failed, failed introspection)
 * Node introspection
 * Node pinning based on overcloud deployment scenario
-* 10 deployment scenarios supported(See Matrix Below) across 4 major versions of OpenStack
+* 10 deployment scenarios supported (See Matrix Below) across 4 major versions of OpenStack
 * Opens “Install” tmux session and deploy scenario tmux scripts included
 * Browbeat Deployment
 * Rally, PerfKit, Shaker and Browbeat workloads pre-installed
@@ -20,12 +20,11 @@ Completes:
 * Runs Browbeat scenario post install
 * Artifacts and timings for tasks
 * Options can be toggled off for vanilla overcloud if needed
-* Handles instackenv/ipmi invalid hardware
 
 
 Initial Deployment Usage:
 
-* Assumes pre-provisioned Baremetal machine for Undercloud (Waits until machine is ready if kicked )
+* Assumes pre-provisioned Baremetal machine for Undercloud (Waits until machine is ready if kicked)
 
 ::
 
@@ -46,8 +45,8 @@ Redeployment Usage:
 
 * Redeploy was only tested on small # of machines (Microcloud - 7 overcloud nodes)
 
-ScaleLab Hardware - SLC1, SLC2
-------------------------------
+ScaleLab - SLC1, SLC2
+---------------------
 
 =  =================================================  ======  =====  ====  ======
 Deployments vs OpenStack Versions
@@ -58,8 +57,8 @@ Deployments vs OpenStack Versions
 1  3 Controllers / X Computes                         Yes     Yes    Yes   Yes
 =  =================================================  ======  =====  ====  ======
 
-Microcloud Hardware
--------------------
+Microcloud Lab
+--------------
 
 =  =================================================  ======  =====  ====  ======
 Deployments vs OpenStack Versions
@@ -77,3 +76,28 @@ Deployments vs OpenStack Versions
 8  1 Controller / X ComputeHCIs                       No      No     Yes   No
 9  3 Controllers / X ComputeHCIs                      No      No     Yes   No
 =  =================================================  ======  =====  ====  ======
+
+New Lab Checklist for integration
+---------------------------------
+
+* lab specific files and nic-configs
+
+  * Create directory in roles/009-undercloud-templates-files/files/(new lab name)
+  * Create directories for nic-configs and nic-configs-13 in above directory
+  * Add nic-configs for both 10,11,12 and 13 (different format)
+  * Create a lab specific deploy-scenarios.yaml in this directory to drive node-assignment.py
+
+* lab specific templates
+
+  * Create directory in roles/009-undercloud-templates-files/templates/(new lab name)
+  * Add network-environment.yaml.j2 to above directory
+  * Add optional storage-environment.yaml.j2
+
+* lab specific data in vars/data.yaml
+
+  * Add to labs_supported list
+  * Add to deploy_scenario_human dictionary
+  * Add a node_assign_regex for determining node hardware type (Ex. r620, sm5039)
+  * Add section to deploy_hardware_specific_nic_configs for the new lab mapping the nic-configs
+  * Add section to deploy_hardware_specific_templates for new lab templates
+  * Add section to tmux_scripts to include only supported deploy scenarios for lab

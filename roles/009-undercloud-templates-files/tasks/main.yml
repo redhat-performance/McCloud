@@ -56,14 +56,14 @@
     group: stack
 
 # Nic-configs Files
-- name: Copy over Tripleo Heat Template nic-config files for "{{hardware_deployed}}"
+- name: Copy over Tripleo Heat Template nic-config files for "{{lab_hardware}}"
   copy:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: stack
     group: stack
     mode: "{{item.mode | default('0644')}}"
-  with_items: "{{deploy_hardware_specific_nic_configs[hardware_deployed][version]}}"
+  with_items: "{{deploy_hardware_specific_nic_configs[lab_hardware][version]}}"
 
 # Templates
 - name: Template out Tripleo Heat Templates and other Scripts/Files
@@ -76,14 +76,14 @@
   with_items: "{{deploy_templates}}"
 
 # Hardware Specific Templates
-- name: Template out Tripleo Heat Templates and other Scripts/Files for "{{hardware_deployed}}"
+- name: Template out Tripleo Heat Templates and other Scripts/Files for "{{lab_hardware}}"
   template:
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     owner: stack
     group: stack
     mode: "{{item.mode | default('0644')}}"
-  with_items: "{{deploy_hardware_specific_templates[hardware_deployed]}}"
+  with_items: "{{deploy_hardware_specific_templates[lab_hardware]}}"
 
 - name: Place version metadata json file in /home/stack
   become: true

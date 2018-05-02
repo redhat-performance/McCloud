@@ -21,4 +21,4 @@
     src: "{{item.src}}"
     dest: "{{item.dest}}"
     mode: 0744
-  with_items: "{{tmux_scripts}}"
+  with_items: "{{tmux_scripts[lab_hardware]}}"

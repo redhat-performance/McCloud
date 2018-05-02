@@ -9,7 +9,15 @@
   remote_user: root
   vars:
     wait_for_ready: true
+  vars_files:
+    - vars/data.yaml
+    - vars/main.yaml
+    - vars/main.local.yaml
   tasks:
+    - name: Check if lab_hardware set to supported labs
+      fail:
+        msg: Did not select lab ({{lab_hardware}}) from supported labs - {{labs_supported}}
+      when: lab_hardware not in labs_supported
     # 30 minute timeout (Incase large machine or foreman rebuild is longer than usual)
     - name: Wait for Machine Ready (Incase machine is rebuilding)
       local_action:

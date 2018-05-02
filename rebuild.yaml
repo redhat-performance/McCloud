@@ -23,12 +23,12 @@
         url: "{{foreman_url}}/api/hosts/{{undercloud_hostname}}"
         user: "{{foreman_user}}"
         validate_certs: false
-      when: hardware_deployed == "scalelab"
+      when: lab_hardware == "scalelab"
 
     - name: Rebuild Scalelab Undercloud Machine
       shell: |
         ipmitool -I lanplus -H mgmt-{{undercloud_hostname}} -U {{ipmi_user}} -P {{ipmi_password}} chassis power cycle
-      when: hardware_deployed == "scalelab"
+      when: lab_hardware == "scalelab"
 
     - name: Wait for Machine Rebuilding
       local_action:

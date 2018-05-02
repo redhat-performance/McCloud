@@ -1,6 +1,11 @@
 ---
 # Vars that should never be touched when running
 
+# Current list of labs supported
+labs_supported:
+  - microcloud
+  - scalelab
+
 # Total count of node failures accumlated as various tasks are run that can detect node failures
 # if this exceeds node_failure_tolerance_count then playbook should fail
 total_node_failure_count: 0
@@ -140,7 +145,7 @@ deploy_files:
   - src: files/pin.py
     dest: /home/stack/mccloud/pin.py
     mode: "0744"
-  - src: files/{{hardware_deployed}}/deploy-scenarios.yaml
+  - src: files/{{lab_hardware}}/deploy-scenarios.yaml
     dest: /home/stack/mccloud/deploy-scenarios.yaml
   - src: files/wipe-disks.yaml
     dest: /home/stack/templates/firstboot/wipe-disks.yaml
@@ -471,23 +476,29 @@ tmux_install_shell: |
 
 # tmux script for each deployment scenario
 tmux_scripts:
-  - src: files/deploy0-tmux.sh
-    dest: /root/deploy0-tmux.sh
-  - src: files/deploy1-tmux.sh
-    dest: /root/deploy1-tmux.sh
-  - src: files/deploy2-tmux.sh
-    dest: /root/deploy2-tmux.sh
-  - src: files/deploy3-tmux.sh
-    dest: /root/deploy3-tmux.sh
-  - src: files/deploy4-tmux.sh
-    dest: /root/deploy4-tmux.sh
-  - src: files/deploy5-tmux.sh
-    dest: /root/deploy5-tmux.sh
-  - src: files/deploy6-tmux.sh
-    dest: /root/deploy6-tmux.sh
-  - src: files/deploy7-tmux.sh
-    dest: /root/deploy7-tmux.sh
-  - src: files/deploy8-tmux.sh
-    dest: /root/deploy8-tmux.sh
-  - src: files/deploy9-tmux.sh
-    dest: /root/deploy9-tmux.sh
+  microcloud:
+    - src: files/deploy0-tmux.sh
+      dest: /root/deploy0-tmux.sh
+    - src: files/deploy1-tmux.sh
+      dest: /root/deploy1-tmux.sh
+    - src: files/deploy2-tmux.sh
+      dest: /root/deploy2-tmux.sh
+    - src: files/deploy3-tmux.sh
+      dest: /root/deploy3-tmux.sh
+    - src: files/deploy4-tmux.sh
+      dest: /root/deploy4-tmux.sh
+    - src: files/deploy5-tmux.sh
+      dest: /root/deploy5-tmux.sh
+    - src: files/deploy6-tmux.sh
+      dest: /root/deploy6-tmux.sh
+    - src: files/deploy7-tmux.sh
+      dest: /root/deploy7-tmux.sh
+    - src: files/deploy8-tmux.sh
+      dest: /root/deploy8-tmux.sh
+    - src: files/deploy9-tmux.sh
+      dest: /root/deploy9-tmux.sh
+  scalelab:
+    - src: files/deploy0-tmux.sh
+      dest: /root/deploy0-tmux.sh
+    - src: files/deploy1-tmux.sh
+      dest: /root/deploy1-tmux.sh

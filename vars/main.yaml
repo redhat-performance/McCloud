@@ -22,7 +22,7 @@ container_namespace: rhosp13
 containers_tag: 2018-03-20.2
 
 # Deploy Scenario:
-hardware_deployed: microcloud
+lab_hardware: microcloud
 deploy_scenario: 0
 deploy_overcloud: true
 redeploy_cleanup_existing_overcloud: true
