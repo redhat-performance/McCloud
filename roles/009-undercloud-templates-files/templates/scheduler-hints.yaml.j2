@@ -3,7 +3,7 @@ parameter_defaults:
     'capabilities:node': 'controller-%index%'
   NetworkerSchedulerHints:
     'capabilities:node': 'networker-%index%'
-{% if version == 10 %}
+{% if version == 10 or version == 11 %}
   NovaComputeSchedulerHints:
     'capabilities:node': 'novacompute-%index%'
 {% else %}
