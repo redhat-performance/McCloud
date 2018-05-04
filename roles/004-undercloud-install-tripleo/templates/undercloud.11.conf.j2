@@ -4,11 +4,6 @@
 # From instack-undercloud
 #
 
-# Local file path to the necessary images. The path should be a
-# directory readable by the current user that contains the full set of
-# images. (string value)
-#image_path = .
-
 # Fully qualified hostname (including domain) to set on the
 # Undercloud. If left unset, the current hostname will be used, but
 # the user is responsible for configuring all system hostname settings
@@ -28,16 +23,21 @@ local_ip = 192.168.0.1/16
 # masquerading. (string value)
 network_gateway = 192.168.0.1
 
-# Virtual IP address to use for the public endpoints of Undercloud
-# services. Only used with SSL. (string value)
-#undercloud_public_vip = 192.168.24.2
+# Virtual IP or DNS address to use for the public endpoints of
+# Undercloud services. Only used with SSL. (string value)
+# Deprecated group/name - [DEFAULT]/undercloud_public_vip
+#undercloud_public_host = 192.168.24.2
 
-# Virtual IP address to use for the admin endpoints of Undercloud
-# services. Only used with SSL. (string value)
-#undercloud_admin_vip = 192.168.24.3
+# Virtual IP or DNS address to use for the admin endpoints of
+# Undercloud services. Only used with SSL. (string value)
+# Deprecated group/name - [DEFAULT]/undercloud_admin_vip
+#undercloud_admin_host = 192.168.24.3
 
 # DNS nameserver(s) to use for the undercloud node. (list value)
 #undercloud_nameservers =
+
+# List of ntp servers to use. (list value)
+undercloud_ntp_servers = {{ntp_server}}
 
 # Certificate file to use for OpenStack service SSL connections.
 # Setting this enables SSL for the OpenStack API endpoints, leaving it
@@ -48,7 +48,7 @@ network_gateway = 192.168.0.1
 # the undercloud install and this certificate will be used in place of
 # the value for undercloud_service_certificate.  The resulting
 # certificate will be written to
-# /etc/pki/tls/certs/undercloud-[undercloud_public_vip].pem.  This
+# /etc/pki/tls/certs/undercloud-[undercloud_public_host].pem.  This
 # certificate is signed by CA selected by the
 # "certificate_generation_ca" option. (boolean value)
 #generate_service_certificate = false
@@ -92,8 +92,8 @@ dhcp_end = 192.168.19.250
 
 # Path to hieradata override file. If set, the file will be copied
 # under /etc/puppet/hieradata and set as the first file in the hiera
-# hierarchy. This can be used to to custom configure services beyond
-# what undercloud.conf provides (string value)
+# hierarchy. This can be used to custom configure services beyond what
+# undercloud.conf provides (string value)
 #hieradata_override =
 
 # Path to network config override template. If set, this template will
@@ -128,6 +128,19 @@ inspection_iprange = 192.168.1.1,192.168.9.250
 # firmware. (boolean value)
 #inspection_enable_uefi = true
 
+# Makes ironic-inspector enroll any unknown node that PXE-boots
+# introspection ramdisk in Ironic. By default, the "fake" driver is
+# used for new nodes (it is automatically enabled when this option is
+# set to True). Set discovery_default_driver to override.
+# Introspection rules can also be used to specify driver information
+# for newly enrolled nodes. (boolean value)
+#enable_node_discovery = false
+
+# The default driver to use for newly discovered nodes (requires
+# enable_node_discovery set to True). This driver is automatically
+# added to enabled_drivers. (string value)
+#discovery_default_driver = pxe_ipmitool
+
 # Whether to enable the debug log level for Undercloud OpenStack
 # services. (boolean value)
 #undercloud_debug = true
@@ -139,14 +152,7 @@ inspection_iprange = 192.168.1.1,192.168.9.250
 # Whether to install Tempest in the Undercloud. (boolean value)
 #enable_tempest = true
 
-# Whether to install Mistral services in the Undercloud. (boolean
-# value)
-#enable_mistral = true
-
-# Whether to install Zaqar services in the Undercloud. (boolean value)
-#enable_zaqar = true
-
-# Whether to install Telemetry services (ceilometer, aodh, gnocchi) in the
+# Whether to install Telemetry services (ceilometer, aodh) in the
 # Undercloud. (boolean value)
 #enable_telemetry = true
 
@@ -157,17 +163,27 @@ inspection_iprange = 192.168.1.1,192.168.9.250
 # (boolean value)
 #enable_validations = true
 
-# Whether to install the Volume service to be boot overcloud nodes
-# from remote volumes. (boolean value)
+# Whether to install the Volume service. It is not currently used in
+# the undercloud. (boolean value)
 #enable_cinder = false
+
+# Whether to enable legacy ceilometer api in the Undercloud. Note:
+# Ceilometer API has been deprecated and will be removed in future
+# release. Please consider moving to gnocchi/Aodh/Panko API instead.
+# (boolean value)
+#enable_legacy_ceilometer_api = true
+
+# Whether to install novajoin metadata service in the Undercloud.
+# (boolean value)
+#enable_novajoin = false
+
+# One Time Password to register Undercloud node with an IPA server.
+# Required when enable_novajoin = True. (string value)
+#ipa_otp =
 
 # Whether to use iPXE for deploy and inspection. (boolean value)
 # Deprecated group/name - [DEFAULT]/ipxe_deploy
 #ipxe_enabled = true
-
-# Whether to store events in the Undercloud Ceilometer. (boolean
-# value)
-#store_events = false
 
 # Maximum number of attempts the scheduler will make when deploying
 # the instance. You should keep it greater or equal to the number of
@@ -190,7 +206,7 @@ clean_nodes = {{node_cleaning}}
 # From instack-undercloud
 #
 
-# Password used for MySQL databases. If left unset, one will be
+# Password used for MySQL root user. If left unset, one will be
 # automatically generated. (string value)
 #undercloud_db_password = <None>
 
@@ -213,6 +229,10 @@ clean_nodes = {{node_cleaning}}
 # Heat service password. If left unset, one will be automatically
 # generated. (string value)
 #undercloud_heat_password = <None>
+
+# Heat cfn service password. If left unset, one will be automatically
+# generated. (string value)
+#undercloud_heat_cfn_password = <None>
 
 # Neutron service password. If left unset, one will be automatically
 # generated. (string value)
@@ -237,6 +257,10 @@ clean_nodes = {{node_cleaning}}
 # Ceilometer service password. If left unset, one will be
 # automatically generated. (string value)
 #undercloud_ceilometer_password = <None>
+
+# Panko service password. If left unset, one will be automatically
+# generated. (string value)
+#undercloud_panko_password = <None>
 
 # Ceilometer metering secret. If left unset, one will be automatically
 # generated. (string value)

@@ -35,7 +35,6 @@
     # Pre-deployment tooling may lay down vlans to test network before hand
     # Lets remove this to avoid confusion when debugging or vlan conflicts
     - name: Clean Validation vlans
-      become: true
       shell: |
         for interface in $(ip -o link show | awk '{print $2}' | grep "@"  | awk '{split($0,interface,"@"); print interface[1]}')
         do

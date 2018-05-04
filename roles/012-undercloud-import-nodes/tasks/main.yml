@@ -33,7 +33,7 @@
     - name: Collect validate-instackenv.py items
       shell: |
         cp /home/stack/instackenv.json {{log_dir}}/instackenv.json
-        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.json
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid0.json
       ignore_errors: true
 
     - name: Collect validate instackenv.json Artifacts
@@ -162,7 +162,7 @@
   always:
     - name: Recollect instackenv.valid.json
       shell: |
-        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.nodeprovide.json
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid1.nodeprovide.json
       ignore_errors: true
 
     - name: Collect No Introspection node provide Artifacts

@@ -189,10 +189,6 @@ local_interface = {{local_interface}}
 # (boolean value)
 #enable_novajoin = false
 
-# Whether to install the Octavia client in the Undercloud. (boolean
-# value)
-#enable_octavia = false
-
 # One Time Password to register Undercloud node with an IPA server.
 # Required when enable_novajoin = True. (string value)
 #ipa_otp =
@@ -370,6 +366,7 @@ clean_nodes = {{node_cleaning}}
 # Network CIDR for the Neutron-managed subnet for Overcloud instances.
 # (string value)
 # Deprecated group/name - [DEFAULT]/network_cidr
+#cidr = 192.168.24.0/24
 cidr = 192.168.0.0/16
 
 # Start of DHCP allocation range for PXE and DHCP of Overcloud
@@ -395,6 +392,7 @@ inspection_iprange = 192.168.1.1,192.168.9.250
 # Network gateway for the Neutron-managed network for Overcloud
 # instances on this network. (string value)
 # Deprecated group/name - [DEFAULT]/network_gateway
+#gateway = 192.168.24.1
 gateway = 192.168.0.1
 
 # The network will be masqueraded for external access. (boolean value)

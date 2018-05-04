@@ -77,7 +77,7 @@
   always:
     - name: Recollect instackenv.valid.json
       shell: |
-        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.clean.json
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid1.clean.json
       ignore_errors: true
 
     - name: Collect Introspection Script Artifacts
@@ -149,7 +149,7 @@
   always:
     - name: Recollect instackenv.valid.json
       shell: |
-        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid.postintrospection.json
+        cp /home/stack/instackenv.valid.json {{log_dir}}/instackenv.valid2.postintrospection.json
       ignore_errors: true
 
     - name: Collect Bulk Introspection Artifacts
