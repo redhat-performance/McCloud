@@ -122,7 +122,7 @@
 
     - name: Ensure playbook stops under this condition
       fail:
-        msg: "Overcloud deploy failures."
+        msg: Overcloud deploy failures.
   always:
     - name: Collect Deploy/Redeploy Artifacts
       synchronize:

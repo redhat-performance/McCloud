@@ -16,6 +16,7 @@
 # portion of the value will be assigned to the network interface
 # defined by local_interface, with the netmask defined by the prefix
 # portion of the value. (string value)
+#local_ip = 192.168.24.1/24
 local_ip = 192.168.0.1/16
 
 # Virtual IP or DNS address to use for the public endpoints of
@@ -33,6 +34,7 @@ local_ip = 192.168.0.1/16
 
 # List of ntp servers to use. (list value)
 #undercloud_ntp_servers =
+undercloud_ntp_servers = {{ntp_server}}
 
 # DNS domain name to use when deploying the overcloud. The overcloud
 # parameter "CloudDomain" must be set to a matching value. (string
@@ -188,6 +190,14 @@ local_interface = {{local_interface}}
 # Whether to install novajoin metadata service in the Undercloud.
 # (boolean value)
 #enable_novajoin = false
+
+# Whether to enable docker container images to be build on the
+# undercloud. (boolean value)
+#enable_container_images_build = true
+
+# Array of host/port combiniations of docker insecure registries.
+# (string value)
+#docker_insecure_registries =
 
 # One Time Password to register Undercloud node with an IPA server.
 # Required when enable_novajoin = True. (string value)

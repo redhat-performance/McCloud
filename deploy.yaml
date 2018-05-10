@@ -55,12 +55,10 @@
       command: "date -u +%Y%m%d-%H%M%S"
       delegate_to: localhost
       register: current_ts
-    # Defines remote log directory
-    - name: Set log directory
+    - name: Set remote log directory
       set_fact:
         log_dir: /home/stack/mccloud/log/{{current_ts.stdout}}
-    # Local artifact directory
-    - name: Set Artifact Directory
+    - name: Set local Artifact Directory
       set_fact:
         artifact_dir: artifacts/{{version}}-deploy{{deploy_scenario}}-{{current_ts.stdout}}
     - name: Ensure artifact directory exists
