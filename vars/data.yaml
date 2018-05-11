@@ -453,25 +453,17 @@ cloud_guest_images:
 tmux_install_shell: |
   tmux -2 new-session -d -s install -n 'root'
   tmux send-keys "cd /var/log" C-m
-  tmux new-window -t install:2 -n 'deploy-microcloud-log'
+  tmux new-window -t install:2 -n 'mccloud-log'
   tmux send-keys "su - stack" C-m
+  tmux send-keys ". stackrc" C-m
   tmux send-keys "cd /home/stack/mccloud/log" C-m
   tmux new-window -t install:3 -n 'undercloud'
   tmux send-keys "su - stack" C-m
   tmux send-keys ". stackrc" C-m
-  tmux send-keys "cd /home/stack/" C-m
   tmux new-window -t install:4 -n 'browbeat-ansible'
   tmux send-keys "su - stack" C-m
   tmux send-keys ". stackrc" C-m
   tmux send-keys "cd /home/stack/browbeat/ansible" C-m
-  tmux new-window -t install:5 -n 'stack-install'
-  tmux send-keys "su - stack" C-m
-  tmux send-keys ". stackrc" C-m
-  tmux split-window -v
-  tmux select-pane -t 1
-  tmux send-keys "su - stack" C-m
-  tmux send-keys ". stackrc" C-m
-  tmux select-pane -t 0
   tmux select-window -t install:2
 
 # tmux script for each deployment scenario
