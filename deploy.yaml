@@ -28,7 +28,7 @@
         timeout: 1800
       when: wait_for_ready
     # Depending on hardware rebuild, we may not have the ssh key exchanged
-    - name: Setup | authorized key upload
+    - name: Setup root authorized key
       authorized_key:
         user: root
         key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

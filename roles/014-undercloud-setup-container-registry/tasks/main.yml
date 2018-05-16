@@ -11,7 +11,7 @@
         path: /etc/sysconfig/docker
         state: present
         regexp: '^INSECURE_REGISTRY='
-        line: 'INSECURE_REGISTRY="--insecure-registry 192.168.0.1:8787 --insecure-registry 192.168.0.3:8787 --insecure-registry {{additional_insecure_registry}}"'
+        line: 'INSECURE_REGISTRY="--insecure-registry 192.168.0.1:8787 --insecure-registry 192.168.0.3:8787 --insecure-registry {{additional_insecure_registry}} --insecure-registry {{additional_ceph_insecure_registry}} "'
 
     - name: Restart Docker registry
       become: true
@@ -21,17 +21,19 @@
 
     - name: Create template to pull images to local registry
       shell: |
-        . /home/stack/stackrc;
-        openstack overcloud container image prepare --namespace {{container_namespace}} --tag {{containers_tag}} --pull-source {{additional_insecure_registry}} --prefix openstack --push-destination 192.168.0.1:8787 --images-file /home/stack/templates/overcloud_containers.yaml
+        . /home/stack/stackrc
+        openstack overcloud container image prepare \
+          --namespace {{additional_insecure_registry}}{{container_namespace}} \
+          --prefix openstack --tag {{containers_tag}} --push-destination 192.168.0.1:8787 \
+          -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
+          --set ceph_namespace={{additional_ceph_insecure_registry}}{{containers_ceph_namespace}}  \
+          --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
+          --output-images-file /home/stack/templates/overcloud_containers.yaml
 
-    # (akrzos) I could not get this command to respond without:
-    # "Error while fetching server API version: ('Connection aborted.', error(13, 'Permission denied'))"
-    # In order to work around this I used Ansible's "become: true" which I am unsure if it will be a
-    # long term solution
     - name: Pull images using the container_images.yaml
       shell: |
         set -o pipefail
-        . /home/stack/stackrc;
+        . /home/stack/stackrc
         { time openstack overcloud container image upload --config-file /home/stack/templates/overcloud_containers.yaml 2>&1 | tee -a {{log_dir}}/014-0-container-image-upload.log ; } 2>> {{log_dir}}/014-0-container-image-upload.log
       become: true
       register: pull_images
@@ -41,8 +43,12 @@
 
     - name: Create template for using images from local registry
       shell: |
-        . /home/stack/stackrc;
-        openstack overcloud container image prepare --tag {{containers_tag}} --namespace 192.168.0.1:8787/{{container_namespace}} --prefix openstack --env-file /home/stack/templates/docker_registry.yaml -r /home/stack/templates/roles_data.yaml
+        . /home/stack/stackrc
+        openstack overcloud container image prepare --namespace 192.168.0.1:8787{{container_namespace}} \
+          --prefix openstack --tag {{containers_tag}} --set ceph_namespace=192.168.0.1:8787{{containers_ceph_namespace}} \
+          --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
+          -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
+          --output-env-file /home/stack/templates/docker_registry.yaml
   always:
     - name: Collect Setup Container Registry Artifacts
       synchronize:

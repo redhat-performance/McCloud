@@ -6,6 +6,7 @@ rhos_release_rpm:
 
 # Pike(12)/Queens(13):
 additional_insecure_registry:
+additional_ceph_insecure_registry:
 
 # Newton(10)/Ocata(11)
 #version: 10
@@ -13,13 +14,27 @@ additional_insecure_registry:
 #rhel_version: 7.4
 #build: "2018-02-06.2" # Newton
 
-# Pike(12)/Queens(13):
+# Pike(12)
+#version: 12
+#rhos_release: 12-director
+#rhel_version: 7.4
+#build: "2018-03-21.1"
+#container_namespace: "/rhosp12"
+#containers_tag: 2018-03-21.1
+#containers_ceph_namespace: "/ceph"
+#containers_ceph_image: rhceph-2-rhel7
+#containers_ceph_tag: 2.4-4
+
+# Queens(13):
 version: 13
 rhos_release: 13-director
 rhel_version: 7.5
-build: "2018-03-20.2" # Queens
-container_namespace: rhosp13
-containers_tag: 2018-03-20.2
+build: "2018-05-07.2"
+container_namespace: "/rhosp13"
+containers_tag: 2018-05-07.2
+containers_ceph_namespace: ""
+containers_ceph_image: rhceph
+containers_ceph_tag: 3-6
 
 # Deploy Scenario:
 lab_hardware: microcloud
