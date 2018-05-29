@@ -1,0 +1,229 @@
+## A Heat environment file which can be used to set up storage
+## backends. Defaults to Ceph used as a backend for Cinder, Glance and
+## Nova ephemeral storage.
+resource_registry:
+{% if version == 13 %}
+  OS::TripleO::Services::CephMgr: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mgr.yaml
+  OS::TripleO::Services::CephMon: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mon.yaml
+  OS::TripleO::Services::CephOSD: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-osd.yaml
+  OS::TripleO::Services::CephClient: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-client.yaml
+{% elif version == 12 %}
+  OS::TripleO::Services::CephMon: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-mon.yaml
+  OS::TripleO::Services::CephOSD: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-osd.yaml
+  OS::TripleO::Services::CephClient: /usr/share/openstack-tripleo-heat-templates/docker/services/ceph-ansible/ceph-client.yaml
+
+{% else %}
+  OS::TripleO::NodeUserData: /home/stack/templates/firstboot/wipe-disks.yaml
+  OS::TripleO::Services::CephMon: /usr/share/openstack-tripleo-heat-templates/puppet/services/ceph-mon.yaml
+  OS::TripleO::Services::CephOSD: /usr/share/openstack-tripleo-heat-templates/puppet/services/ceph-osd.yaml
+  OS::TripleO::Services::CephClient: /usr/share/openstack-tripleo-heat-templates/puppet/services/ceph-client.yaml
+
+{% endif %}
+parameter_defaults:
+{% if version == 13 or version == 12 %}
+  # CephPoolDefaultPgNum: 32
+  CephPools:
+    - name: images
+      pg_num: 2048
+      rule_name: ""
+    - name: metrics
+      pg_num: 2048
+      rule_name: ""
+    - name: backups
+      pg_num: 64
+      rule_name: ""
+    - name: vms
+      pg_num: 4096
+      rule_name: ""
+    - name: volumes
+      pg_num: 64
+      rule_name: ""
+
+{% elif version == 11 %}
+  CephPools:
+    backups:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+    images:
+      size: 3
+      pg_num: 2048
+      pgp_num: 2048
+    manila_data:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+    manila_metadata:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+    metrics:
+      size: 3
+      pg_num: 2048
+      pgp_num: 2048
+    vms:
+      size: 3
+      pg_num: 4096
+      pgp_num: 4096
+    volumes:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+{% elif version == 10 %}
+  CephPools:
+    backups:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+    images:
+      size: 3
+      pg_num: 2048
+      pgp_num: 2048
+    metrics:
+      size: 3
+      pg_num: 2048
+      pgp_num: 2048
+    vms:
+      size: 3
+      pg_num: 4096
+      pgp_num: 4096
+    volumes:
+      size: 3
+      pg_num: 64
+      pgp_num: 64
+{% endif %}
+
+  #### BACKEND SELECTION ####
+
+  ## Whether to enable iscsi backend for Cinder.
+  CinderEnableIscsiBackend: false
+  ## Whether to enable rbd (Ceph) backend for Cinder.
+  CinderEnableRbdBackend: true
+  ## Cinder Backup backend can be either 'ceph' or 'swift'.
+  CinderBackupBackend: ceph
+  ## Whether to enable NFS backend for Cinder.
+  # CinderEnableNfsBackend: false
+  ## Whether to enable rbd (Ceph) backend for Nova ephemeral storage.
+  NovaEnableRbdBackend: true
+  ## Glance backend can be either 'rbd' (Ceph), 'swift' or 'file'.
+  GlanceBackend: rbd
+  ## Gnocchi backend can be either 'rbd' (Ceph), 'swift' or 'file'.
+  GnocchiBackend: rbd
+
+  #### CINDER NFS SETTINGS ####
+
+  ## NFS mount options
+  # CinderNfsMountOptions: ''
+  ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
+  # CinderNfsServers: ''
+
+
+  #### GLANCE NFS SETTINGS ####
+
+  ## Make sure to set `GlanceBackend: file` when enabling NFS
+  ##
+  ## Whether to make Glance 'file' backend a NFS mount
+  # GlanceNfsEnabled: false
+  ## NFS share for image storage, e.g. '192.168.122.1:/export/glance'
+  ## (If using IPv6, use both double- and single-quotes,
+  ## e.g. "'[fdd0::1]:/export/glance'")
+  # GlanceNfsShare: ''
+  ## Mount options for the NFS image storage mount point
+  # GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+
+
+  #### CEPH SETTINGS ####
+
+  ## When deploying Ceph Nodes through the oscplugin CLI, the following
+  ## parameters are set automatically by the CLI. When deploying via
+  ## heat stack-create or ceph on the controller nodes only,
+  ## they need to be provided manually.
+
+  ## Number of Ceph storage nodes to deploy
+  # CephStorageCount: 0
+  ## Ceph FSID, e.g. '4b5c8c0a-ff60-454b-a1b4-9747aa737d19'
+  # CephClusterFSID: ''
+  ## Ceph monitor key, e.g. 'AQC+Ox1VmEr3BxAALZejqeHj50Nj6wJDvs96OQ=='
+  # CephMonKey: ''
+  ## Ceph admin key, e.g. 'AQDLOh1VgEp6FRAAFzT7Zw+Y9V6JJExQAsRnRQ=='
+  # CephAdminKey: ''
+  ## Ceph client key, e.g 'AQC+vYNXgDAgAhAAc8UoYt+OTz5uhV7ItLdwUw=='
+  # CephClientKey: ''
+{%if version == 13 or version == 12 %}
+  # Allow more Memory for the OSDs to avoid OSD trashing
+  CephAnsibleExtraConfig:
+    ceph_osd_docker_memory_limit: 3g
+  ## OSDs configuration
+  ## See https://github.com/ceph/ceph-ansible/blob/stable-3.0/docs/source/osds/scenarios.rst
+  CephAnsibleDisksConfig:
+    devices:
+    - /dev/sdb
+    - /dev/sdc
+    - /dev/sdd
+    - /dev/sde
+    - /dev/sdf
+    - /dev/sdg
+    - /dev/sdh
+    - /dev/sdi
+    - /dev/sdj
+    - /dev/sdk
+    - /dev/sdl
+    - /dev/sdm
+    - /dev/sdn
+    - /dev/sdo
+    - /dev/sdp
+    - /dev/sdq
+    dedicated_devices:
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    - /dev/nvme0n1
+    osd_scenario: non-collocated
+{% else %}
+  ExtraConfig:
+    ceph::profile::params::osds:
+      '/dev/sdb':
+        journal: '/dev/nvme0n1'
+      '/dev/sdc':
+        journal: '/dev/nvme0n1'
+      '/dev/sdd':
+        journal: '/dev/nvme0n1'
+      '/dev/sde':
+        journal: '/dev/nvme0n1'
+      '/dev/sdf':
+        journal: '/dev/nvme0n1'
+      '/dev/sdg':
+        journal: '/dev/nvme0n1'
+      '/dev/sdh':
+        journal: '/dev/nvme0n1'
+      '/dev/sdi':
+        journal: '/dev/nvme0n1'
+      '/dev/sdj':
+        journal: '/dev/nvme0n1'
+      '/dev/sdk':
+        journal: '/dev/nvme0n1'
+      '/dev/sdl':
+        journal: '/dev/nvme0n1'
+      '/dev/sdm':
+        journal: '/dev/nvme0n1'
+      '/dev/sdn':
+        journal: '/dev/nvme0n1'
+      '/dev/sdo':
+        journal: '/dev/nvme0n1'
+      '/dev/sdp':
+        journal: '/dev/nvme0n1'
+      '/dev/sdq':
+        journal: '/dev/nvme0n1'
+{% endif %}
