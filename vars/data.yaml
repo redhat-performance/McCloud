@@ -241,6 +241,8 @@ deploy_hardware_specific_nic_configs:
       # r730xd
       - src: files/scalelab/nic-configs-13/ceph-storage-r730xd.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-r730xd.yaml
+      - src: files/scalelab/nic-configs-13/swift-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r730xd.yaml
       # 1029p
       - src: files/scalelab/nic-configs-13/ceph-storage-1029p.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
@@ -278,6 +280,8 @@ deploy_hardware_specific_nic_configs:
       # r730xd
       - src: files/scalelab/nic-configs/ceph-storage-r730xd.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-r730xd.yaml
+      - src: files/scalelab/nic-configs/swift-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r730xd.yaml
       # 1029p
       - src: files/scalelab/nic-configs/ceph-storage-1029p.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
@@ -315,6 +319,8 @@ deploy_hardware_specific_nic_configs:
       # r730xd
       - src: files/scalelab/nic-configs/ceph-storage-r730xd.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-r730xd.yaml
+      - src: files/scalelab/nic-configs/swift-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r730xd.yaml
       # 1029p
       - src: files/scalelab/nic-configs/ceph-storage-1029p.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
@@ -352,6 +358,8 @@ deploy_hardware_specific_nic_configs:
       # r730xd
       - src: files/scalelab/nic-configs/ceph-storage-r730xd.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-r730xd.yaml
+      - src: files/scalelab/nic-configs/swift-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r730xd.yaml
       # 1029p
       - src: files/scalelab/nic-configs/ceph-storage-1029p.yaml
         dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
