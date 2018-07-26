@@ -215,6 +215,45 @@ deploy_hardware_specific_nic_configs:
       - src: files/microcloud/nic-configs/swift-storage-sm5039.yaml
         dest: /home/stack/templates/nic-configs/swift-storage-sm5039.yaml
   scalelab:
+    14:
+      # r620
+      - src: files/scalelab/nic-configs-13/ceph-storage-r620.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-r620.yaml
+      - src: files/scalelab/nic-configs-13/cinder-storage-r620.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-r620.yaml
+      - src: files/scalelab/nic-configs-13/compute-r620.yaml
+        dest: /home/stack/templates/nic-configs/compute-r620.yaml
+      - src: files/scalelab/nic-configs-13/controller-r620.yaml
+        dest: /home/stack/templates/nic-configs/controller-r620.yaml
+      - src: files/scalelab/nic-configs-13/swift-storage-r620.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r620.yaml
+      # r630
+      - src: files/scalelab/nic-configs-13/ceph-storage-r630.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-r630.yaml
+      - src: files/scalelab/nic-configs-13/cinder-storage-r630.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-r630.yaml
+      - src: files/scalelab/nic-configs-13/compute-r630.yaml
+        dest: /home/stack/templates/nic-configs/compute-r630.yaml
+      - src: files/scalelab/nic-configs-13/controller-r630.yaml
+        dest: /home/stack/templates/nic-configs/controller-r630.yaml
+      - src: files/scalelab/nic-configs-13/swift-storage-r630.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r630.yaml
+      # r730xd
+      - src: files/scalelab/nic-configs-13/ceph-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-r730xd.yaml
+      - src: files/scalelab/nic-configs-13/swift-storage-r730xd.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-r730xd.yaml
+      # 1029p
+      - src: files/scalelab/nic-configs-13/ceph-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/ceph-storage-1029p.yaml
+      - src: files/scalelab/nic-configs-13/cinder-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/cinder-storage-1029p.yaml
+      - src: files/scalelab/nic-configs-13/compute-1029p.yaml
+        dest: /home/stack/templates/nic-configs/compute-1029p.yaml
+      - src: files/scalelab/nic-configs-13/controller-1029p.yaml
+        dest: /home/stack/templates/nic-configs/controller-1029p.yaml
+      - src: files/scalelab/nic-configs-13/swift-storage-1029p.yaml
+        dest: /home/stack/templates/nic-configs/swift-storage-1029p.yaml
     13:
       # r620
       - src: files/scalelab/nic-configs-13/ceph-storage-r620.yaml
