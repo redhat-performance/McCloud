@@ -29,7 +29,7 @@
           --set ceph_namespace={{additional_ceph_insecure_registry}}{{containers_ceph_namespace}}  \
           --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
           --output-images-file /home/stack/templates/overcloud_containers.yaml
-        when: version < 14
+      when: version < 14
 
     - name: Create template to pull images to local registry
       shell: |
@@ -40,7 +40,7 @@
           --set ceph_namespace={{additional_ceph_insecure_registry}}{{containers_ceph_namespace}}  \
           --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
           --output-images-file /home/stack/templates/overcloud_containers.yaml
-        when: version == 14
+      when: version == 14
 
     - name: Pull images using the container_images.yaml
       shell: |
