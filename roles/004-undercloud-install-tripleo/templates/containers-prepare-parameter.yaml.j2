@@ -1,0 +1,28 @@
+parameter_defaults:
+  ContainerImagePrepare:
+  - push_destination: true
+    set:
+      ceph_image: rhceph
+      ceph_namespace: brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888
+      ceph_tag: 3-12
+      name_prefix: openstack-
+      name_suffix: ''
+      namespace: docker-registry.engineering.redhat.com/rhosp14
+      neutron_driver: null
+      openshift_base_image: ose
+      openshift_cockpit_image: registry-console
+      openshift_cockpit_namespace: registry.access.redhat.com/openshift3
+      openshift_cockpit_tag: v3.9
+      openshift_etcd_image: etcd
+      openshift_etcd_namespace: registry.access.redhat.com/rhel7
+      openshift_etcd_tag: {{ containers_tag }}
+      openshift_gluster_block_image: rhgs-gluster-block-prov-rhel7
+      openshift_gluster_image: rhgs-server-rhel7
+      openshift_gluster_namespace: registry.access.redhat.com/rhgs3
+      openshift_gluster_tag: {{ containers_tag }}
+      openshift_heketi_image: rhgs-volmanager-rhel7
+      openshift_heketi_namespace: registry.access.redhat.com/rhgs3
+      openshift_heketi_tag: {{ containers_tag }}
+      openshift_namespace: registry.access.redhat.com/openshift3
+      openshift_tag: v3.9
+      tag: {{ containers_tag }}

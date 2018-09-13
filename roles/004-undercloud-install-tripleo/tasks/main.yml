@@ -33,3 +33,11 @@
     dest: /home/stack/undercloud.conf
     owner: stack
     group: stack
+
+- name: Copy containers-prepare-parameter
+  template:
+    src: containers-prepare-parameter.yaml.j2
+    dest: /home/stack/containers-prepare-parameter.yaml
+    owner: stack
+    group: stack
+  when: version >= 14
