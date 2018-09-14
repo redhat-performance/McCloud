@@ -5,6 +5,11 @@
 
 - name: Validate instackenv.json Block
   block:
+    - name: Check for ipmitool
+      yum:
+        name: ipmitool
+        state: present
+
     - name: Run validate-instackenv.py
       shell: |
         set -o pipefail
