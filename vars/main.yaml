@@ -26,15 +26,39 @@ additional_ceph_insecure_registry:
 #containers_ceph_tag: 2.4-4
 
 # Queens(13):
-version: 13
-rhos_release: 13-director
+#version: 13
+#rhos_release: 13-director
+#rhel_version: 7.5
+#build: "2018-05-07.2"
+#container_namespace: "/rhosp13"
+#containers_tag: 2018-05-07.2
+#containers_ceph_namespace: ""
+#containers_ceph_image: rhceph
+#containers_ceph_tag: 3-6
+
+# Rocky(14)
+version: 14
+rhos_release: 14-director
 rhel_version: 7.5
-build: "2018-05-07.2"
-container_namespace: "/rhosp13"
-containers_tag: 2018-05-07.2
+build: "2018-09-06.1"
+container_namespace: "/rhosp14"
+containers_tag: 2018-09-06.1
 containers_ceph_namespace: ""
 containers_ceph_image: rhceph
-containers_ceph_tag: 3-6
+containers_ceph_tag: 3-9
+
+# Additional env files
+# If You have additional env files for deployment, pass them here. Use the Key to define
+# what the env file is.
+#
+# Note: There is no need to pass ceph-ansible as of OSP14. This work will also only work
+# with OSP14+
+#
+# Comment out if you have nothing to pass.
+#
+#additional_env_files:
+#    - /usr/share/openstack-tripleo-heat-templates/environments/services/neutron-ovn-ha.yaml
+#additional_env_files:
 
 # Deploy Scenario:
 lab_hardware: microcloud

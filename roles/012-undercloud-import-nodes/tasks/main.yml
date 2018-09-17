@@ -6,6 +6,7 @@
 - name: Validate instackenv.json Block
   block:
     - name: Check for ipmitool
+      become: true
       yum:
         name: ipmitool
         state: present

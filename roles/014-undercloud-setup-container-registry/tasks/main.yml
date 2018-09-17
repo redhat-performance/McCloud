@@ -12,12 +12,14 @@
         state: present
         regexp: '^INSECURE_REGISTRY='
         line: 'INSECURE_REGISTRY="--insecure-registry 192.168.0.1:8787 --insecure-registry 192.168.0.3:8787 --insecure-registry {{additional_insecure_registry}} --insecure-registry {{additional_ceph_insecure_registry}} "'
+      when: version < 14
 
     - name: Restart Docker registry
       become: true
       service:
         name: docker
         state: restarted
+      when: version < 14
 
     - name: Create template to pull images to local registry
       shell: |
@@ -28,19 +30,23 @@
           -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
           --set ceph_namespace={{additional_ceph_insecure_registry}}{{containers_ceph_namespace}}  \
           --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
-          --output-images-file /home/stack/templates/overcloud_containers.yaml
+          --output-images-file /home/stack/templates/overcloud_containers.yaml \
+          --output-env-file /home/stack/templates/docker_registry.yaml \
       when: version < 14
 
     - name: Create template to pull images to local registry
       shell: |
         . /home/stack/stackrc
-        openstack overcloud container image prepare \
-          --namespace {{additional_insecure_registry}}{{container_namespace}} \
-          --prefix openstack --tag {{containers_tag}} --push-destination 192.168.0.1:8787 \
-          --set ceph_namespace={{additional_ceph_insecure_registry}}{{containers_ceph_namespace}}  \
-          --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
-          --output-images-file /home/stack/templates/overcloud_containers.yaml
-      when: version == 14
+        openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml 1> /home/stack/templates/docker_registry.yaml
+      when: version >= 14
+
+    - name: Create template to pull images to local registry - Custom
+      shell: |
+        . /home/stack/stackrc
+        openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml \
+          -e {{item}} 1>> /home/stack/templates/docker_registry.yaml
+      with_items: additional_env_files
+      when: version >= 14 and additional_env_files is defined
 
     - name: Pull images using the container_images.yaml
       shell: |
@@ -53,25 +59,7 @@
       retries: 2
       delay: 10
       ignore_errors: true
-
-    - name: Create template for using images from local registry
-      shell: |
-        . /home/stack/stackrc
-        openstack overcloud container image prepare --namespace 192.168.0.1:8787{{container_namespace}} \
-          --prefix openstack --tag {{containers_tag}} --set ceph_namespace=192.168.0.1:8787{{containers_ceph_namespace}} \
-          --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
-          -e /usr/share/openstack-tripleo-heat-templates/environments/ceph-ansible/ceph-ansible.yaml \
-          --output-env-file /home/stack/templates/docker_registry.yaml
-      when: version < 14
-
-    - name: Create template for using images from local registry
-      shell: |
-        . /home/stack/stackrc
-        openstack overcloud container image prepare --namespace 192.168.0.1:8787{{container_namespace}} \
-          --prefix openstack --tag {{containers_tag}} --set ceph_namespace=192.168.0.1:8787{{containers_ceph_namespace}} \
-          --set ceph_image={{containers_ceph_image}} --set ceph_tag={{containers_ceph_tag}} \
-          --output-env-file /home/stack/templates/docker_registry.yaml
-      when: version == 14
+      when: version >= 14
 
   always:
     - name: Collect Setup Container Registry Artifacts
