@@ -61,6 +61,12 @@
       ignore_errors: true
       when: version >= 14
 
+    - name: Upload images to local registery
+      shell: |
+        . /home/stack/stackrc
+        openstack overcloud container image upload --config-file /home/stack/templates/overcloud_containers.yaml
+      when: version < 14
+
   always:
     - name: Collect Setup Container Registry Artifacts
       synchronize:
