@@ -120,6 +120,17 @@ tune_undercloud_keystone_processes_count: 24
 newton_objectstorage_deploy_workaround: true
 
 ###########################################
+# Puiblic/Private External Network parameters
+###########################################
+external_vlan: 10
+external_network_cidr: 172.21.0.0/16
+external_network_pool_start: 172.21.0.10
+external_network_pool_end: 172.21.0.20
+external_network_gateway: 172.21.0.1
+# Overcloud External Network VIP
+external_network_vip: 172.21.0.10
+
+###########################################
 # Configuration Items (Undercloud)
 ###########################################
 # Defaults are set for MicroCloud
@@ -131,7 +142,6 @@ version_directory: /etc
 # External private vlan on undercloud:
 deploy_external_private_vlan: true
 route_external_traffic_from_undercloud: true
-external_vlan: 10
 external_vlan_device: enp1s0f0.{{external_vlan}}
 external_undercloud_interface: enp2s0f0
 private_external_address: 172.21.0.1
@@ -149,8 +159,7 @@ bulk_introspection_timeout: 3600
 ###########################################
 # Configuration Items (Overcloud)
 ###########################################
-# Overcloud External Network VIP
-external_network_vip: 172.21.0.10
+
 # OpenStack Overcloud config items:
 create_flavors: true
 upload_guest_images: true

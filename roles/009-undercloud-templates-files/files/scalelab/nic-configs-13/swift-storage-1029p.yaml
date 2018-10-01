@@ -84,11 +84,22 @@ resources:
           params:
             $network_config:
               network_config:
-              - type: ovs_bridge
-                name: br-ex
-                use_dhcp: false
+
+              - type: interface
+                name: eno1
                 dns_servers:
                   get_param: DnsServers
+                use_dhcp: true
+
+              - type: interface
+                name: enp94s0f0
+                use_dhcp: false
+                defroute: false
+                onboot: false
+
+              - type: ovs_bridge
+                name: br-int-sm
+                use_dhcp: false
                 addresses:
                 - ip_netmask:
                     list_join:
@@ -99,9 +110,6 @@ resources:
                 - ip_netmask: 169.254.169.254/32
                   next_hop:
                     get_param: EC2MetadataIp
-                # - default: true
-                #   next_hop:
-                #     get_param: ControlPlaneDefaultRoute
                 members:
                 - type: interface
                   name: enp94s0f1
@@ -112,6 +120,13 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: InternalApiIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: StorageMgmtNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: StorageMgmtIpSubnet
+
               - type: ovs_bridge
                 name: br-storage
                 use_dhcp: false
@@ -125,19 +140,13 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: StorageIpSubnet
-              - type: ovs_bridge
-                name: br-storagemgmt
+
+              - type: interface
+                name: enp94s0f3
                 use_dhcp: false
-                members:
-                - type: interface
-                  name: enp94s0f3
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: StorageMgmtNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: StorageMgmtIpSubnet
+                defroute: false
+                onboot: false
+
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

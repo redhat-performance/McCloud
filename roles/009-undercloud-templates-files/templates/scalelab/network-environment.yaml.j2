@@ -6,21 +6,24 @@ resource_registry:
   OS::TripleO::ObjectStorage::Net::SoftwareConfig: /home/stack/templates/nic-configs/swift-storage.yaml
 
 parameter_defaults:
-  NeutronExternalNetworkBridge: "'br-ex'"
+  NeutronExternalNetworkBridge: "''"
   InternalApiNetCidr: 172.16.0.0/16
   TenantNetCidr: 172.17.0.0/16
   StorageNetCidr: 172.18.0.0/16
   StorageMgmtNetCidr: 172.19.0.0/16
   ManagementNetCidr: 172.20.0.0/16
-  ExternalNetCidr: 172.21.0.0/16
+  # ExternalNetCidr: 172.21.0.0/16
+  ExternalNetCidr: "{{external_network_cidr}}"
   InternalApiAllocationPools: [{'start': '172.16.0.10', 'end': '172.16.1.200'}]
   TenantAllocationPools: [{'start': '172.17.0.10', 'end': '172.17.1.200'}]
   StorageAllocationPools: [{'start': '172.18.0.10', 'end': '172.18.1.200'}]
   StorageMgmtAllocationPools: [{'start': '172.19.0.10', 'end': '172.19.1.200'}]
   ManagementAllocationPools: [{'start': '172.20.0.10', 'end': '172.20.1.200'}]
-  ExternalAllocationPools: [{'start': '172.21.0.10', 'end': '172.21.0.20'}]
+  # ExternalAllocationPools: [{'start': '172.21.0.10', 'end': '172.21.0.20'}]
+  ExternalAllocationPools: [{'start': '{{external_network_pool_start}}', 'end': '{{external_network_pool_end}}'}]
   # Set to the router gateway on the external network
-  ExternalInterfaceDefaultRoute: 172.21.0.1
+  # ExternalInterfaceDefaultRoute: 172.21.0.1
+  ExternalInterfaceDefaultRoute: "{{external_network_gateway}}"
   PublicVirtualFixedIPs: [{'ip_address':'{{external_network_vip}}'}]
   # Gateway router for the provisioning network (or Undercloud IP)
   ControlPlaneDefaultRoute: 192.168.0.1
@@ -34,4 +37,5 @@ parameter_defaults:
   StorageMgmtNetworkVlanID: 303
   TenantNetworkVlanID: 304
   ManagementNetworkVlanID: 305
-  ExternalNetworkVlanID: 10
+  # ExternalNetworkVlanID: 10
+  ExternalNetworkVlanID: "{{external_vlan}}"

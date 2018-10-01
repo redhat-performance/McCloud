@@ -1,10 +1,18 @@
-heat_template_version: queens
+heat_template_version: ocata
 description: >
-  Software Config to drive os-net-config to configure VLANs for the Controller role.
+  Software Config to drive os-net-config to configure VLANs for the controller role.
 parameters:
   ControlPlaneIp:
     default: ''
     description: IP address/subnet on the ctlplane network
+    type: string
+  ExternalIpSubnet:
+    default: ''
+    description: IP address/subnet on the external network
+    type: string
+  InternalApiIpSubnet:
+    default: ''
+    description: IP address/subnet on the internal API network
     type: string
   StorageIpSubnet:
     default: ''
@@ -12,58 +20,54 @@ parameters:
     type: string
   StorageMgmtIpSubnet:
     default: ''
-    description: IP address/subnet on the storage_mgmt network
-    type: string
-  InternalApiIpSubnet:
-    default: ''
-    description: IP address/subnet on the internal_api network
+    description: IP address/subnet on the storage mgmt network
     type: string
   TenantIpSubnet:
     default: ''
     description: IP address/subnet on the tenant network
     type: string
-  ExternalIpSubnet:
-    default: ''
-    description: IP address/subnet on the external network
-    type: string
-  ManagementIpSubnet:
+  ManagementIpSubnet: # Only populated when including environments/network-management.yaml
     default: ''
     description: IP address/subnet on the management network
     type: string
+  ExternalNetworkVlanID:
+    default: 10
+    description: Vlan ID for the external network traffic.
+    type: number
+  InternalApiNetworkVlanID:
+    default: 20
+    description: Vlan ID for the internal_api network traffic.
+    type: number
   StorageNetworkVlanID:
     default: 30
     description: Vlan ID for the storage network traffic.
     type: number
   StorageMgmtNetworkVlanID:
     default: 40
-    description: Vlan ID for the storage_mgmt network traffic.
-    type: number
-  InternalApiNetworkVlanID:
-    default: 20
-    description: Vlan ID for the internal_api network traffic.
+    description: Vlan ID for the storage mgmt network traffic.
     type: number
   TenantNetworkVlanID:
     default: 50
     description: Vlan ID for the tenant network traffic.
     type: number
-  ExternalNetworkVlanID:
-    default: 10
-    description: Vlan ID for the external network traffic.
-    type: number
   ManagementNetworkVlanID:
     default: 60
     description: Vlan ID for the management network traffic.
     type: number
-  ControlPlaneSubnetCidr: # Override this via parameter_defaults
-    default: '24'
-    description: The subnet CIDR of the control plane network.
-    type: string
   ControlPlaneDefaultRoute: # Override this via parameter_defaults
     description: The default route of the control plane network.
     type: string
   ExternalInterfaceDefaultRoute:
-    default: '10.0.0.1'
+    default: 10.0.0.1
     description: default route for the external network
+    type: string
+  ManagementInterfaceDefaultRoute: # Commented out by default in this template
+    default: unset
+    description: The default route of the management network.
+    type: string
+  ControlPlaneSubnetCidr: # Override this via parameter_defaults
+    default: '24'
+    description: The subnet CIDR of the control plane network.
     type: string
   DnsServers: # Override this via parameter_defaults
     default: []
@@ -84,40 +88,15 @@ resources:
           params:
             $network_config:
               network_config:
-              - type: ovs_bridge
-                name: br-ex
-                use_dhcp: false
+
+              - type: interface
+                name: eno1
                 dns_servers:
                   get_param: DnsServers
-                addresses:
-                - ip_netmask:
-                    list_join:
-                    - /
-                    - - get_param: ControlPlaneIp
-                      - get_param: ControlPlaneSubnetCidr
-                routes:
-                - ip_netmask: 169.254.169.254/32
-                  next_hop:
-                    get_param: EC2MetadataIp
-                # - default: true
-                #   next_hop:
-                #     get_param: ControlPlaneDefaultRoute
-                members:
-                - type: interface
-                  name: enp94s0f1
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: InternalApiNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: InternalApiIpSubnet
-                - type: vlan
-                  vlan_id:
-                    get_param: ExternalNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: ExternalIpSubnet
+                use_dhcp: false
+                defroute: false
+                onboot: false
+
               - type: ovs_bridge
                 name: br-tenant
                 use_dhcp: false
@@ -131,6 +110,37 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: TenantIpSubnet
+
+              - type: ovs_bridge
+                name: br-int-sm
+                use_dhcp: false
+                addresses:
+                - ip_netmask:
+                    list_join:
+                    - /
+                    - - get_param: ControlPlaneIp
+                      - get_param: ControlPlaneSubnetCidr
+                routes:
+                - ip_netmask: 169.254.169.254/32
+                  next_hop:
+                    get_param: EC2MetadataIp
+                members:
+                - type: interface
+                  name: enp94s0f1
+                  primary: true
+                - type: vlan
+                  vlan_id:
+                    get_param: InternalApiNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: InternalApiIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: StorageMgmtNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: StorageMgmtIpSubnet
+
               - type: ovs_bridge
                 name: br-storage
                 use_dhcp: false
@@ -144,8 +154,9 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: StorageIpSubnet
+
               - type: ovs_bridge
-                name: br-storagemgmt
+                name: br-ex
                 use_dhcp: false
                 members:
                 - type: interface
@@ -153,10 +164,15 @@ resources:
                   primary: true
                 - type: vlan
                   vlan_id:
-                    get_param: StorageMgmtNetworkVlanID
+                    get_param: ExternalNetworkVlanID
                   addresses:
                   - ip_netmask:
-                      get_param: StorageMgmtIpSubnet
+                      get_param: ExternalIpSubnet
+                  routes:
+                  - default: true
+                    next_hop:
+                      get_param: ExternalInterfaceDefaultRoute
+
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
