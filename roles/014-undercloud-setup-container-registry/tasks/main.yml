@@ -37,15 +37,16 @@
     - name: Create template to pull images to local registry
       shell: |
         . /home/stack/stackrc
-        openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml 1> /home/stack/templates/docker_registry.yaml
+        openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml \
+        --output-env-file /home/stack/templates/docker_registry.yaml
       when: version >= 14
 
     - name: Create template to pull images to local registry - Custom
       shell: |
         . /home/stack/stackrc
         openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml \
-          -e {{item}} 1>> /home/stack/templates/docker_registry.yaml
-      with_items: "{{ additional_env_files }}"
+        {{additional_env_files | join('-e')}} \
+        --output-env-file /home/stack/templates/docker_registry.yaml
       when: version >= 14 and additional_env_files is defined
 
     - name: Pull images using the container_images.yaml

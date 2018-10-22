@@ -20,7 +20,7 @@ date -u >> ${log}
     -e /usr/share/openstack-tripleo-heat-templates/environments/docker-ha.yaml \
     -e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
     {% if additional_env_files is defined %}
-        -e {{ additional_env_files | join('-e') }} \
+    -e {{ additional_env_files | join('-e') }} \
     {% endif %}
     -e /home/stack/templates/network-environment.yaml \
     -e /home/stack/templates/docker_registry.yaml \
