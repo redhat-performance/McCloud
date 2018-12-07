@@ -39,13 +39,13 @@ additional_ceph_insecure_registry:
 # Rocky(14)
 version: 14
 rhos_release: 14-director
-rhel_version: 7.5
-build: "2018-09-06.1"
+rhel_version: 7.6
+build: "2018-11-29.3"
 container_namespace: "/rhosp14"
-containers_tag: 2018-09-06.1
+containers_tag: 2018-11-29.2
 containers_ceph_namespace: ""
 containers_ceph_image: rhceph
-containers_ceph_tag: 3-9
+containers_ceph_tag: 3-16
 
 # Additional env files
 # If You have additional env files for deployment, pass them here. Use the Key to define
@@ -118,6 +118,16 @@ pike_objectstorage_deploy_workaround: true
 undercloud_keystone_processes_workaround: true
 tune_undercloud_keystone_processes_count: 24
 newton_objectstorage_deploy_workaround: true
+
+###########################################
+# Mount NFS Server
+# Necessary for long term storage of logs
+###########################################
+mount_nfs: false
+nfs_server: "none.com"
+nfs_remote_path: "/path/to/storage"
+# This will mount to /home/stack/<dir>
+nfs_dir: "nfs"
 
 ###########################################
 # Configuration Items (Undercloud)

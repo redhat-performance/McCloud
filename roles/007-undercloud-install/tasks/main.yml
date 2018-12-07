@@ -65,3 +65,15 @@
         dest: "{{artifact_dir}}/mccloud-log"
         mode: pull
       when: collect_artifacts
+
+    - name: Create mount point
+      shell: mkdir -p /home/stack/{{nfs_dir}}
+      when: mount_nfs
+
+    - name: Mount NFS Storage
+      become: true
+      shell: |
+        mount -t nfs -o,vers=3 {{nfs_server}}:{{nfs_remote_path}} /home/stack/{{nfs_dir}}
+      when: mount_nfs
+      ignore_errors: true
+

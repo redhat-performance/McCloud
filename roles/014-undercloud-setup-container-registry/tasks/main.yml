@@ -43,6 +43,11 @@
         . /home/stack/stackrc
         openstack tripleo container image prepare -e /home/stack/containers-prepare-parameter.yaml \
         --output-env-file /home/stack/templates/docker_registry.yaml
+      register: image_pull
+      until: image_pull.rc == 0
+      retries: 5
+      delay: 60
+      ignore_errors: true
       when: version >= 14
 
     - name: Create template to pull images to local registry - Custom
