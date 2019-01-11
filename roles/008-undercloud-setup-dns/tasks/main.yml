@@ -6,7 +6,7 @@
 - name: Get neutron subnet uuid
   shell: |
     . /home/stack/stackrc
-    neutron subnet-list | grep start | grep ctlplane-subnet | awk '{print $2}'
+    neutron subnet-list | grep start | grep 192.168.0.1/16 | awk '{print $2}'
   register: neutron_subnet_uuid
 
 - name: Setup DNS on Undercloud Neutron subnet
