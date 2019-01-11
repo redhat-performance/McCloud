@@ -13,6 +13,7 @@
   shell: |
     . /home/stack/stackrc
     neutron subnet-update {{neutron_subnet_uuid.stdout}} --dns-nameserver {{dns_server}}
+  ignore_errors: true
 
 - name: Newton(10) Obtain ctlplane UUID
   shell: |
