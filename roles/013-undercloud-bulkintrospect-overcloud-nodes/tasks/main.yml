@@ -177,12 +177,14 @@
         . /home/stack/stackrc
         mkdir /home/stack/introspection-data
         for i in `openstack baremetal node list | grep 'None' | awk '{print $2}'`; do openstack baremetal introspection data save $i > /home/stack/introspection-data/$i; done
+      ignore_errors: true
   always:
     - name: Copy introspection data
       become: true
       shell: |
         mkdir -p {{log_dir}}/introspection-data
         cp -r /home/stack/introspection-data/* {{log_dir}}/introspection-data
+      ignore_errors: true
 
     - name: Collect Introspection-data Artifacts
       synchronize:

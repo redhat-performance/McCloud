@@ -21,10 +21,6 @@
         state: restarted
       when: version < 14
 
-    - name: Docker gid
-      shell: newgrp docker
-      when: version >= 13
-
     - name: Create template to pull images to local registry
       shell: |
         . /home/stack/stackrc

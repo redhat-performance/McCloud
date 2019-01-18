@@ -132,8 +132,8 @@ resources:
           params:
             $network_config:
               network_config:
-              - type: ovs_bridge
-                name: br-ex
+              - type: interface
+                name: enp2s0f1 
                 use_dhcp: false
                 dns_servers:
                   get_param: DnsServers
@@ -150,9 +150,31 @@ resources:
                 # - default: true
                 #   next_hop:
                 #     get_param: ControlPlaneDefaultRoute
+              - type: ovs_bridge
+                name: br-storage
+                use_dhcp: false
                 members:
                 - type: interface
-                  name: em2
+                  name:  enp1s0f0
+                  primary: true
+                - type: vlan
+                  vlan_id:
+                    get_param: StorageNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: StorageIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: StorageMgmtNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: StorageMgmtIpSubnet
+              - type: ovs_bridge
+                name: br-ex
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: enp1s0f1 
                   primary: true
                 - type: vlan
                   vlan_id:
@@ -162,49 +184,16 @@ resources:
                       get_param: InternalApiIpSubnet
                 - type: vlan
                   vlan_id:
-                    get_param: ExternalNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: ExternalIpSubnet
-              - type: ovs_bridge
-                name: br-tenant
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: em1
-                  primary: true
-                - type: vlan
-                  vlan_id:
                     get_param: TenantNetworkVlanID
                   addresses:
                   - ip_netmask:
                       get_param: TenantIpSubnet
-              - type: ovs_bridge
-                name: br-storage
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: em3
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: StorageNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: StorageIpSubnet
-              - type: ovs_bridge
-                name: br-storagemgmt
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: em4
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: StorageMgmtNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: StorageMgmtIpSubnet
+                # - type: vlan
+                #   vlan_id:
+                #     get_param: ExternalNetworkVlanID
+                #   addresses:
+                #   - ip_netmask:
+                #       get_param: ExternalIpSubnet
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

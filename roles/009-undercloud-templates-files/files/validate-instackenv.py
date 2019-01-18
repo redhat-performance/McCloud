@@ -76,7 +76,6 @@ def main():
         remove_undercloud(instackenv_json, cliargs.output_instackenv, cliargs.undercloud_ipmi_addr)
 
     # Open instackenv and validate
-    maclist = []
     baremetal_ips = []
     good_nodes = []
     failed_nodes = []
@@ -122,19 +121,6 @@ def main():
                 failed_nodes.append(node["pm_addr"])
                 continue
 
-            if "mac" in node:
-                if len(node["mac"]) == 0:
-                    print "ERROR :: MAC address length 0 on node: {}".format(node["pm_addr"])
-                    errors += 1
-                    failed_nodes.append(node["pm_addr"])
-                    continue
-                maclist.extend(node["mac"])
-            else:
-                print "ERROR :: MAC address does not exist for node: {}".format(node["pm_addr"])
-                errors += 1
-                failed_nodes.append(node["pm_addr"])
-                continue
-
             if node["pm_type"] == "pxe_ipmitool":
                 cmd = ("ipmitool -R 1 -I lanplus -H {} -U {} -P {} chassis "
                        "status".format(node["pm_addr"], node["pm_user"], node["pm_password"]))
@@ -153,10 +139,6 @@ def main():
 
     if not len(set(baremetal_ips)) == len(baremetal_ips):
         print "ERROR :: Baremetals IPs are not all unique."
-        errors += 1
-
-    if not len(set(maclist)) == len(maclist):
-        print "ERROR :: MAC addresses are not all unique."
         errors += 1
 
     with open(cliargs.output_instackenv, "w") as wf:

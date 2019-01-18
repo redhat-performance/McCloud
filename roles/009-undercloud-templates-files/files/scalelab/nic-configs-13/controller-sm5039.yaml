@@ -1,6 +1,6 @@
 heat_template_version: queens
 description: >
-  Software Config to drive os-net-config to configure VLANs for the Compute role.
+  Software Config to drive os-net-config to configure VLANs for the Controller role.
 parameters:
   StorageInterfaceRoutes:
     default: []
@@ -132,8 +132,8 @@ resources:
           params:
             $network_config:
               network_config:
-              - type: ovs_bridge
-                name: br-ex
+              - type: interface
+                name: enp2s0f1 
                 use_dhcp: false
                 dns_servers:
                   get_param: DnsServers
@@ -150,35 +150,12 @@ resources:
                 # - default: true
                 #   next_hop:
                 #     get_param: ControlPlaneDefaultRoute
-                members:
-                - type: interface
-                  name: em2
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: InternalApiNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: InternalApiIpSubnet
-              - type: ovs_bridge
-                name: br-tenant
-                use_dhcp: false
-                members:
-                - type: interface
-                  name: em1
-                  primary: true
-                - type: vlan
-                  vlan_id:
-                    get_param: TenantNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: TenantIpSubnet
               - type: ovs_bridge
                 name: br-storage
                 use_dhcp: false
                 members:
                 - type: interface
-                  name: em3
+                  name:  enp1s0f0
                   primary: true
                 - type: vlan
                   vlan_id:
@@ -186,6 +163,37 @@ resources:
                   addresses:
                   - ip_netmask:
                       get_param: StorageIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: StorageMgmtNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: StorageMgmtIpSubnet
+              - type: ovs_bridge
+                name: br-ex
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: enp1s0f1 
+                  primary: true
+                - type: vlan
+                  vlan_id:
+                    get_param: InternalApiNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: InternalApiIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: TenantNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: TenantIpSubnet
+                - type: vlan
+                  vlan_id:
+                    get_param: ExternalNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: ExternalIpSubnet
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.

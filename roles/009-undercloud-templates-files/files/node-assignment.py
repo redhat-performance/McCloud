@@ -172,7 +172,8 @@ def main():
         for node in instackenv["nodes"]:
             node_pin = node["pm_addr"][0:node["pm_addr"].find(".")]
             try:
-                node_type = re.search(cliargs.pm_addr_regex, node_pin).group(1)
+                pos = re.search(cliargs.pm_addr_regex,node_pin).lastindex
+                node_type = re.search(cliargs.pm_addr_regex, node_pin).group(pos)
             except AttributeError:
                 node_type = ""
                 print ("ERROR :: Unable to determine node_type with node({}) using regex '{}'"
